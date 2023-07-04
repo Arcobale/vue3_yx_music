@@ -1,5 +1,9 @@
 <template>
-  <div id="root"></div>
+  <div id="root">
+    官方榜
+    全球榜
+    
+  </div>
 </template>
 
 <script>

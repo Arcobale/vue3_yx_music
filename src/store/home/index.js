@@ -1,15 +1,22 @@
-// import {reqCategoryList, reqBannerList, reqFLoorList} from '@/api';
+import { reqPersonalizedList } from '@/api';
 
 const state = {
-    categoryList: [],
-    bannerList: [],
-    floorList: [],
+    personalizedList: []
 };
 
 const mutations = {
+    PERSONALIZEDLIST(state, personalizedList) {
+        state.personalizedList = personalizedList;
+    }
 };
 
 const actions = {
+    async getPersonalizedList({commit}, limit) {
+        let res = await reqPersonalizedList(limit);
+        if (res.code == 200) {
+            commit('PERSONALIZEDLIST', res.data);
+        }
+    }
 };
 
 const getters = {};

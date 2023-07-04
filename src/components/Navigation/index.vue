@@ -23,7 +23,6 @@ export default {
     const router = useRouter();
     const menus = computed(() => router.options.routes);
     const activePath = computed(() => {
-      console.log(router.currentRoute.value);
       return router.currentRoute.value.fullPath;
     });
     // console.log(activePath.value);
