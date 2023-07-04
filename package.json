@@ -13,9 +13,15 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.4.0",
     "core-js": "^3.6.5",
-    "vue": "^3.0.0"
+    "element-plus": "^2.3.7",
+    "less": "^3.13.1",
+    "less-loader": "^7.3.0",
+    "vue": "^3.0.0",
+    "vue-router": "^4.2.2",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.19",
