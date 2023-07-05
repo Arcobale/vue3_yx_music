@@ -34,7 +34,9 @@
                 </el-icon>
                 <span style="vertical-align: middle"> Search </span>
             </el-button> -->
-            <el-input v-model="searchWords" class="searchbox" placeholder="搜索" :prefix-icon="Search" />
+            <div class="searchbox">
+                <el-input v-model="searchWords" placeholder="搜索" :prefix-icon="Search" />
+            </div>
             <el-icon>
                 <Setting />
             </el-icon>
@@ -58,6 +60,7 @@ import { Search } from '@element-plus/icons-vue'
 
 
 export default {
+    name: 'Header',
     setup() {
         const router = useRouter();
         const option = computed(() => {
@@ -107,6 +110,7 @@ export default {
             display: flex;
             justify-content: flex-start;
             align-items: center;
+            line-height: 50px;
 
             .link {
                 margin-left: 20px;
@@ -129,11 +133,29 @@ export default {
         align-items: center;
 
         .searchbox {
-            width: 145px;
-            height: 22px;
-            opacity: 0.3;
-            border-radius: 70%;
-            font-size: 12px;
+            // background-color: rgba(209, 113, 104, 0.6);
+            // background-color: rgb(209 113 104 / 100%);
+            // background-color: #d17168;
+            border-radius: 100px;
+            color: blue;
+
+            :deep(.el-input__wrapper) {
+                font-size: 12px;
+                width: 145px;
+                height: 22px;
+                border-radius: 100px;
+                // background-color: transparent;
+                background-color: rgba(209, 113, 104, 0.9);
+                border: 0px;
+                box-shadow: 0 0 0 0;
+            }
+
+            :deep(.el-input__inner) {
+                color: #f7e6e5;
+            }
+            :deep(.el-input__inner::placeholder) {
+                color: #f5d3d1;
+            }
         }
     }
 }

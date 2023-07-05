@@ -19,6 +19,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
+  name: 'Navigation',
   setup() {
     const router = useRouter();
     const menus = computed(() => router.options.routes);

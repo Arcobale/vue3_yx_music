@@ -33,13 +33,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-// @import url('./assets/reset.css');
+@import url('./assets/reset.css');
 
 .root {
   padding: 0px;
   margin: 0px;
   min-width: 1000px;
   min-height: 670px;
+  width: 1000px;
+  height: 670px;
 
   .el-header {
     padding: 0px;
