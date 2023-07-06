@@ -3,7 +3,6 @@
     <el-menu router :default-active="activePath.split('/')[1]" class="el-menu-vertical-demo" active-text-color="#d74d45">
         <template v-for="(menu, index) in menus">
           <el-menu-item :index="menu.path" :key="index" v-if="!menu.hidden">
-            <!-- slot="title" 改成#title 并用template包裹 -->
             <template #title>
               <component :is="menu.iconClass" style="height:16px; width: 16px; margin-right: 8px;" />
               <span>{{ menu.name }}</span>
@@ -26,7 +25,6 @@ export default {
     const activePath = computed(() => {
       return router.currentRoute.value.fullPath;
     });
-    // console.log(activePath.value);
     return {
       menus,
       activePath

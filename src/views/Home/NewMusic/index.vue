@@ -141,11 +141,11 @@ export default {
         font-size: 14px;
         font-weight: 400;
         color: #696969;
-  
+
         li {
           display: block;
         }
-  
+
         .active {
           font-weight: 600;
           color: black;
@@ -163,7 +163,6 @@ export default {
         width: 90px;
         height: 24px;
         border-radius: 10px;
-        border: 1px solid #c3c3c3;
         text-align: center;
         line-height: 24px;
 
@@ -184,7 +183,9 @@ export default {
         }
       }
 
-      .collect {}
+      .collect {
+        border: 1px solid #c3c3c3;
+      }
     }
   }
 

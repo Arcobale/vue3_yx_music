@@ -1,5 +1,6 @@
 import requests from './requests.js'
 
+// Home
 export function reqPersonalizedList(params) {
     return requests({
         method: 'get',
@@ -85,6 +86,41 @@ export function reqNewSongList(params) {
     return requests({
         method: 'get',
         url: `/top/song`,
+        params
+    })
+}
+
+// PrivateFM
+export function reqPersonalFM() {
+    return requests({
+        method: 'get',
+        url: `/personal_fm`
+    })
+}
+
+// RecentSong
+export function reqRecentSong(params) {
+    return requests({
+        method: 'get',
+        url: `/record/recent/song`,
+        params
+    })
+}
+
+// playlist
+export function reqPlayListAll(params) {
+    return requests({
+        method: 'get',
+        url: `/playlist/track/all`,
+        params
+    })
+}
+
+// playsong
+export function reqSongDetail(params) {
+    return requests({
+        method: 'get',
+        url: `/song/detail`,
         params
     })
 }

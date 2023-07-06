@@ -25,15 +25,9 @@
                 <router-link to="/video/videolist" class="link" active-class="active">视频</router-link>
                 <router-link to="/video/mv" class="link" active-class="active">MV</router-link>
             </ul>
-            <ul v-else>Else</ul>
+            <ul v-else></ul>
         </div>
         <div id="search">
-            <!-- <el-button type="primary" class="searchbox">
-                <el-icon style="vertical-align: middle">
-                    <Search />
-                </el-icon>
-                <span style="vertical-align: middle"> Search </span>
-            </el-button> -->
             <div class="searchbox">
                 <el-input v-model="searchWords" placeholder="搜索" :prefix-icon="Search" />
             </div>

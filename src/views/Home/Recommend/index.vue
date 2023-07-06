@@ -16,7 +16,7 @@
       </div>
       <div class="container">
         <div v-for="item in personalizedList" :key="item.id">
-          <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 134px; height: 134px;">
+          <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 134px; height: 134px;" @click="showDetail(item.id)">
           <div class="desc">{{ item.name }}</div>
         </div>
       </div>
@@ -75,11 +75,13 @@
 <script>
 import { onMounted, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'Recommend',
   setup() {
     const store = useStore();
+    const router = useRouter()
     const personalizedListParams = reactive({
       limit: 10
     })
@@ -97,6 +99,17 @@ export default {
       return ('' + num).length < 2 ? ('0' + num) : ('' + num);
     }
 
+    function showDetail(playListId) {
+      router.push({
+        name: 'playlist',
+        params: {
+          id: playListId
+        }
+      });
+      // router.push(`/playlist/${playListId}`);
+      
+    }
+
     return {
       store,
       personalizedList: computed(() => store.state.home.personalizedList || {}),
@@ -104,7 +117,8 @@ export default {
       newSong: computed(() => store.state.home.newSong || {}),
       personalizedMV: computed(() => store.state.home.personalizedMV || {}),
       banner: computed(() => store.state.home.banner || {}),
-      fixedNum
+      fixedNum,
+      showDetail,
     }
   }
 }

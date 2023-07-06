@@ -93,10 +93,10 @@ const router = createRouter({
             component: () => import('@/views/Download')
         },
         {
-            path: '/latestplayed',
+            path: '/recentsong',
             name: '最近播放',
             iconClass: 'PieChart',
-            component: () => import('@/views/LatestPlayed')
+            component: () => import('@/views/RecentSong')
         },
         {
             path: '/collection',
@@ -120,6 +120,12 @@ const router = createRouter({
                     component: () => import('@/views/Collection/Video'),
                 }
             ]
+        },
+        {
+            path: '/playlist/:id',
+            name: 'playlist',
+            component: () => import('@/views/PlayList'),
+            hidden: true
         }
     ],
     history: createWebHistory()
