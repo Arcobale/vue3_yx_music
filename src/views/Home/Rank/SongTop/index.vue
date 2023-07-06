@@ -93,7 +93,7 @@ export default {
     }
 
     .song-item:nth-child(2n+1) {
-        background-color: #fafafa;
+        background-color: #f2f2f2;
     }
 
     .song-item:nth-last-child(1) {

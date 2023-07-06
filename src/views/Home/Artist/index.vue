@@ -53,7 +53,7 @@ export default {
     })
 
     onMounted(() => {
-      store.dispatch('getArtistList', artistListParams);
+      getData();
     })
 
     function getData() {
@@ -63,16 +63,16 @@ export default {
     function changeArea(e) {
       artistListParams.area = parseInt(e.target.value);
       let curActiveElement = document.querySelector('.category-area .active');
-      curActiveElement.className = '';
-      e.target.className = 'active';
+      curActiveElement.classList.remove('active');
+      e.target.classList.add('active');
       getData();
     }
 
     function changeType(e) {
       artistListParams.type = parseInt(e.target.value);
       let curActiveElement = document.querySelector('.category-type .active');
-      curActiveElement.className = '';
-      e.target.className = 'active';
+      curActiveElement.classList.remove('active');
+      e.target.classList.add('active');
       getData();
     }
 
@@ -98,12 +98,12 @@ export default {
       display: flex;
       margin-bottom: 14px;
       .key {
-        font-weight: 500;
+        font-weight: 600;
       }
       ul {
         display: flex;
         justify-content: space-evenly;
-        font-weight: 300;
+        font-weight: 400;
         li {
           display: block;
           width: 76px;
@@ -115,7 +115,7 @@ export default {
           border-left: none;
         }
         .active {
-          font-weight: 500;
+          font-weight: 600;
           color: #c24639;
         }
       }

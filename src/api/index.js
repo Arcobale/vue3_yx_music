@@ -80,3 +80,11 @@ export function reqArtistList(params) {
         params
     })
 }
+
+export function reqNewSongList(params) {
+    return requests({
+        method: 'get',
+        url: `/top/song`,
+        params
+    })
+}

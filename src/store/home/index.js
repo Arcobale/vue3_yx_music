@@ -1,4 +1,4 @@
-import { reqPersonalizedList, reqPrivateContent, reqNewSong, reqPersonalizedMV, reqBanner, reqPlayListHQ, reqPlayListTag, reqPlayListHotTag, reqTopList, reqTopListDetail, reqArtistList } from '@/api';
+import { reqPersonalizedList, reqPrivateContent, reqNewSong, reqPersonalizedMV, reqBanner, reqPlayListHQ, reqPlayListTag, reqPlayListHotTag, reqTopList, reqTopListDetail, reqArtistList, reqNewSongList } from '@/api';
 
 const state = {
     personalizedList: [],
@@ -13,6 +13,7 @@ const state = {
     topList: [],
     topListDetail: [],
     artistList: [],
+    newSongList: [],
 };
 
 const mutations = {
@@ -49,6 +50,9 @@ const mutations = {
     },
     ARTISTLIST(state, artistList) {
         state.artistList = artistList;
+    },
+    NEWSONGLIST(state, newSongList) {
+        state.newSongList = newSongList;
     }
 };
 
@@ -117,6 +121,12 @@ const actions = {
         let res = await reqArtistList(params);
         if (res.code == 200) {
             commit('ARTISTLIST', res.artists);
+        }
+    },
+    async getNewSongList({commit}, params) {
+        let res = await reqNewSongList(params);
+        if (res.code == 200) {
+            commit('NEWSONGLIST', res.data);
         }
     }
 };
