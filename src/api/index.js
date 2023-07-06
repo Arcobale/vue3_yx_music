@@ -116,11 +116,18 @@ export function reqPlayListAll(params) {
     })
 }
 
-// playsong
 export function reqSongDetail(params) {
     return requests({
         method: 'get',
         url: `/song/detail`,
+        params
+    })
+}
+
+export function reqSongUrl(params) {
+    return requests({
+        method: 'get',
+        url: `/song/url/v1`,
         params
     })
 }

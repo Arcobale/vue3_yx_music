@@ -1,5 +1,6 @@
 <template>
     <div class="playlist">
+        <audio :src="songUrl"></audio>
         <div class="playlist-detail">
             <img :src="playListDetail.coverImgUrl" alt="">
             <div class="right">
@@ -64,7 +65,12 @@ export default {
         });
         const playListDetailParams = reactive({
             id
+        });
+        const songUrlParams = reactive({
+            id: 1,
+            level: 'standard'
         })
+        const songUrl = computed(() => store.state.playlist.songUrl[0] ? store.state.playlist.songUrl[0].url : '');
 
         onMounted(() => {
             store.dispatch('getPlayListAll', playListAllParams);
@@ -75,13 +81,20 @@ export default {
             return num < 10 ? '0' + num : '' + num;
         }
 
-        function playSong(id) {
-            store.dispatch('getSongDetail', { ids: id });
+        function playSong(songId) {
+            let audio = document.querySelector('audio');
+            songUrlParams.id = songId;
+            store.dispatch('getSongUrl', songUrlParams);
+            setTimeout(() => {
+                console.log(songUrl.value);
+                audio.play();
+            }, 1000);
         }
 
         return {
             fixedNum,
             playSong,
+            songUrl,
             playListAll: computed(() => store.state.playlist.playListAll || {}),
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
         }
@@ -198,7 +211,7 @@ export default {
             }
 
             .length {
-                
+                font-size: 8px;
             }
         }
 
