@@ -4,6 +4,10 @@
 
 <script>
 export default {
+  name: 'NewMusic',
+  setup() {
+    
+  }
 
 }
 </script>

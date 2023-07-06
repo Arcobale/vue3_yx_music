@@ -61,18 +61,23 @@
 </template>
 
 <script>
-import { onMounted, computed, ref, reactive } from 'vue';
+import { onMounted, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
   name: 'SongList',
   setup() {
     const store = useStore();
-    const cat = ref('全部');
+    const playListHQParams = reactive({
+      order: 'hot',
+      cat: '全部',
+      limit: 100,
+      offset: 0
+    })
     const playListHQ = computed(() => store.state.home.playListHQ ? store.state.home.playListHQ : []);
 
     onMounted(() => {
-      store.dispatch('getPlayListHQ', { cat });
+      store.dispatch('getPlayListHQ', playListHQParams);
       store.dispatch('getPlayListTag');
       store.dispatch('getPlayListHotTag');
     })
@@ -82,13 +87,12 @@ export default {
     }
 
     return {
-      cat,
       fixedNum,
       playListHQ,
-      bannerCover: computed(() => playListHQ.value[0] ? playListHQ.value[0] : {}),
-      playListCategories: computed(() => store.state.home.playListCategories),
-      playListSubCategories: computed(() => store.state.home.playListSubCategories),
-      playListHotTag: computed(() => store.state.home.playListHotTag),
+      bannerCover: computed(() => playListHQ.value[0] || {}),
+      playListCategories: computed(() => store.state.home.playListCategories || {}),
+      playListSubCategories: computed(() => store.state.home.playListSubCategories || {}),
+      playListHotTag: computed(() => store.state.home.playListHotTag || {}),
     }
   }
 }

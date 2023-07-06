@@ -13,7 +13,7 @@
                 <router-link to="/home/recommend" class="link" active-class="active">个性推荐</router-link>
                 <router-link to="/home/songlist" class="link" active-class="active">歌单</router-link>
                 <router-link to="/home/rank" class="link" active-class="active">排行榜</router-link>
-                <router-link to="/home/singer" class="link" active-class="active">歌手</router-link>
+                <router-link to="/home/artist" class="link" active-class="active">歌手</router-link>
                 <router-link to="/home/newmusic" class="link" active-class="active">最新音乐</router-link>
             </ul>
             <ul v-else-if="option === 'collection'">

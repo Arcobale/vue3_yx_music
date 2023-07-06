@@ -73,20 +73,20 @@
 </template>
 
 <script>
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-// import { useRouter } from 'vue-router';
 
 export default {
   name: 'Recommend',
   setup() {
-    const limit = 10;
-    // const router = useRouter();
     const store = useStore();
+    const personalizedListParams = reactive({
+      limit: 10
+    })
 
     onMounted(() => {
       // state.personalizedList = store.state.home.personalizedList;
-      store.dispatch("getPersonalizedList", { limit });
+      store.dispatch("getPersonalizedList", personalizedListParams);
       store.dispatch("getPrivateContent");
       store.dispatch("getNewSong");
       store.dispatch("getPersonalizedMV");
@@ -99,11 +99,11 @@ export default {
 
     return {
       store,
-      personalizedList: computed(() => store.state.home.personalizedList),
-      privateContent: computed(() => store.state.home.privateContent),
-      newSong: computed(() => store.state.home.newSong),
-      personalizedMV: computed(() => store.state.home.personalizedMV),
-      banner: computed(() => store.state.home.banner),
+      personalizedList: computed(() => store.state.home.personalizedList || {}),
+      privateContent: computed(() => store.state.home.privateContent || {}),
+      newSong: computed(() => store.state.home.newSong || {}),
+      personalizedMV: computed(() => store.state.home.personalizedMV || {}),
+      banner: computed(() => store.state.home.banner || {}),
       fixedNum
     }
   }

@@ -70,7 +70,7 @@ export default {
 
     return {
       fixedNum,
-      topList: computed(() => { return store.state.home.topList ? store.state.home.topList : []}),
+      topList: computed(() => store.state.home.topList || {})
     }
   }
 }

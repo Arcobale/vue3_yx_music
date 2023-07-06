@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
@@ -30,13 +30,15 @@ export default {
     props: ['rankId'],
 
     setup(props) {
-        console.log(props.rankId);
         const store = useStore();
-        const topListDetail = ref([]);
+        const topListDetail = ref('');
+        const topListDetailParams = reactive({
+            id: props.rankId
+        })
 
         onMounted(() => {
-            store.dispatch('getTopListDetail', { id: props.rankId }).then(() => {
-                topListDetail.value = store.state.home.topListDetail
+            store.dispatch('getTopListDetail', topListDetailParams).then(() => {
+                topListDetail.value = store.state.home.topListDetail || [];
             });
         })
 

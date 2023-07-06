@@ -33,9 +33,9 @@ const router = createRouter({
                     component: () => import('@/views/Home/Rank')
                 },
                 {
-                    path: '/home/singer',
+                    path: '/home/artist',
                     name: '歌手',
-                    component: () => import('@/views/Home/Singer')
+                    component: () => import('@/views/Home/Artist')
                 },
                 {
                     path: '/home/newmusic',
@@ -64,12 +64,12 @@ const router = createRouter({
             children: [
                 {
                     path: '/video/videolist',
-                    name: '视频',
+                    name: '视频列表',
                     component: () => import('@/views/Video/VideoList')
                 },
                 {
                     path: '/video/mv',
-                    name: 'MV',
+                    name: 'MV列表',
                     component: () => import('@/views/Video/MV')
                 }
             ]
@@ -106,17 +106,17 @@ const router = createRouter({
             children: [
                 {
                     path: '/collection/album',
-                    name: '专辑',
+                    name: '收藏专辑',
                     component: () => import('@/views/Collection/Album'),
                 },
                 {
                     path: '/collection/singer',
-                    name: '歌手',
+                    name: '收藏歌手',
                     component: () => import('@/views/Collection/Singer'),
                 },
                 {
                     path: '/collection/video',
-                    name: '视频',
+                    name: '收藏视频',
                     component: () => import('@/views/Collection/Video'),
                 }
             ]

@@ -72,3 +72,11 @@ export function reqTopListDetail(params) {
         params
     })
 }
+
+export function reqArtistList(params) {
+    return requests({
+        method: 'get',
+        url: `/artist/list`,
+        params
+    })
+}

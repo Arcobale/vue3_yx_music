@@ -1,4 +1,4 @@
-import { reqPersonalizedList, reqPrivateContent, reqNewSong, reqPersonalizedMV, reqBanner, reqPlayListHQ, reqPlayListTag, reqPlayListHotTag, reqTopList, reqTopListDetail } from '@/api';
+import { reqPersonalizedList, reqPrivateContent, reqNewSong, reqPersonalizedMV, reqBanner, reqPlayListHQ, reqPlayListTag, reqPlayListHotTag, reqTopList, reqTopListDetail, reqArtistList } from '@/api';
 
 const state = {
     personalizedList: [],
@@ -12,6 +12,7 @@ const state = {
     playListHotTag: [],
     topList: [],
     topListDetail: [],
+    artistList: [],
 };
 
 const mutations = {
@@ -45,12 +46,15 @@ const mutations = {
     },
     TOPLISTDETAIL(state, topListDetail) {
         state.topListDetail = topListDetail;
+    },
+    ARTISTLIST(state, artistList) {
+        state.artistList = artistList;
     }
 };
 
 const actions = {
-    async getPersonalizedList({commit}, {limit}) {
-        let res = await reqPersonalizedList({limit});
+    async getPersonalizedList({commit}, params) {
+        let res = await reqPersonalizedList(params);
         if (res.code == 200) {
             commit('PERSONALIZEDLIST', res.result);
         }
@@ -79,8 +83,8 @@ const actions = {
             commit('BANNER', res.banners);
         }
     },
-    async getPlayListHQ({commit}, {cat, limit, order, offset}) {
-        let res = await reqPlayListHQ({cat, limit, order, offset});
+    async getPlayListHQ({commit}, params) {
+        let res = await reqPlayListHQ(params);
         if (res.code == 200) {
             commit('PLAYLISTHQ', res.playlists);
         }
@@ -103,12 +107,18 @@ const actions = {
             commit('TOPLIST', res.list);
         }
     },
-    async getTopListDetail({commit}, {id}) {
-        let res = await reqTopListDetail({id});
+    async getTopListDetail({commit}, params) {
+        let res = await reqTopListDetail(params);
         if (res.code == 200) {
             commit('TOPLISTDETAIL', res.playlist.tracks);
         }
     },
+    async getArtistList({commit}, params) {
+        let res = await reqArtistList(params);
+        if (res.code == 200) {
+            commit('ARTISTLIST', res.artists);
+        }
+    }
 };
 
 const getters = {};
