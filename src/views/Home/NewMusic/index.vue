@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="container">
-      <div class="container-item" v-for="(item, index) in newSongList" :key="item.id">
+      <div class="container-item" v-for="(item, index) in newSongList" :key="item.id" @dblclick="playSong(item.id)">
         <div class="song-num">{{ fixedNum(index + 1) }}</div>
         <div class="song-cover">
           <img :src="item.album.picUrl" alt="">
@@ -45,14 +45,14 @@
           </div>
         </div>
         <div class="song-album">{{ item.album.name }}</div>
-        <div class="song-length">04:06</div>
+        <div class="song-length">{{ toSongLen(item.duration) }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { computed, reactive, onMounted } from 'vue'
+import { computed, reactive, onMounted, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -60,6 +60,8 @@ export default {
 
   setup() {
     const store = useStore();
+    const { proxy } = getCurrentInstance();
+
     const newSongListParams = reactive({
       type: 0
     })
@@ -90,10 +92,29 @@ export default {
       e.target.classList.add('active-title');
     }
 
+    // 输出固定格式的时间
+    function toSongLen(ms) {
+      let second = Math.round(ms / 1000);
+      let minute = parseInt(second / 60);
+      second = second % 60;
+      let res = '';
+
+      res += minute < 10 ? '0' + minute : '' + minute;
+      res += ':';
+      res += second < 10 ? '0' + second : '' + second;
+      return res;
+    }
+
+    function playSong(songId) {
+      proxy.$Mitt.emit('playSong', songId);
+    }
+
     return {
       fixedNum,
       changeType,
       changeRoute,
+      toSongLen,
+      playSong,
       newSongList: computed(() => store.state.home.newSongList || {})
     }
   }
@@ -229,11 +250,11 @@ export default {
       }
 
       .song-artist {
-        width: 130px;
+        width: 140px;
       }
 
       .song-album {
-        width: 175px;
+        width: 180px;
       }
 
       .song-length {

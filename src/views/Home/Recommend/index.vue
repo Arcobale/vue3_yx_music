@@ -2,7 +2,7 @@
   <div class="home-recommend">
     <div class="banner">
       <el-carousel :interval="4000" type="card" height="200px">
-        <el-carousel-item v-for="(item, index) in banner" :key="index">
+        <el-carousel-item v-for="(item, index) in banner" :key="index" @click="bannerHandler(item, item.targetType)">
           <img :src="item.imageUrl" alt="" style="height: 200px; border-radius: 10px;">
         </el-carousel-item>
       </el-carousel>
@@ -16,7 +16,8 @@
       </div>
       <div class="container">
         <div v-for="item in personalizedList" :key="item.id">
-          <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 134px; height: 134px;" @click="showDetail(item.id)">
+          <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 134px; height: 134px;"
+            @click="showDetail(item.id)">
           <div class="desc">{{ item.name }}</div>
         </div>
       </div>
@@ -43,7 +44,7 @@
         </el-icon>
       </div>
       <div class="container">
-        <div v-for="(item, index) in newSong" :key="item.id" class="container-item">
+        <div v-for="(item, index) in newSong" :key="item.id" class="container-item" @dblclick="playSong(item.id)">
           <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 60px; height: 60px;">
           <span class="num">{{ fixedNum(index) }}</span>
           <div class="desc">
@@ -73,7 +74,7 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive } from 'vue';
+import { onMounted, computed, reactive, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
@@ -81,7 +82,9 @@ export default {
   name: 'Recommend',
   setup() {
     const store = useStore();
-    const router = useRouter()
+    const router = useRouter();
+    const { proxy } = getCurrentInstance();
+
     const personalizedListParams = reactive({
       limit: 10
     })
@@ -107,7 +110,30 @@ export default {
         }
       });
       // router.push(`/playlist/${playListId}`);
-      
+    }
+
+    function playSong(songId) {
+      proxy.$Mitt.emit('playSong', songId);
+    }
+
+    function bannerHandler(banner, type) {
+      if (type === 1) {
+        // 新歌首发/热歌推荐，根据targetId播放歌曲
+        playSong(banner.targetId);
+      } else if (type === 3000) {
+        // 数字专辑，根据url属性的id参数跳转歌单详情页
+        // let url = banner.url;
+        // let query = url.split('?')[1];
+        // let id = query.split('=')[1];
+        // showDetail(id);
+        alert('暂不支持');
+      } else if (type === 1000) {
+        // 独家策划，根据targetId跳转歌单详情页
+        showDetail(banner.targetId);
+      } else if (type === 10) {
+        // 新碟首发/热碟推荐，根据targetId跳转歌单详情页
+        showDetail(banner.targetId);
+      }
     }
 
     return {
@@ -119,6 +145,8 @@ export default {
       banner: computed(() => store.state.home.banner || {}),
       fixedNum,
       showDetail,
+      playSong,
+      bannerHandler
     }
   }
 }
@@ -128,8 +156,10 @@ export default {
 .home-recomment {
   background-color: #ffffff;
 }
+
 .banner {
   margin: auto;
+
   .is-active {
     width: 538px;
     left: -70px;
@@ -247,6 +277,7 @@ export default {
     .container-item:nth-last-child(2) {
       border-bottom: 1px solid #b6b6b6;
     }
+
     .container-item:last-child {
       border-bottom: 1px solid #b6b6b6;
     }

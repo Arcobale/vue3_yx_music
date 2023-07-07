@@ -42,7 +42,7 @@
                     {{ item.ar[0].name }}
                 </div>
                 <div class="album">{{ item.al.name }}</div>
-                <div class="length">04:06</div>
+                <div class="length">{{ toSongLen(item.dt) }}</div>
             </div>
         </div>
     </div>
@@ -69,11 +69,6 @@ export default {
         const playListDetailParams = reactive({
             id
         });
-        // const songUrlParams = reactive({
-        //     id: 1,
-        //     level: 'standard'
-        // })
-        // const songUrl = computed(() => store.state.playlist.songUrl[0] ? store.state.playlist.songUrl[0].url : '');
 
         onMounted(() => {
             store.dispatch('getPlayListAll', playListAllParams);
@@ -85,20 +80,26 @@ export default {
         }
 
         function playSong(songId) {
-            // let audio = document.querySelector('audio');
-            // songUrlParams.id = songId;
-            // store.dispatch('getSongUrl', songUrlParams);
-            // setTimeout(() => {
-            //     console.log(songUrl.value);
-            //     audio.play();
-            // }, 1000);
             proxy.$Mitt.emit('playSong', songId);
+        }
+
+        // 输出固定格式的时间
+        function toSongLen(ms) {
+            let second = Math.round(ms / 1000);
+            let minute = parseInt(second / 60);
+            second = second % 60;
+            let res = '';
+
+            res += minute < 10 ? '0' + minute : '' + minute;
+            res += ':';
+            res += second < 10 ? '0' + second : '' + second;
+            return res;
         }
 
         return {
             fixedNum,
             playSong,
-            // songUrl,
+            toSongLen,
             playListAll: computed(() => store.state.playlist.playListAll || {}),
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
         }
@@ -133,6 +134,7 @@ export default {
                 display: flex;
                 align-items: center;
                 color: #39629a;
+
                 img {
                     width: 21px;
                     height: 21px;
@@ -143,6 +145,7 @@ export default {
             .func {
                 font-size: 12px;
                 display: flex;
+
                 div {
                     margin-right: 8px;
                     box-sizing: border-box;
@@ -150,6 +153,7 @@ export default {
                     border: 1px solid #c3c3c3;
                     border-radius: 10px;
                 }
+
                 .playall {
                     background-color: #e65d4c;
                     color: white;
@@ -161,10 +165,12 @@ export default {
                 margin: 18px 0 10px;
                 display: flex;
                 font-weight: 300;
+
                 .trackcount {
                     margin-right: 8px;
                 }
             }
+
             .desc {
                 line-height: 1.75;
                 font-weight: 300;
@@ -195,7 +201,7 @@ export default {
 
             .title {
                 margin-left: 0;
-                width: 300px;
+                width: 330px;
 
                 .bold {
                     color: black;
@@ -207,7 +213,7 @@ export default {
             }
 
             .artist {
-                width: 180px;
+                width: 150px;
             }
 
             .album {

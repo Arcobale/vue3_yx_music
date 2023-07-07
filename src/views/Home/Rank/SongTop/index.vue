@@ -1,7 +1,7 @@
 <template>
     <div class="song">
         <div class="container">
-            <div class="song-item" v-for="(item, index) in topListDetail.slice(0, 5)" :key="item.id">
+            <div class="song-item" v-for="(item, index) in topListDetail.slice(0, 5)" :key="item.id" @dblclick="playSong(item.id)">
                 <div class="num">{{ index + 1 }}</div>
                 <div class="title">{{ item.name }}</div>
                 <div class="alia" v-if="item.alia != ''">（{{ item.alia[0] }}）</div>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
@@ -31,6 +31,8 @@ export default {
 
     setup(props) {
         const store = useStore();
+        const { proxy } = getCurrentInstance();
+
         const topListDetail = ref('');
         const topListDetailParams = reactive({
             id: props.rankId
@@ -42,8 +44,13 @@ export default {
             });
         })
 
+        function playSong(songId) {
+            proxy.$Mitt.emit('playSong', songId);
+        }
+
         return {
             topListDetail,
+            playSong
         }
     }
 }

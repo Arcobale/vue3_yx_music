@@ -2,7 +2,7 @@
   <audio :src="songUrl"></audio>
 
   <div id="footer">
-    <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2"></el-progress>
+    <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2" v-if="songDetail"></el-progress>
     <div class="wrapper">
       <div class="song" v-if="songDetail">
         <div class="cover">
@@ -108,7 +108,7 @@ export default {
       // 监听歌曲播放的实时进度
       audio.addEventListener('timeupdate', () => {
         curTime.value = toSongLen(audio.currentTime * 1000);
-        percentage.value = calcPlayProgress(audio.currentTime * 1000, songDetail.value.dt);
+        percentage.value = songDetail ? calcPlayProgress(audio.currentTime * 1000, songDetail.value.dt) : 0;
       });
       // 监听歌曲播放是否完成
       audio.addEventListener('ended', () => {
@@ -156,6 +156,7 @@ export default {
 <style lang="less" scoped>
 #footer {
   width: 100%;
+  background-color: white;
 
   .el-progress {
     width: 100%;
