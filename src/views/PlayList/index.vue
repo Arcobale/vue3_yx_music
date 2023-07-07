@@ -1,6 +1,6 @@
 <template>
     <div class="playlist">
-        <audio :src="songUrl"></audio>
+        <!-- <audio :src="songUrl"></audio> -->
         <div class="playlist-detail">
             <img :src="playListDetail.coverImgUrl" alt="">
             <div class="right">
@@ -49,14 +49,17 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive } from 'vue';
+import { onMounted, computed, reactive, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+
 export default {
     name: '歌单详情',
     setup() {
         const store = useStore();
         const router = useRouter();
+        const { proxy } = getCurrentInstance();
+
         const id = computed(() => router.currentRoute.value.params.id);
         const playListAllParams = reactive({
             id,
@@ -66,11 +69,11 @@ export default {
         const playListDetailParams = reactive({
             id
         });
-        const songUrlParams = reactive({
-            id: 1,
-            level: 'standard'
-        })
-        const songUrl = computed(() => store.state.playlist.songUrl[0] ? store.state.playlist.songUrl[0].url : '');
+        // const songUrlParams = reactive({
+        //     id: 1,
+        //     level: 'standard'
+        // })
+        // const songUrl = computed(() => store.state.playlist.songUrl[0] ? store.state.playlist.songUrl[0].url : '');
 
         onMounted(() => {
             store.dispatch('getPlayListAll', playListAllParams);
@@ -82,19 +85,20 @@ export default {
         }
 
         function playSong(songId) {
-            let audio = document.querySelector('audio');
-            songUrlParams.id = songId;
-            store.dispatch('getSongUrl', songUrlParams);
-            setTimeout(() => {
-                console.log(songUrl.value);
-                audio.play();
-            }, 1000);
+            // let audio = document.querySelector('audio');
+            // songUrlParams.id = songId;
+            // store.dispatch('getSongUrl', songUrlParams);
+            // setTimeout(() => {
+            //     console.log(songUrl.value);
+            //     audio.play();
+            // }, 1000);
+            proxy.$Mitt.emit('playSong', songId);
         }
 
         return {
             fixedNum,
             playSong,
-            songUrl,
+            // songUrl,
             playListAll: computed(() => store.state.playlist.playListAll || {}),
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
         }

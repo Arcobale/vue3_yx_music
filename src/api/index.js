@@ -66,6 +66,7 @@ export function reqTopList() {
     })
 }
 
+// 获取歌单详情
 export function reqTopListDetail(params) {
     return requests({
         method: 'get',
@@ -108,6 +109,7 @@ export function reqRecentSong(params) {
 }
 
 // playlist
+// 获取歌单所有歌曲
 export function reqPlayListAll(params) {
     return requests({
         method: 'get',
@@ -116,6 +118,7 @@ export function reqPlayListAll(params) {
     })
 }
 
+// 获取歌曲详情
 export function reqSongDetail(params) {
     return requests({
         method: 'get',
@@ -124,6 +127,7 @@ export function reqSongDetail(params) {
     })
 }
 
+// 获取音乐URL
 export function reqSongUrl(params) {
     return requests({
         method: 'get',

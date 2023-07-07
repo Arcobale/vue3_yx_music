@@ -1,17 +1,21 @@
 <template>
   <div id="footer">
-    <div class="song">
-      <div class="cover"></div>
+    <audio :src="songUrl"></audio>
+    <div class="song" v-if="songDetail">
+      <div class="cover">
+        <img :src="songDetail.al.picUrl" alt="">
+      </div>
       <div class="song-detail">
         <div class="song-detail-info">
-          <span class="info-title">达尔文</span>
-          <span class="info-singer"> - 林俊杰</span>
+          <span class="info-title">{{ songDetail.name }}</span>
+          <span class="info-singer"> - {{ songDetail.ar[0].name }}</span>
         </div>
         <div class="song-detail-length">
-          00:00 / 04:06
+          {{ curTime }} / {{ toSongLen(songDetail.dt) }}
         </div>
       </div>
     </div>
+    <div class="song-place" v-else></div>
     <div class="player">
       <svg class="icon" aria-hidden="true">
         <use xlink:href="#icon-heart"></use>
@@ -19,10 +23,13 @@
       <svg class="icon skip" aria-hidden="true">
         <use xlink:href="#icon-skipback"></use>
       </svg>
-      <div class="play">
+      <div class="play" @click="changePlayState">
         <!-- <i class="iconfont icon-play1"></i> -->
-        <svg class="icon" aria-hidden="true">
+        <svg class="icon" aria-hidden="true" v-if="isPaused">
           <use xlink:href="#icon-play2"></use>
+        </svg>
+        <svg class="icon" aria-hidden="true" v-if="!isPaused">
+          <use xlink:href="#icon-pause"></use>
         </svg>
       </div>
       <svg class="icon skip" aria-hidden="true">
@@ -50,8 +57,85 @@
 </template>
 
 <script>
+import { computed, getCurrentInstance, reactive, ref, watch } from 'vue'
+import { useStore } from 'vuex';
+
 export default {
-  name: 'Player'
+  name: 'Player',
+  setup() {
+    const store = useStore();
+    const { proxy } = getCurrentInstance();
+
+    const isPaused = ref(true);
+    const curTime = ref('00:00');
+    const songUrl = computed(() => store.state.playlist.songUrl[0] ? store.state.playlist.songUrl[0].url : '');
+
+    const songUrlParams = reactive({
+      id: 1,
+      level: 'standard'
+    });
+    const songDetailParams = reactive({
+      ids: 1
+    });
+
+    // 输出固定格式的时间
+    function toSongLen(ms) {
+      let second = Math.round(ms / 1000);
+      let minute = parseInt(second / 60);
+      second = second % 60;
+      let res = '';
+
+      res += minute < 10 ? '0' + minute : '' + minute;
+      res += ':';
+      res += second < 10 ? '0' + second : '' + second;
+      return res;
+    }
+
+    // 监听双击歌曲播放的事件，使用歌曲id请求歌曲详情及其URL
+    proxy.$Mitt.on('playSong', songId => {
+      let audio = document.querySelector('audio');
+      songUrlParams.id = songId;
+      songDetailParams.ids = songId;
+      store.dispatch('getSongUrl', songUrlParams);
+      store.dispatch('getSongDetail', songDetailParams);
+
+      // 监听歌曲播放的实时进度
+      audio.addEventListener('timeupdate', () => {
+        curTime.value = toSongLen(audio.currentTime * 1000);
+      });
+      // 监听歌曲播放是否完成
+      audio.addEventListener('ended', () => {
+        audio.pause();
+        isPaused.value = true;
+      });
+      // 等待歌曲资源请求完毕后再播放
+      setTimeout(() => {
+        audio.play();
+        isPaused.value = false;
+      }, 1000);
+    })
+
+
+    // 播放/暂停状态切换
+    function changePlayState() {
+      let audio = document.querySelector('audio');
+      isPaused.value = !audio.paused;
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    return {
+      songUrl,
+      curTime,
+      songDetail: computed(() => store.state.playlist.songDetail[0] || undefined),
+      changePlayState,
+      toSongLen,
+      isPaused
+    }
+  }
 }
 </script>
 
@@ -69,24 +153,30 @@ export default {
     height: 16px;
   }
 
+  .song-place {
+    width: 300px;
+  }
+
   .song {
     width: 300px;
     font-size: 10px;
     display: flex;
     align-items: center;
 
-    .cover {
-      background-color: white;
+    .cover img {
       width: 38px;
       height: 38px;
+      border-radius: 10%;
       margin: 0 8px;
     }
+
     .song-detail {
       .song-detail-info {
         .info-title {
           font-size: 12px;
           color: #000000;
         }
+
         margin-bottom: 4px;
       }
     }
@@ -101,6 +191,7 @@ export default {
     .skip {
       fill: #c3473a;
     }
+
     .play {
       background-color: #c3473a;
       width: 40px;

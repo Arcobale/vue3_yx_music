@@ -56,6 +56,9 @@ export default {
     top: 50px;
     bottom: 60px;
     width: 100%;
+    .el-main {
+      margin-bottom: 60px;
+    }
   }
 
   .el-footer {
