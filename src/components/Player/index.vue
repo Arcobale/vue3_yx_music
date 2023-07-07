@@ -1,57 +1,61 @@
 <template>
+  <audio :src="songUrl"></audio>
+
   <div id="footer">
-    <audio :src="songUrl"></audio>
-    <div class="song" v-if="songDetail">
-      <div class="cover">
-        <img :src="songDetail.al.picUrl" alt="">
-      </div>
-      <div class="song-detail">
-        <div class="song-detail-info">
-          <span class="info-title">{{ songDetail.name }}</span>
-          <span class="info-singer"> - {{ songDetail.ar[0].name }}</span>
+    <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2"></el-progress>
+    <div class="wrapper">
+      <div class="song" v-if="songDetail">
+        <div class="cover">
+          <img :src="songDetail.al.picUrl" alt="">
         </div>
-        <div class="song-detail-length">
-          {{ curTime }} / {{ toSongLen(songDetail.dt) }}
+        <div class="song-detail">
+          <div class="song-detail-info">
+            <span class="info-title">{{ songDetail.name }}</span>
+            <span class="info-singer"> - {{ songDetail.ar[0].name }}</span>
+          </div>
+          <div class="song-detail-length">
+            {{ curTime }} / {{ toSongLen(songDetail.dt) }}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="song-place" v-else></div>
-    <div class="player">
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-heart"></use>
-      </svg>
-      <svg class="icon skip" aria-hidden="true">
-        <use xlink:href="#icon-skipback"></use>
-      </svg>
-      <div class="play" @click="changePlayState">
-        <!-- <i class="iconfont icon-play1"></i> -->
-        <svg class="icon" aria-hidden="true" v-if="isPaused">
-          <use xlink:href="#icon-play2"></use>
+      <div class="song-place" v-else></div>
+      <div class="player">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-heart"></use>
         </svg>
-        <svg class="icon" aria-hidden="true" v-if="!isPaused">
-          <use xlink:href="#icon-pause"></use>
+        <svg class="icon skip" aria-hidden="true">
+          <use xlink:href="#icon-skipback"></use>
+        </svg>
+        <div class="play" @click="changePlayState">
+          <!-- <i class="iconfont icon-play1"></i> -->
+          <svg class="icon" aria-hidden="true" v-if="isPaused">
+            <use xlink:href="#icon-play2"></use>
+          </svg>
+          <svg class="icon" aria-hidden="true" v-if="!isPaused">
+            <use xlink:href="#icon-pause"></use>
+          </svg>
+        </div>
+        <svg class="icon skip" aria-hidden="true">
+          <use xlink:href="#icon-skipforward"></use>
+        </svg>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-share"></use>
         </svg>
       </div>
-      <svg class="icon skip" aria-hidden="true">
-        <use xlink:href="#icon-skipforward"></use>
-      </svg>
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-share"></use>
-      </svg>
-    </div>
-    <div class="controler">
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-danquxunhuan"></use>
-      </svg>
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-a-icon_playlist"></use>
-      </svg>
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-geciweidianji"></use>
-      </svg>
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-004laba-2"></use>
-      </svg>
+      <div class="controler">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-danquxunhuan"></use>
+        </svg>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-a-icon_playlist"></use>
+        </svg>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-geciweidianji"></use>
+        </svg>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-004laba-2"></use>
+        </svg>
+      </div>
     </div>
   </div>
 </template>
@@ -68,7 +72,9 @@ export default {
 
     const isPaused = ref(true);
     const curTime = ref('00:00');
+    const percentage = ref(0);
     const songUrl = computed(() => store.state.playlist.songUrl[0] ? store.state.playlist.songUrl[0].url : '');
+    const songDetail = computed(() => store.state.playlist.songDetail[0] || undefined);
 
     const songUrlParams = reactive({
       id: 1,
@@ -102,6 +108,7 @@ export default {
       // 监听歌曲播放的实时进度
       audio.addEventListener('timeupdate', () => {
         curTime.value = toSongLen(audio.currentTime * 1000);
+        percentage.value = calcPlayProgress(audio.currentTime * 1000, songDetail.value.dt);
       });
       // 监听歌曲播放是否完成
       audio.addEventListener('ended', () => {
@@ -127,12 +134,19 @@ export default {
       }
     }
 
+    // 计算播放进度
+    function calcPlayProgress(cur, total = 0) {
+      return cur / total * 100;
+    }
+
     return {
       songUrl,
       curTime,
-      songDetail: computed(() => store.state.playlist.songDetail[0] || undefined),
+      percentage,
+      songDetail,
       changePlayState,
       toSongLen,
+      calcPlayProgress,
       isPaused
     }
   }
@@ -141,79 +155,85 @@ export default {
 
 <style lang="less" scoped>
 #footer {
-  height: 60px;
   width: 100%;
-  background: #ffffff;
-  display: flex;
-  justify-content: space-between;
-  color: #9b9b9b;
 
-  .icon {
-    width: 16px;
-    height: 16px;
+  .el-progress {
+    width: 100%;
   }
 
-  .song-place {
-    width: 300px;
-  }
-
-  .song {
-    width: 300px;
-    font-size: 10px;
+  .wrapper {
+    height: 60px;
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    color: #9b9b9b;
 
-    .cover img {
-      width: 38px;
-      height: 38px;
-      border-radius: 10%;
-      margin: 0 8px;
+    .icon {
+      width: 16px;
+      height: 16px;
     }
 
-    .song-detail {
-      .song-detail-info {
-        .info-title {
-          font-size: 12px;
-          color: #000000;
+    .song-place {
+      width: 300px;
+    }
+
+    .song {
+      width: 300px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+
+      .cover img {
+        width: 38px;
+        height: 38px;
+        border-radius: 10%;
+        margin: 0 8px;
+      }
+
+      .song-detail {
+        .song-detail-info {
+          .info-title {
+            font-size: 12px;
+            color: #000000;
+          }
+
+          margin-bottom: 4px;
         }
-
-        margin-bottom: 4px;
       }
     }
-  }
 
-  .player {
-    width: 300px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+    .player {
+      width: 300px;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
 
-    .skip {
-      fill: #c3473a;
-    }
+      .skip {
+        fill: #c3473a;
+      }
 
-    .play {
-      background-color: #c3473a;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      position: relative;
+      .play {
+        background-color: #c3473a;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        position: relative;
 
-      svg {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        fill: white;
+        svg {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          fill: white;
+        }
       }
     }
-  }
 
-  .controler {
-    width: 215px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+    .controler {
+      width: 215px;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+    }
   }
 }
 </style>
