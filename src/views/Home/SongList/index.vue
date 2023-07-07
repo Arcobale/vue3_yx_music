@@ -35,7 +35,7 @@
 
     </div>
     <div class="songlist">
-      <div v-for="item in playListHQ" :key="item.id">
+      <div v-for="item in playListHQ" :key="item.id" @click="showDetail(item.id)">
         <img :src="item.coverImgUrl" :alt="item.name" class="cover" style="width: 170px; height: 170px;">
         <div class="mask">
           <div class="creator">
@@ -61,13 +61,16 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive } from 'vue';
-import { useStore } from 'vuex';
+import { onMounted, computed, reactive } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'SongList',
   setup() {
     const store = useStore();
+    const router = useRouter();
+
     const playListHQParams = reactive({
       order: 'hot',
       cat: '全部',
@@ -86,6 +89,15 @@ export default {
       return num > 99999999 ? parseInt(num / 100000000) + '亿' : num > 99999 ? parseInt(num / 10000) + '万' : num + '';
     }
 
+    function showDetail(playListId) {
+      router.push({
+        name: 'playlist',
+        params: {
+          id: playListId
+        }
+      });
+    }
+
     return {
       fixedNum,
       playListHQ,
@@ -93,6 +105,7 @@ export default {
       playListCategories: computed(() => store.state.home.playListCategories || {}),
       playListSubCategories: computed(() => store.state.home.playListSubCategories || {}),
       playListHotTag: computed(() => store.state.home.playListHotTag || {}),
+      showDetail
     }
   }
 }

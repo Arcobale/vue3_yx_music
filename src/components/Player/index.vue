@@ -1,5 +1,5 @@
 <template>
-  <audio :src="songUrl"></audio>
+  <audio :src="songPlayDetail ? songPlayDetail.url : ''"></audio>
 
   <div id="footer">
     <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2" v-if="songDetail"></el-progress>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance, reactive, ref, watch } from 'vue'
+import { computed, getCurrentInstance, reactive, ref } from 'vue'
 import { useStore } from 'vuex';
 
 export default {
@@ -73,7 +73,7 @@ export default {
     const isPaused = ref(true);
     const curTime = ref('00:00');
     const percentage = ref(0);
-    const songUrl = computed(() => store.state.playlist.songUrl[0] ? store.state.playlist.songUrl[0].url : '');
+    const songPlayDetail = computed(() => store.state.playlist.songUrl ? store.state.playlist.songUrl[0] : {});
     const songDetail = computed(() => store.state.playlist.songDetail[0] || undefined);
 
     const songUrlParams = reactive({
@@ -108,7 +108,7 @@ export default {
       // 监听歌曲播放的实时进度
       audio.addEventListener('timeupdate', () => {
         curTime.value = toSongLen(audio.currentTime * 1000);
-        percentage.value = songDetail ? calcPlayProgress(audio.currentTime * 1000, songDetail.value.dt) : 0;
+        percentage.value = songDetail.value ? calcPlayProgress(audio.currentTime * 1000, songDetail.value.dt) : 0;
       });
       // 监听歌曲播放是否完成
       audio.addEventListener('ended', () => {
@@ -119,6 +119,9 @@ export default {
       setTimeout(() => {
         audio.play();
         isPaused.value = false;
+        if (songPlayDetail.freeTrialInfo) {
+          alert('您正在试听会员歌曲！');
+        }
       }, 1000);
     })
 
@@ -140,9 +143,9 @@ export default {
     }
 
     return {
-      songUrl,
       curTime,
       percentage,
+      songPlayDetail,
       songDetail,
       changePlayState,
       toSongLen,
