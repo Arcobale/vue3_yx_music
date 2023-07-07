@@ -1,7 +1,8 @@
 <template>
     <div class="song">
         <div class="container">
-            <div class="song-item" v-for="(item, index) in topListDetail.slice(0, 5)" :key="item.id" @dblclick="playSong(item.id)">
+            <div class="song-item" v-for="(item, index) in topListDetail.slice(0, 5)" :key="item.id"
+                @dblclick="playSong(item.id)">
                 <div class="num">{{ index + 1 }}</div>
                 <div class="title">{{ item.name }}</div>
                 <div class="alia" v-if="item.alia != ''">（{{ item.alia[0] }}）</div>
@@ -12,7 +13,7 @@
                 </div>
             </div>
         </div>
-        <div class="all">
+        <div class="all" @click="showDetail(rankId)">
             查看全部
             <el-icon>
                 <ArrowRight />
@@ -24,6 +25,7 @@
 <script>
 import { ref, onMounted, reactive, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
     name: 'SongTop',
@@ -31,6 +33,7 @@ export default {
 
     setup(props) {
         const store = useStore();
+        const router = useRouter();
         const { proxy } = getCurrentInstance();
 
         const topListDetail = ref('');
@@ -48,9 +51,20 @@ export default {
             proxy.$Mitt.emit('playSong', songId);
         }
 
+        function showDetail(playListId) {
+            router.push({
+                name: 'playlist',
+                params: {
+                    id: playListId
+                }
+            });
+        }
+
         return {
             topListDetail,
-            playSong
+            playSong,
+            showDetail,
+            rankId: props.rankId
         }
     }
 }

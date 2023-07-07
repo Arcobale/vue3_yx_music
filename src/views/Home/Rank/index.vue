@@ -6,7 +6,7 @@
       </div>
       <div class="container">
         <div class="container-item" v-for="item in topList.slice(0, 4)" :key="item.id">
-          <div class="cover">
+          <div class="cover" @click="showDetail(item.id)">
             <img :src="item.coverImgUrl" alt="" style="width: 170px; height: 170px;">
             <div class="mask">
               <div class="frequency">
@@ -26,7 +26,7 @@
         </el-icon>
       </div>
       <div class="container">
-        <div class="container-item" v-for="item in topList.slice(4)" :key="item.id">
+        <div class="container-item" v-for="item in topList.slice(4)" :key="item.id" @click="showDetail(item.id)">
           <div class="cover">
             <img :src="item.coverImgUrl" alt="" style="width: 170px;">
           </div>
@@ -48,6 +48,7 @@
 <script>
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import SongTop from './SongTop'
 
 export default {
@@ -59,6 +60,7 @@ export default {
 
   setup() {
     const store = useStore();
+    const router = useRouter();
 
     onMounted(() => {
       store.dispatch('getTopList');
@@ -68,8 +70,18 @@ export default {
       return num > 99999999 ? parseInt(num / 100000000) + '亿' : num > 99999 ? parseInt(num / 10000) + '万' : num + '';
     }
 
+    function showDetail(playListId) {
+      router.push({
+        name: 'playlist',
+        params: {
+          id: playListId
+        }
+      });
+    }
+
     return {
       fixedNum,
+      showDetail,
       topList: computed(() => store.state.home.topList || {})
     }
   }

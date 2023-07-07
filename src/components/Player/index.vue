@@ -11,7 +11,7 @@
         <div class="song-detail">
           <div class="song-detail-info">
             <span class="info-title">{{ songDetail.name }}</span>
-            <span class="info-singer"> - {{ songDetail.ar[0].name }}</span>
+            - <span class="info-singer" v-for="ar in songDetail.ar" :key="ar.id">{{ ar.name }}/</span>
           </div>
           <div class="song-detail-length">
             {{ curTime }} / {{ toSongLen(songDetail.dt) }}
@@ -195,12 +195,11 @@ export default {
 
       .song-detail {
         .song-detail-info {
+          margin-bottom: 4px;
           .info-title {
             font-size: 12px;
             color: #000000;
           }
-
-          margin-bottom: 4px;
         }
       }
     }
