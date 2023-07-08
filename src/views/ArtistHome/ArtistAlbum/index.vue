@@ -31,19 +31,16 @@
 <script>
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 
 export default {
     name: 'ArtistAlbum',
-    setup() {
+    props: ['artistId'],
+    setup(props) {
         const store = useStore();
-        const router = useRouter();
-
-        const artistId = computed(() => router.currentRoute.value.params.id)
 
         onMounted(() => {
-            store.dispatch('getArtistTopSong', { id: artistId.value });
-            store.dispatch('getArtistAlbum', { id: artistId.value });
+            store.dispatch('getArtistTopSong', { id: props.artistId });
+            store.dispatch('getArtistAlbum', { id: props.artistId });
         });
 
 

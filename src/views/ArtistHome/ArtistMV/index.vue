@@ -7,6 +7,10 @@
   <script>
   export default {
     name: 'ArtistMV',
+    props: ['artistId'],
+    setup(props) {
+
+    }
     
   
   }

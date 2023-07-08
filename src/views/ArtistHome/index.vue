@@ -27,7 +27,7 @@
         </div>
 
         <div class="container">
-            <router-view></router-view>
+            <router-view :artistId="artistId"></router-view>
         </div>
 
     </div>
@@ -79,6 +79,7 @@ export default {
 
 
         return {
+            artistId,
             artist: computed(() => store.state.artisthome.artistDetail || {}),
             simiArtist: computed(() => store.state.artisthome.simiArtist || {}),
             artistMV: computed(() => store.state.artisthome.artistMV || {}),
@@ -106,7 +107,7 @@ export default {
             margin-left: 30px;
 
             .name {
-                font-size: 16px;
+                font-size: 20px;
                 font-weight: 600;
                 margin-top: 8px;
             }
@@ -147,6 +148,7 @@ export default {
         margin-top: 30px;
         display: flex;
         align-items: center;
+        font-size: 14px;
         font-weight: 500;
         div {
             height: 100%;

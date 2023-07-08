@@ -34,7 +34,7 @@ const actions = {
     async getArtistDesc({commit}, params) {
         let res = await reqArtistDesc(params);
         if (res.code == 200) {
-            commit('ARTISTDESC', res);
+            commit('ARTISTDESC', res.introduction);
         }
     },
     async getArtistDetail({commit}, params) {
