@@ -1,6 +1,7 @@
 import requests from './requests.js'
 
 // Home
+// 获取推荐歌单
 export function reqPersonalizedList(params) {
     return requests({
         method: 'get',
@@ -9,6 +10,7 @@ export function reqPersonalizedList(params) {
     })
 }
 
+// 获取独家放送-入口列表
 export function reqPrivateContent() {
     return requests({
         method: 'get',
@@ -16,6 +18,7 @@ export function reqPrivateContent() {
     })
 }
 
+// 获取推荐新音乐
 export function reqNewSong() {
     return requests({
         method: 'get',
@@ -23,6 +26,7 @@ export function reqNewSong() {
     })
 }
 
+// 获取推荐MV
 export function reqPersonalizedMV() {
     return requests({
         method: 'get',
@@ -30,6 +34,7 @@ export function reqPersonalizedMV() {
     })
 }
 
+// 获取首页banner
 export function reqBanner() {
     return requests({
         method: 'get',
@@ -37,6 +42,7 @@ export function reqBanner() {
     })
 }
 
+// 获取歌单（网友精选碟）
 export function reqPlayListHQ(params) {
     return requests({
         method: 'get',
@@ -45,6 +51,7 @@ export function reqPlayListHQ(params) {
     })
 }
 
+// 获取歌单分类
 export function reqPlayListTag() {
     return requests({
         method: 'get',
@@ -52,6 +59,7 @@ export function reqPlayListTag() {
     })
 }
 
+// 获取热门歌单分类
 export function reqPlayListHotTag() {
     return requests({
         method: 'get',
@@ -59,6 +67,7 @@ export function reqPlayListHotTag() {
     })
 }
 
+// 获取所有榜单
 export function reqTopList() {
     return requests({
         method: 'get',
@@ -75,6 +84,7 @@ export function reqTopListDetail(params) {
     })
 }
 
+// 获取歌手分类列表
 export function reqArtistList(params) {
     return requests({
         method: 'get',
@@ -83,6 +93,7 @@ export function reqArtistList(params) {
     })
 }
 
+// 获取新歌速递
 export function reqNewSongList(params) {
     return requests({
         method: 'get',
@@ -92,6 +103,7 @@ export function reqNewSongList(params) {
 }
 
 // PrivateFM
+// 获取私人FM，需登录
 export function reqPersonalFM() {
     return requests({
         method: 'get',
@@ -100,6 +112,7 @@ export function reqPersonalFM() {
 }
 
 // RecentSong
+// 获取最近播放-歌曲
 export function reqRecentSong(params) {
     return requests({
         method: 'get',

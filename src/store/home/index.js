@@ -131,7 +131,19 @@ const actions = {
     }
 };
 
-const getters = {};
+const getters = {
+    playListSortedCategories(state) {
+        let { playListCategories, playListSubCategories } = state;
+        let sortedCat = new Array(Object.keys(playListCategories).length).fill(0).map(item => new Array());
+        for (let i = 0; i < playListSubCategories.length; i++) {
+            let item = playListSubCategories[i];
+            let index = item['category'];
+            sortedCat[index].push({name: item.name, hot: item.hot});
+        }
+
+        return sortedCat;
+    }
+};
 
 export default {
     state,
