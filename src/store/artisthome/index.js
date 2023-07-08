@@ -1,9 +1,12 @@
-import { reqArtistDesc, reqArtistDetail, reqArtistTopSong } from "@/api";
+import { reqArtistDesc, reqArtistDetail, reqArtistTopSong, reqSimiArtist, reqArtistAlbum, reqArtistMV } from "@/api";
 
 const state = {
     artistDesc: {},
     artistDetail: {},
     artistTopSong: [],
+    simiArtist: [],
+    artistAlbum: [],
+    artistMV: []
 };
 
 const mutations = {
@@ -15,6 +18,15 @@ const mutations = {
     },
     ARTISTTOPSONG(state, artistTopSong) {
         state.artistTopSong = artistTopSong;
+    },
+    SIMIARTIST(state, simiArtist) {
+        state.simiArtist = simiArtist;
+    },
+    ARTISTALBUM(state, artistAlbum) {
+        state.artistAlbum = artistAlbum;
+    },
+    ARTISTMV(state, artistMV) {
+        state.artistMV = artistMV;
     }
 };
 
@@ -36,7 +48,25 @@ const actions = {
         if (res.code == 200) {
             commit('ARTISTTOPSONG', res.songs);
         }
-    }
+    },
+    async getSimiArtist({commit}, params) {
+        let res = await reqSimiArtist(params);
+        if (res.code == 200) {
+            commit('SIMIARTIST', res.songs);
+        }
+    },
+    async getArtistAlbum({commit}, params) {
+        let res = await reqArtistAlbum(params);
+        if (res.code == 200) {
+            commit('ARTISTALBUM', res.hotAlbums);
+        }
+    },
+    async getArtistMV({commit}, params) {
+        let res = await reqArtistMV(params);
+        if (res.code == 200) {
+            commit('ARTISTMV', res.mvs);
+        }
+    },
 };
 
 const getters = {};

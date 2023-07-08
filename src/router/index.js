@@ -18,27 +18,27 @@ const router = createRouter({
             iconClass: 'Headset',
             children: [
                 {
-                    path: '/home/recommend',
+                    path: 'recommend',
                     name: '个性推荐',
                     component: () => import('@/views/Home/Recommend')
                 },
                 {
-                    path: '/home/songlist',
+                    path: 'songlist',
                     name: '歌单',
                     component: () => import('@/views/Home/SongList')
                 },
                 {
-                    path: '/home/rank',
+                    path: 'rank',
                     name: '排行榜',
                     component: () => import('@/views/Home/Rank')
                 },
                 {
-                    path: '/home/artist',
+                    path: 'artist',
                     name: '歌手',
                     component: () => import('@/views/Home/Artist')
                 },
                 {
-                    path: '/home/newmusic',
+                    path: 'newmusic',
                     name: '最新音乐',
                     component: () => import('@/views/Home/NewMusic')
                 }
@@ -58,17 +58,19 @@ const router = createRouter({
         },
         {
             path: '/video',
-            redirect: '/video/videolist',
+            redirect: {
+                name: '视频列表'
+            },
             name: '视频',
             iconClass: 'VideoCamera',
             children: [
                 {
-                    path: '/video/videolist',
+                    path: 'videolist',
                     name: '视频列表',
                     component: () => import('@/views/Video/VideoList')
                 },
                 {
-                    path: '/video/mv',
+                    path: 'mv',
                     name: 'MV列表',
                     component: () => import('@/views/Video/MV')
                 }
@@ -100,22 +102,24 @@ const router = createRouter({
         },
         {
             path: '/collection',
-            redirect: '/collection/album',
+            redirect: {
+                name: '收藏专辑'
+            },
             name: '我的收藏',
             iconClass: 'Star',
             children: [
                 {
-                    path: '/collection/album',
+                    path: 'album',
                     name: '收藏专辑',
                     component: () => import('@/views/Collection/Album'),
                 },
                 {
-                    path: '/collection/singer',
+                    path: 'singer',
                     name: '收藏歌手',
                     component: () => import('@/views/Collection/Singer'),
                 },
                 {
-                    path: '/collection/video',
+                    path: 'video',
                     name: '收藏视频',
                     component: () => import('@/views/Collection/Video'),
                 }
@@ -129,9 +133,31 @@ const router = createRouter({
         },
         {
             path: '/artisthome/:id',
+            redirect: {
+                name: 'artistalbum'
+            },
             name: 'artisthome',
             component: () => import('@/views/ArtistHome'),
-            hidden: true
+            hidden: true,
+            children: [
+                {
+                    path: 'album',
+                    name: 'artistalbum',
+                    component: () => import('@/views/ArtistHome/ArtistAlbum')
+                },
+                {
+                    path: 'mv',
+                    component: () => import('@/views/ArtistHome/ArtistMV')
+                },
+                {
+                    path: 'detail',
+                    component: () => import('@/views/ArtistHome/ArtistDetail')
+                },
+                {
+                    path: 'simi',
+                    component: () => import('@/views/ArtistHome/SimiArtist')
+                },
+            ]
         }
     ],
     history: createWebHistory()

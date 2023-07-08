@@ -175,3 +175,39 @@ export function reqArtistTopSong(params) {
         params
     })
 }
+
+// 获取相似歌手
+export function reqSimiArtist(params) {
+    return requests({
+        method: 'get',
+        url: `/simi/artist`,
+        params
+    })
+}
+
+// 获取歌手专辑
+export function reqArtistAlbum(params) {
+    return requests({
+        method: 'get',
+        url: `/artist/album`,
+        params
+    })
+}
+
+// 获取歌手MV
+export function reqArtistMV(params) {
+    return requests({
+        method: 'get',
+        url: `/artist/mv`,
+        params
+    })
+}
+
+// 获取MV播放地址
+export function reqMV(params) {
+    return requests({
+        method: 'get',
+        url: `/mv`,
+        params
+    })
+}
