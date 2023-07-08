@@ -28,7 +28,7 @@ export default {
       })
 
       return {
-        artistDesc: computed(() => store.state.artisthome.artistDesc),
+        artistDesc: computed(() => store.state.artisthome.artistDesc || {}),
       }
     }
     

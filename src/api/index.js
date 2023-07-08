@@ -203,11 +203,11 @@ export function reqArtistMV(params) {
     })
 }
 
-// 获取MV播放地址
-export function reqMV(params) {
+// 获取MV数据
+export function reqMVDetail(params) {
     return requests({
         method: 'get',
-        url: `/mv`,
+        url: `/mv/detail`,
         params
     })
 }

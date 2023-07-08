@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import ArtistAlbum from './ArtistAlbum'
@@ -50,18 +50,9 @@ export default {
         const router = useRouter();
 
         const artistId = computed(() => router.currentRoute.value.params.id)
-        const artistMVParams = reactive({
-            id: artistId.value,
-            limit: 50,
-            offset: 0
-        })
 
         onMounted(() => {
             store.dispatch('getArtistDetail', { id: artistId.value });
-
-            // store.dispatch('getSimiArtist', { id: artistId.value }); //301
-            
-            store.dispatch('getArtistMV', artistMVParams);
         });
 
         function changeRoute() {
@@ -81,8 +72,6 @@ export default {
         return {
             artistId,
             artist: computed(() => store.state.artisthome.artistDetail || {}),
-            simiArtist: computed(() => store.state.artisthome.simiArtist || {}),
-            artistMV: computed(() => store.state.artisthome.artistMV || {}),
             changeRoute,
         }
     }
@@ -143,7 +132,7 @@ export default {
 
     .nav {
         height: 30px;
-        width: 740px;
+        width: 730px;
         border-bottom: 1px solid #e0e0e0;
         margin-top: 30px;
         display: flex;
