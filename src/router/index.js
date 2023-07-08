@@ -126,6 +126,12 @@ const router = createRouter({
             name: 'playlist',
             component: () => import('@/views/PlayList'),
             hidden: true
+        },
+        {
+            path: '/artisthome/:id',
+            name: 'artisthome',
+            component: () => import('@/views/ArtistHome'),
+            hidden: true
         }
     ],
     history: createWebHistory()

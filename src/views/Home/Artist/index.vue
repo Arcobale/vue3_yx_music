@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="container">
-      <div class="singer-item" v-for="item in artistList" :key="item.id">
+      <div class="singer-item" v-for="item in artistList" :key="item.id" @click="showArtistHome(item.id)">
         <div class="cover">
             <img :src="item.img1v1Url" alt="" style="width: 134px; height: 134px;">
           </div>
@@ -38,13 +38,16 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive, toRefs } from 'vue';
+import { onMounted, computed, reactive } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'Artist',
   setup() {
     const store = useStore();
+    const router = useRouter();
+
     const artistListParams = reactive({
       limit: 30,
       offset: 0,
@@ -76,10 +79,16 @@ export default {
       getData();
     }
 
+    function showArtistHome(artistId) {
+      router.push({name: 'artisthome', params: {
+        id: artistId
+      }})
+    }
+
     return {
       changeArea,
       changeType,
-      ...toRefs(artistListParams),
+      showArtistHome,
       artistList: computed(() => store.state.home.artistList),
     }
   }

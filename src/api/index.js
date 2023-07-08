@@ -148,3 +148,30 @@ export function reqSongUrl(params) {
         params
     })
 }
+
+// 获取歌手描述
+export function reqArtistDesc(params) {
+    return requests({
+        method: 'get',
+        url: `/artist/desc`,
+        params
+    })
+}
+
+// 获取歌手详情
+export function reqArtistDetail(params) {
+    return requests({
+        method: 'get',
+        url: `/artist/detail`,
+        params
+    })
+}
+
+// 获取歌手热门50首歌曲
+export function reqArtistTopSong(params) {
+    return requests({
+        method: 'get',
+        url: `/artist/top/song`,
+        params
+    })
+}
