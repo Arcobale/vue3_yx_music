@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="songlist">
-                <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id">
+                <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id" @click="playSong(song.id)">
                     <div class="song-num">{{ fixedNum(index + 1) }}</div>
                     <div class="song-title">
                         {{ song.name }}
@@ -23,24 +23,55 @@
                     <div class="song-length">{{ toSongLen(song.dt) }}</div>
                 </div>
             </div>
-            <div class="all">查看全部 ></div>
+            <div class="all">查看全部50首 ></div>
+        </div>
+    </div>
+
+    <div class="top-song" v-for="album in artistAlbum" :key="album.id">
+        <div class="album-cover">
+            <img :src="album.picUrl" alt="">
+            <div class="date">{{ fixedDate(album.publishTime) }}</div>
+        </div>
+        <div class="album-detail">
+            <div class="header">
+                <div class="album-title">{{ album.name }}</div>
+                <div class="button">
+                    <span>播放</span>
+                    <span>收藏</span>
+                </div>
+            </div>
+
+            <AlbumSongList :albumId="album.id"></AlbumSongList>
+
         </div>
     </div>
 </template>
 
 <script>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, reactive, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
+import AlbumSongList from './AlbumSongList'
+import { dayjs } from 'element-plus'
 
 export default {
     name: 'ArtistAlbum',
     props: ['artistId'],
+    components: {
+        AlbumSongList
+    },
     setup(props) {
         const store = useStore();
+        const { proxy } = getCurrentInstance();
+
+        const artistAlbumParams = reactive({
+            id: props.artistId,
+            limit: 30,
+            offset: 0
+        })
 
         onMounted(() => {
             store.dispatch('getArtistTopSong', { id: props.artistId });
-            store.dispatch('getArtistAlbum', { id: props.artistId });
+            store.dispatch('getArtistAlbum', artistAlbumParams);
         });
 
 
@@ -60,11 +91,22 @@ export default {
             return res;
         }
 
+        function fixedDate(time) {
+            let timeFormat = dayjs(time).format("YYYY-MM-DD");
+            return timeFormat;
+        }
+
+        function playSong(songId) {
+            proxy.$Mitt.emit('playSong', songId);
+        }
+
         return {
             artistTopSong: computed(() => store.state.artisthome.artistTopSong || {}),
             artistAlbum: computed(() => store.state.artisthome.artistAlbum || {}),
             fixedNum,
             toSongLen,
+            fixedDate,
+            playSong
         }
     }
 }
@@ -73,11 +115,18 @@ export default {
 <style lang="less" scoped>
 .top-song {
     display: flex;
+    margin-bottom: 50px;
 
-    .album-cover img {
-        width: 150px;
-        height: 150px;
-        border-radius: 10px;
+    .album-cover {
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+        }
+
+        .date {
+            margin-top: 5px;
+        }
     }
 
     .album-detail {

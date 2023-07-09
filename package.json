@@ -17,6 +17,7 @@
     "@vue/cli": "^5.0.8",
     "axios": "^1.4.0",
     "core-js": "^3.6.5",
+    "dayjs": "^1.11.9",
     "element-plus": "^2.3.7",
     "less": "^3.13.1",
     "less-loader": "^7.3.0",

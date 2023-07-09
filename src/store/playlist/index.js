@@ -1,10 +1,11 @@
-import { reqPlayListAll, reqSongDetail, reqTopListDetail, reqSongUrl } from "@/api";
+import { reqPlayListAll, reqSongDetail, reqTopListDetail, reqSongUrl, reqAlbumDetail } from "@/api";
 
 const state = {
     playListAll: [],
     songDetail: [],
     playListDetail: {},
     songUrl: {},
+    albumDetail: {},
 };
 
 const mutations = {
@@ -19,6 +20,9 @@ const mutations = {
     },
     SONGURL(state, songUrl) {
         state.songUrl = songUrl;
+    },
+    ALBUMDETAIL(state, albumDetail) {
+        state.albumDetail = albumDetail;
     }
 };
 
@@ -45,6 +49,12 @@ const actions = {
         let res = await reqSongUrl(params);
         if (res.code == 200) {
             commit('SONGURL', res.data);
+        }
+    },
+    async getAlbumDetail({commit}, params) {
+        let res = await reqAlbumDetail(params);
+        if (res.code == 200) {
+            commit('ALBUMDETAIL', res);
         }
     }
 };

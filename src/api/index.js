@@ -211,3 +211,12 @@ export function reqMVDetail(params) {
         params
     })
 }
+
+// 获取专辑内容
+export function reqAlbumDetail(params) {
+    return requests({
+        method: 'get',
+        url: `/album`,
+        params
+    })
+}
