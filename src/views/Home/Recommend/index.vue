@@ -4,6 +4,9 @@
       <el-carousel :interval="4000" type="card" height="200px">
         <el-carousel-item v-for="(item, index) in banner" :key="index" @click="bannerHandler(item, item.targetType)">
           <img :src="item.imageUrl" alt="" style="height: 200px; border-radius: 10px;">
+          <div class="mask">
+            <div class="type" :style="{ backgroundColor: item.titleColor }">{{ item.typeTitle }}</div>
+          </div>
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -116,23 +119,32 @@ export default {
       proxy.$Mitt.emit('playSong', songId);
     }
 
+    function showAlbumDetail(albumId) {
+      router.push({
+        name: 'albumlist',
+        params: {
+          id: albumId
+        }
+      });
+    }
+
     function bannerHandler(banner, type) {
       if (type === 1) {
         // 新歌首发/热歌推荐，根据targetId播放歌曲
         playSong(banner.targetId);
       } else if (type === 3000) {
-        // 数字专辑，根据url属性的id参数跳转歌单详情页
+        // 数字专辑/独家策划/活动，根据url属性的id参数跳转歌单详情页
         // let url = banner.url;
         // let query = url.split('?')[1];
         // let id = query.split('=')[1];
-        // showDetail(id);
+        // showAlbumDetail(id);
         alert('暂不支持');
       } else if (type === 1000) {
         // 独家策划，根据targetId跳转歌单详情页
-        showDetail(banner.targetId);
+        // showDetail(banner.targetId);
       } else if (type === 10) {
         // 新碟首发/热碟推荐，根据targetId跳转歌单详情页
-        showDetail(banner.targetId);
+        showAlbumDetail(banner.targetId);
       }
     }
 
@@ -163,6 +175,31 @@ export default {
   .is-active {
     width: 538px;
     left: -70px;
+  }
+
+  .mask {
+    // width: 70px;
+    // height: 20px;
+    width: 538px;
+    height: 200px;
+    border-radius: 10px;
+    background-color: transparent;
+    position: absolute;
+    transform: translate(0, -100%);
+
+    .type {
+      width: 70px;
+      height: 20px;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      border-top-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      color: white;
+      font-size: 12px;
+      text-align: center;
+      line-height: 20px;
+    }
   }
 }
 
@@ -246,7 +283,7 @@ export default {
       margin: 8px 0;
       width: 100%;
       height: 80px;
-      border-top: 1px solid #b6b6b6;
+      border-top: 1px solid #fafafa;
       margin: 0px;
 
       .cover {
@@ -274,12 +311,16 @@ export default {
       }
     }
 
+    .container-item:hover {
+      background-color: #f0f0f0;
+    }
+
     .container-item:nth-last-child(2) {
-      border-bottom: 1px solid #b6b6b6;
+      border-bottom: 1px solid #fafafa;
     }
 
     .container-item:last-child {
-      border-bottom: 1px solid #b6b6b6;
+      border-bottom: 1px solid #fafafa;
     }
   }
 }
