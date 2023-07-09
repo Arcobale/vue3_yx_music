@@ -4,6 +4,9 @@
       <img :src="item.imgurl16v9" alt="">
       <div class="mask">
         <span class="count">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-play1"></use>
+          </svg>
           {{ fixedCount(item.playCount) }}
         </span>
         <span class="length">{{ toSongLen(item.duration) }}</span>
@@ -70,13 +73,16 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   column-gap: 15px;
   row-gap: 30px;
+
   .mv-item {
     font-size: 12px;
+
     img {
       height: 130px;
       width: 230px;
       border-radius: 10px;
     }
+
     .mask {
       color: white;
       height: 130px;
@@ -84,11 +90,19 @@ export default {
       background-color: transparent;
       position: absolute;
       transform: translate(0, -100%);
+
       .count {
         position: absolute;
         top: 6px;
         right: 8px;
+
+        .icon {
+          width: 12px;
+          height: 12px;
+          fill: white;
+        }
       }
+
       .length {
         position: absolute;
         bottom: 6px;
@@ -96,6 +110,7 @@ export default {
       }
 
     }
+
     .title {
       height: 25px;
       line-height: 25px;

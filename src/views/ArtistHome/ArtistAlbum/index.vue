@@ -12,7 +12,8 @@
                 </div>
             </div>
             <div class="songlist">
-                <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id" @dblclick="playSong(song.id)">
+                <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id"
+                    @dblclick="playSong(song.id)">
                     <div class="song-num">{{ fixedNum(index + 1) }}</div>
                     <div class="song-title">
                         {{ song.name }}
@@ -187,7 +188,11 @@ export default {
             }
 
             .song-item:nth-child(2n+1) {
-                background-color: #f2f2f2;
+                background-color: #fafafa;
+            }
+
+            .song-item:hover {
+                background-color: #f0f0f0;
             }
         }
 

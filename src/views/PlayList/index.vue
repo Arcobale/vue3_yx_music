@@ -225,7 +225,12 @@ export default {
         }
 
         .song-item:nth-child(2n+1) {
-            background-color: #f2f2f2;
+            background-color: #fafafa;
+        }
+
+        .song-item:hover {
+            background-color: #f0f0f0;
         }
     }
-}</style>
+}
+</style>

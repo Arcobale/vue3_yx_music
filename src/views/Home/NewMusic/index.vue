@@ -263,7 +263,7 @@ export default {
     }
 
     .container-item:nth-child(2n+1) {
-      background-color: #f2f2f2;
+      background-color: #fafafa;
     }
   }
 }

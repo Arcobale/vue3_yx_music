@@ -14,7 +14,7 @@
                     <div class="downloadall">下载全部</div>
                 </div>
                 <div class="artist">
-                    <span>歌手：</span>{{ albumDesc.artist ? albumDesc.artist.name : '' }}
+                    <span>歌手：</span><a :href="`/artisthome/${albumDesc.artist?albumDesc.artist.id:''}`">{{ albumDesc.artist ? albumDesc.artist.name : '' }}</a>
                 </div>
                 <div class="date">
                     <span>时间：</span>{{ fixedDate(albumDesc.publishTime) }}
@@ -159,6 +159,11 @@ export default {
             .date {
                 margin: 18px 0 10px;
                 font-weight: 300;
+                a {
+                    text-decoration: none;
+                    color: #39629a;
+                    font-weight: 400;
+                }
             }
 
             span {
@@ -215,7 +220,11 @@ export default {
         }
 
         .song-item:nth-child(2n+1) {
-            background-color: #f2f2f2;
+            background-color: #fafafa;
+        }
+
+        .song-item:hover {
+            background-color: #f0f0f0;
         }
     }
 }</style>
