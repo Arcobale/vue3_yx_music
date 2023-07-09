@@ -220,3 +220,12 @@ export function reqAlbumDetail(params) {
         params
     })
 }
+
+// 获取专辑动态信息
+export function reqAlbumDetailDynamic(params) {
+    return requests({
+        method: 'get',
+        url: `/album/detail/dynamic`,
+        params
+    })
+}

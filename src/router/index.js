@@ -132,6 +132,12 @@ const router = createRouter({
             hidden: true
         },
         {
+            path: '/albumlist/:id',
+            name: 'albumlist',
+            component: () => import('@/views/AlbumList'),
+            hidden: true
+        },
+        {
             path: '/artisthome/:id',
             redirect: {
                 name: 'artistalbum'

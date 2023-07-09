@@ -1,4 +1,4 @@
-import { reqPlayListAll, reqSongDetail, reqTopListDetail, reqSongUrl, reqAlbumDetail } from "@/api";
+import { reqPlayListAll, reqSongDetail, reqTopListDetail, reqSongUrl, reqAlbumDetail, reqAlbumDetailDynamic } from "@/api";
 
 const state = {
     playListAll: [],
@@ -6,6 +6,7 @@ const state = {
     playListDetail: {},
     songUrl: {},
     albumDetail: {},
+    albumDetailDynamic: {},
 };
 
 const mutations = {
@@ -23,6 +24,9 @@ const mutations = {
     },
     ALBUMDETAIL(state, albumDetail) {
         state.albumDetail = albumDetail;
+    },
+    ALBUMDETAILDYNAMIC(state, albumDetailDynamic) {
+        state.albumDetailDynamic = albumDetailDynamic;
     }
 };
 
@@ -55,6 +59,12 @@ const actions = {
         let res = await reqAlbumDetail(params);
         if (res.code == 200) {
             commit('ALBUMDETAIL', res);
+        }
+    },
+    async getAlbumDetailDynamic({commit}, params) {
+        let res = await reqAlbumDetailDynamic(params);
+        if (res.code == 200) {
+            commit('ALBUMDETAILDYNAMIC', res);
         }
     }
 };

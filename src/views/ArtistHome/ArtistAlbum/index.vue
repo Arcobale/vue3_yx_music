@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="songlist">
-                <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id" @click="playSong(song.id)">
+                <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id" @dblclick="playSong(song.id)">
                     <div class="song-num">{{ fixedNum(index + 1) }}</div>
                     <div class="song-title">
                         {{ song.name }}
@@ -197,6 +197,8 @@ export default {
             background-color: #f2f2f2;
             text-align: right;
             line-height: 30px;
+            padding-right: 25px;
+            box-sizing: border-box;
         }
     }
 }

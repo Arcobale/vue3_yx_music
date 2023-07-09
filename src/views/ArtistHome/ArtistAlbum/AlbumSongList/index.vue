@@ -1,6 +1,6 @@
 <template>
     <div class="songlist">
-        <div class="song-item" v-for="(song, index) in albumSong.slice(0, 10)" :key="song.id" @click="playSong(song.id)">
+        <div class="song-item" v-for="(song, index) in albumSong.slice(0, 10)" :key="song.id" @dblclick="playSong(song.id)">
             <div class="song-num">{{ fixedNum(index + 1) }}</div>
             <div class="song-title" :class="{ deactive: song.dt === 0 }">
                 {{ song.name }}
@@ -12,18 +12,20 @@
         </div>
     </div>
 
-    <div class="all" v-if="albumSong.length > 10">查看全部 ></div>
+    <div class="all" v-if="albumSong.length > 10" @click="showDetail(albumId)">查看全部 ></div>
 </template>
 
 <script>
 import { computed, onMounted, ref, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'AlbumSongList',
     props: ['albumId'],
     setup(props) {
         const store = useStore();
+        const router = useRouter();
         const { proxy } = getCurrentInstance();
 
         const albumDetail = ref('');
@@ -54,12 +56,22 @@ export default {
             proxy.$Mitt.emit('playSong', songId);
         }
 
+        function showDetail(albumId) {
+            router.push({
+                name: 'albumlist',
+                params: {
+                    id: albumId
+                }
+            });
+        }
+
         return {
-            albumDetail,
+            albumId: ref(props.albumId),
             albumSong: computed(() => albumDetail.value.songs || []),
             fixedNum,
             toSongLen,
             playSong,
+            showDetail
         }
     }
 
@@ -113,5 +125,7 @@ export default {
     background-color: #f2f2f2;
     text-align: right;
     line-height: 30px;
+    padding-right: 25px;
+    box-sizing: border-box;
 }
 </style>

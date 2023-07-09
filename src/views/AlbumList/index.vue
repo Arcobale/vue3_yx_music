@@ -1,38 +1,30 @@
 <template>
-    <div class="playlist">
-        <div class="playlist-detail">
-            <img :src="playListDetail.coverImgUrl" alt="">
+    <div class="albumlist">
+        <div class="albumlist-detail">
+            <img :src="albumDesc.picUrl" alt="">
             <div class="right">
                 <div class="name">
-                    {{ playListDetail.name }}
-                </div>
-                <div class="creator">
-                    <img :src="playListDetail.creator ? playListDetail.creator.avatarUrl : ''" alt="">
-                    {{ playListDetail.creator ? playListDetail.creator.nickname : '' }}
+                    <div class="type">专辑</div>
+                    {{ albumDesc.name }}
                 </div>
                 <div class="func">
                     <div class="playall">播放全部</div>
-                    <div class="collect">收藏</div>
-                    <div class="share">分享</div>
+                    <div class="collect">收藏({{ albumDetailDynamic.subCount }})</div>
+                    <div class="share">分享({{ albumDetailDynamic.shareCount }})</div>
                     <div class="downloadall">下载全部</div>
                 </div>
-                <div class="count">
-                    <div class="trackcount">
-                        <span>歌曲数：</span>{{ playListDetail.trackCount }}
-                    </div>
-                    <div class="playcount">
-                        <span>播放数：</span>{{ playListDetail.playCount }}
-                    </div>
+                <div class="artist">
+                    <span>歌手：</span>{{ albumDesc.artist ? albumDesc.artist.name : '' }}
                 </div>
-                <div class="desc">
-                    <span>简介：</span>{{ playListDetail.description }}
+                <div class="date">
+                    <span>时间：</span>{{ fixedDate(albumDesc.publishTime) }}
                 </div>
             </div>
         </div>
         <div class="container">
-            <div class="song-item" v-for="(item, index) in playListAll" :key="item.id" @dblclick="playSong(item.id)">
+            <div class="song-item" v-for="(item, index) in albumSong" :key="item.id" @dblclick="playSong(item.id)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
-                <div class="title">
+                <div class="title" :class="{ deactive: item.dt === 0 }">
                     <span class="bold">{{ item.name }}</span>
                     <span class="alia" v-if="item.alia != ''">({{ item.alia[0] }})</span>
                 </div>
@@ -48,30 +40,25 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive, getCurrentInstance } from 'vue';
+import { onMounted, computed, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { dayjs } from 'element-plus'
 
 export default {
-    name: 'PlayList',
+    name: 'AlbumList',
     setup() {
         const store = useStore();
         const router = useRouter();
         const { proxy } = getCurrentInstance();
 
         const id = computed(() => router.currentRoute.value.params.id);
-        const playListAllParams = reactive({
-            id,
-            limit: 10,
-            offset: 0,
-        });
-        const playListDetailParams = reactive({
-            id
-        });
+        const albumDetail = computed(() => store.state.playlist.albumDetail);
+        const albumDetailDynamic = computed(() => store.state.playlist.albumDetailDynamic);
 
         onMounted(() => {
-            store.dispatch('getPlayListAll', playListAllParams);
-            store.dispatch('getPlayListDetail', playListDetailParams);
+            store.dispatch('getAlbumDetailDynamic', { id: id.value });
+            store.dispatch('getAlbumDetail', { id: id.value })
         })
 
         function fixedNum(num) {
@@ -95,20 +82,27 @@ export default {
             return res;
         }
 
+        function fixedDate(time) {
+            let timeFormat = dayjs(time).format("YYYY-MM-DD");
+            return timeFormat;
+        }
+
         return {
             fixedNum,
-            playSong,
+            fixedDate,
             toSongLen,
-            playListAll: computed(() => store.state.playlist.playListAll || {}),
-            playListDetail: computed(() => store.state.playlist.playListDetail || {}),
+            playSong,
+            albumDesc: computed(() => albumDetail.value.album || []),
+            albumDetailDynamic,
+            albumSong: computed(() => albumDetail.value.songs || []),
         }
     }
 }
 </script>
 
 <style lang="less" scoped>
-.playlist {
-    .playlist-detail {
+.albumlist {
+    .albumlist-detail {
         display: flex;
         font-size: 10px;
 
@@ -125,18 +119,18 @@ export default {
             .name {
                 font-size: 20px;
                 font-weight: 600;
-            }
-
-            .creator {
-                margin: 15px 0 20px;
-                font-size: 12px;
                 display: flex;
                 align-items: center;
-                color: #39629a;
-
-                img {
-                    width: 21px;
-                    height: 21px;
+                .type {
+                    width: 35px;
+                    height: 18px;
+                    border: 1px solid #e65d4c;
+                    border-radius: 3px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #e65d4c;
+                    text-align: center;
+                    line-height: 18px;
                     margin-right: 8px;
                 }
             }
@@ -144,6 +138,7 @@ export default {
             .func {
                 font-size: 12px;
                 display: flex;
+                margin-top: 20px;
 
                 div {
                     margin-right: 8px;
@@ -160,18 +155,9 @@ export default {
             }
 
 
-            .count {
+            .artist,
+            .date {
                 margin: 18px 0 10px;
-                display: flex;
-                font-weight: 300;
-
-                .trackcount {
-                    margin-right: 8px;
-                }
-            }
-
-            .desc {
-                line-height: 1.75;
                 font-weight: 300;
             }
 
@@ -209,6 +195,10 @@ export default {
                 .alia {
                     color: #656464;
                 }
+            }
+
+            .deactive span {
+                color: #c3c3c3 !important;
             }
 
             .artist {
