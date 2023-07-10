@@ -7,15 +7,22 @@ import mv from '@/store/mv/index.js'
 
 const store = createStore({
     state: {
-        curSongIndex: -1
+        curSongIndex: -1,
+        curCycle: 0,
     },
     mutations: {
         SKIPSONG(state, { step, total }) {
             state.curSongIndex = (state.curSongIndex + step) % total;
             state.curSongIndex += state.curSongIndex < 0 ? total : 0;
         },
+        SKIPSONGRANDOM(state, { total }) {
+            state.curSongIndex = Math.floor(Math.random() * total);
+        },
         CHANGESONG(state, newIndex) {
             state.curSongIndex = newIndex;
+        },
+        CHANGECYCLE(state) {
+            state.curCycle = (state.curCycle + 1) % 3;
         }
     },
     modules: {

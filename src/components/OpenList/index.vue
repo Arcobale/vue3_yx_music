@@ -67,6 +67,7 @@ export default {
 
         proxy.$Mitt.on('clearSongList', () => {
             playData.length = 0;
+            store.commit('CHANGESONG', -1);
             proxy.$Mitt.emit('stopCurSong');
         })
 
@@ -91,7 +92,14 @@ export default {
         })
 
         proxy.$Mitt.on('skipSong', (step) => {
-            store.commit('SKIPSONG', { step, total: playData.length });
+            // curCycle=0为单曲循环，传入step为0，不自动切歌
+            // curCycle=1为列表循环，传入step为1，自动切到下一曲
+            if (store.state.curCycle !== 2) {
+                store.commit('SKIPSONG', { step, total: playData.length });
+            } else {
+                // curCycle=2为随机播放，随机切到播放列表中任意一曲
+                store.commit('SKIPSONGRANDOM', { total: playData.length });
+            }
             let nextSongId = playData[store.state.curSongIndex].id;
             proxy.$Mitt.emit('playSong', { songId: nextSongId });
         })

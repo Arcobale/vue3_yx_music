@@ -44,9 +44,17 @@
         </svg>
       </div>
       <div class="controler">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-danquxunhuan"></use>
-        </svg>
+        <div class="cycle" @click="changeCycle">
+          <svg class="icon" aria-hidden="true" v-if="curCycle === 0">
+            <use xlink:href="#icon-danquxunhuan"></use>
+          </svg>
+          <svg class="icon" aria-hidden="true" v-else-if="curCycle === 1">
+            <use xlink:href="#icon-xunhuanbofang"></use>
+          </svg>
+          <svg class="icon" aria-hidden="true" v-else-if="curCycle === 2">
+            <use xlink:href="#icon-suijibofang"></use>
+          </svg>
+        </div>
         <svg class="icon" aria-hidden="true" @click="openList">
           <use xlink:href="#icon-a-icon_playlist"></use>
         </svg>
@@ -75,6 +83,8 @@ export default {
     const curTime = ref('00:00');
     const percentage = ref(0);
     const isEmpty = ref(true);
+    // 循环状态。0:单曲循环，1:列表循环，2:随机播放
+    const curCycle = computed(() => store.state.curCycle);
     const songPlayDetail = computed(() => store.state.playlist.songUrl ? store.state.playlist.songUrl[0] : {});
     const songDetail = computed(() => store.state.playlist.songDetail[0] || undefined);
 
@@ -110,7 +120,7 @@ export default {
 
       // 替换整个播放列表时记录点击歌曲的位置，以便切歌
       if (songIndex) {
-        store.commit('CHANGESONG', index);
+        store.commit('CHANGESONG', songIndex);
       }
 
       // 监听歌曲播放的实时进度
@@ -120,7 +130,7 @@ export default {
       });
       // 监听歌曲播放是否完成
       audio.addEventListener('ended', () => {
-        audio.pause();
+        proxy.$Mitt.emit('skipSong', store.state.curCycle);
         isPaused.value = true;
       });
       // 等待歌曲资源请求完毕后再播放
@@ -169,8 +179,14 @@ export default {
       proxy.$Mitt.emit('skipSong', step);
     }
 
+    // 切换循环状态
+    function changeCycle() {
+      store.commit('CHANGECYCLE');
+    }
+
     return {
       curTime,
+      curCycle,
       percentage,
       songPlayDetail,
       songDetail,
@@ -179,6 +195,7 @@ export default {
       toSongLen,
       calcPlayProgress,
       openList,
+      changeCycle,
       isPaused,
       isEmpty
     }
