@@ -7,7 +7,7 @@
                     <span class="count">总{{ playData.length }}首</span>
                     <div class="right">
                         <span class="button">收藏全部</span>
-                        <span class="button">清空列表</span>
+                        <span class="button" @click="clearList">清空列表</span>
                     </div>
                 </div>
             </div>
@@ -65,6 +65,11 @@ export default {
             }
         }
 
+        function clearList() {
+            playData.length = 0;
+            proxy.$Mitt.emit('clearSong');
+        }
+
         proxy.$Mitt.on('openList', () => {
             isOpen.value = true;
         })
@@ -85,6 +90,7 @@ export default {
         return {
             isOpen,
             playData,
+            clearList,
         }
 
     }

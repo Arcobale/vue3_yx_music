@@ -2,11 +2,11 @@
   <audio :src="songPlayDetail ? songPlayDetail.url : ''"></audio>
 
   <div id="footer">
-    <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2" v-if="songDetail"></el-progress>
+    <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2"></el-progress>
     <div class="wrapper">
-      <div class="song" v-if="songDetail">
+      <div class="song" v-if="!isEmpty">
         <div class="cover">
-          <img :src="songDetail.al.picUrl" alt="">
+          <img :src="songDetail ? songDetail.al.picUrl : ''" alt="">
         </div>
         <div class="song-detail">
           <div class="song-detail-info">
@@ -73,6 +73,7 @@ export default {
     const isPaused = ref(true);
     const curTime = ref('00:00');
     const percentage = ref(0);
+    const isEmpty = ref(true);
     const songPlayDetail = computed(() => store.state.playlist.songUrl ? store.state.playlist.songUrl[0] : {});
     const songDetail = computed(() => store.state.playlist.songDetail[0] || undefined);
 
@@ -104,6 +105,7 @@ export default {
       songDetailParams.ids = songId;
       store.dispatch('getSongUrl', songUrlParams);
       store.dispatch('getSongDetail', songDetailParams);
+      isEmpty.value = false;
 
       // 监听歌曲播放的实时进度
       audio.addEventListener('timeupdate', () => {
@@ -123,6 +125,15 @@ export default {
           alert('您正在试听会员歌曲！');
         }
       }, 1000);
+    })
+
+    proxy.$Mitt.on('clearSong', () => {
+      let audio = document.querySelector('audio');
+      percentage.value = 0;
+      isPaused.value = true;
+      curTime.value = '00:00';
+      isEmpty.value = true;
+      audio.src = '';
     })
 
 
@@ -156,7 +167,8 @@ export default {
       toSongLen,
       calcPlayProgress,
       openList,
-      isPaused
+      isPaused,
+      isEmpty
     }
   }
 }
