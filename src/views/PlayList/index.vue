@@ -80,6 +80,7 @@ export default {
 
         function playSong(songId) {
             proxy.$Mitt.emit('playSong', songId);
+            proxy.$Mitt.emit('addSong', songId);
         }
 
         // 输出固定格式的时间

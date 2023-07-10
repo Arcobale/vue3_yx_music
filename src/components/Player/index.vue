@@ -46,12 +46,12 @@
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-danquxunhuan"></use>
         </svg>
-        <svg class="icon" aria-hidden="true">
+        <svg class="icon" aria-hidden="true" @click="openList">
           <use xlink:href="#icon-a-icon_playlist"></use>
         </svg>
-        <svg class="icon" aria-hidden="true">
+        <!-- <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-geciweidianji"></use>
-        </svg>
+        </svg> -->
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-004laba-2"></use>
         </svg>
@@ -142,6 +142,11 @@ export default {
       return cur / total * 100;
     }
 
+    // 打开播放列表
+    function openList() {
+      proxy.$Mitt.emit('openList');
+    }
+
     return {
       curTime,
       percentage,
@@ -150,6 +155,7 @@ export default {
       changePlayState,
       toSongLen,
       calcPlayProgress,
+      openList,
       isPaused
     }
   }

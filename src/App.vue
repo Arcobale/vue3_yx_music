@@ -15,19 +15,25 @@
       <Player></Player>
     </el-footer>
   </el-container>
+  <SongDetail class="songdetail"></SongDetail>
+  <OpenList class="openlist"></OpenList>
 </template>
 
 <script>
 import Header from './components/Header'
 import Navigation from './components/Navigation'
 import Player from './components/Player'
+import SongDetail from './components/SongDetail'
+import OpenList from './components/OpenList'
 
 export default {
   name: 'App',
   components: {
     Header,
     Navigation,
-    Player
+    Player,
+    SongDetail,
+    OpenList
   }
 }
 </script>
@@ -48,7 +54,7 @@ export default {
     position: fixed;
     width: 100%;
     height: 50px;
-    z-index: 1;
+    z-index: 100;
   }
 
   .content {
@@ -67,6 +73,14 @@ export default {
     width: 100%;
     bottom: 0px;
     height: auto;
+    z-index: 100;
   }
+}
+
+.songdetail {
+  display: none;
+}
+.openlist {
+  // display: none;
 }
 </style>

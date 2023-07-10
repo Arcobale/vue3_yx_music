@@ -54,6 +54,7 @@ export default {
 
         function playSong(songId) {
             proxy.$Mitt.emit('playSong', songId);
+            proxy.$Mitt.emit('addSong', songId);
         }
 
         function showDetail(albumId) {
