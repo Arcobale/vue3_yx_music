@@ -32,7 +32,7 @@
         </div>
         <div class="container">
             <div class="song-item" v-for="(item, index) in playListAll" :key="item.id"
-                @dblclick="playAllSong(item.id, item, index)">
+                @dblclick="playAllSong(item.id, index)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title">
                     <span class="bold">{{ item.name }}</span>
@@ -82,16 +82,12 @@ export default {
             return num < 10 ? '0' + num : '' + num;
         }
 
-        function playSong(songId, song) {
-            proxy.$Mitt.emit('playSong', songId);
-            proxy.$Mitt.emit('addSong', { id: songId, name: song.name, artist: song.ar, len: song.dt });
-        }
-
-        function playAllSong(curSongId, song, curSongIndex) {
+        function playAllSong(curSongId, curSongIndex) {
             proxy.$Mitt.emit('clearSongList');
             for (let i = 0; i < playListAll.value.length; i++) {
                 let item = playListAll.value[i];
-                proxy.$Mitt.emit('addSong', { id: item.id, name: item.name, artist: item.ar, len: item.dt });
+                let newItem = { id: item.id, name: item.name, artist: item.ar, len: item.dt };
+                proxy.$Mitt.emit('addSong', { song: newItem});
             }
             if (typeof curSongId === 'number') {
                 proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
@@ -115,7 +111,6 @@ export default {
 
         return {
             fixedNum,
-            playSong,
             playAllSong,
             toSongLen,
             playListAll,

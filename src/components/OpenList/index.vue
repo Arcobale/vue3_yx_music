@@ -22,17 +22,15 @@
 
 <script>
 import { ref, getCurrentInstance, onMounted, reactive } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
     name: 'OpenList',
     setup() {
+        const store = useStore();
         const { proxy } = getCurrentInstance();
 
         const isOpen = ref(false);
-        const curSongIndex = ref(0);
-        const songDetailParams = reactive({
-            ids: 1
-        });
         const playData = reactive([]);
 
         onMounted(() => {
@@ -76,31 +74,31 @@ export default {
             isOpen.value = true;
         })
 
-        proxy.$Mitt.on('addSong', (song) => {
-            songDetailParams.ids = song.id;
-            playData.push({
+        proxy.$Mitt.on('addSong', ({ song, insertIndex }) => {
+            let newItem = {
                 id: song.id,
                 name: song.name,
                 artist: arrToString(song.artist),
                 len: toSongLen(song.len),
-            });
+            }
+            // 若指定了插入位置，即在现有播放列表中插入单曲
+            if (insertIndex >= 0) {
+                playData.splice(insertIndex, 0, newItem);
+                store.commit('CHANGESONG', insertIndex);
+            } else { // 若未指定，则为替换整个播放列表
+                playData.push(newItem);
+            }
         })
 
         proxy.$Mitt.on('skipSong', (step) => {
-            curSongIndex.value = (curSongIndex.value + step) % playData.length;
-            curSongIndex.value += curSongIndex.value < 0 ? playData.length : 0;
-            let nextSongId = playData[curSongIndex.value].id;
+            store.commit('SKIPSONG', { step, total: playData.length });
+            let nextSongId = playData[store.state.curSongIndex].id;
             proxy.$Mitt.emit('playSong', { songId: nextSongId });
-        })
-
-        proxy.$Mitt.on('changeSong', (index) => {
-            curSongIndex.value = index;
         })
 
         return {
             isOpen,
             playData,
-            curSongIndex,
             clearList,
         }
 

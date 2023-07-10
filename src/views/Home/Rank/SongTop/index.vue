@@ -2,7 +2,7 @@
     <div class="song">
         <div class="container">
             <div class="song-item" v-for="(item, index) in topListDetail.slice(0, 5)" :key="item.id"
-                @dblclick="playSong(item.id)">
+                @dblclick="playSong(item)">
                 <div class="num">{{ index + 1 }}</div>
                 <div class="title">{{ item.name }}</div>
                 <div class="alia" v-if="item.alia != ''">（{{ item.alia[0] }}）</div>
@@ -47,9 +47,10 @@ export default {
             });
         })
 
-        function playSong(songId) {
-            proxy.$Mitt.emit('playSong', songId);
-            proxy.$Mitt.emit('addSong', songId);
+        function playSong(song) {
+            proxy.$Mitt.emit('playSong', { songId: song.id });
+            let newItem = { id: song.id, name: song.name, artist: song.ar, len: song.dt };
+            proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });
         }
 
         function showDetail(playListId) {

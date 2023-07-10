@@ -6,6 +6,18 @@ import artisthome from '@/store/artisthome/index.js'
 import mv from '@/store/mv/index.js'
 
 const store = createStore({
+    state: {
+        curSongIndex: -1
+    },
+    mutations: {
+        SKIPSONG(state, { step, total }) {
+            state.curSongIndex = (state.curSongIndex + step) % total;
+            state.curSongIndex += state.curSongIndex < 0 ? total : 0;
+        },
+        CHANGESONG(state, newIndex) {
+            state.curSongIndex = newIndex;
+        }
+    },
     modules: {
         home,
         recent,

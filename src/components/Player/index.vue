@@ -108,9 +108,9 @@ export default {
       store.dispatch('getSongDetail', songDetailParams);
       isEmpty.value = false;
 
-      // 切换为当前播放列表指定index的歌曲
+      // 替换整个播放列表时记录点击歌曲的位置，以便切歌
       if (songIndex) {
-        proxy.$Mitt.emit('changeSong', songIndex);
+        store.commit('CHANGESONG', index);
       }
 
       // 监听歌曲播放的实时进度

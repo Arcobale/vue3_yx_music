@@ -47,7 +47,7 @@
         </el-icon>
       </div>
       <div class="container">
-        <div v-for="(item, index) in newSong" :key="item.id" class="container-item" @dblclick="playSong(item.id)">
+        <div v-for="(item, index) in newSong" :key="item.id" class="container-item" @dblclick="playSong(item)">
           <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 60px; height: 60px;">
           <span class="num">{{ fixedNum(index) }}</span>
           <div class="desc">
@@ -115,9 +115,10 @@ export default {
       // router.push(`/playlist/${playListId}`);
     }
 
-    function playSong(songId) {
-      proxy.$Mitt.emit('playSong', songId);
-      proxy.$Mitt.emit('addSong', songId);
+    function playSong(song) {
+      proxy.$Mitt.emit('playSong', { songId: song.id });
+      let newItem = { id: song.id, name: song.name, artist: song.song.artists, len: song.song.duration };
+      proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });
     }
 
     function showAlbumDetail(albumId) {

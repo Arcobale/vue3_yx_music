@@ -31,7 +31,7 @@
     </div>
     <div class="container">
       <div class="container-item" v-for="(item, index) in newSongList" :key="item.id"
-        @dblclick="playAllSong(item.id, item, index)">
+        @dblclick="playAllSong(item.id, index)">
         <div class="song-num">{{ fixedNum(index + 1) }}</div>
         <div class="song-cover">
           <img :src="item.album.picUrl" alt="">
@@ -107,16 +107,12 @@ export default {
       return res;
     }
 
-    function playSong(songId, song) {
-      proxy.$Mitt.emit('playSong', songId);
-      proxy.$Mitt.emit('addSong', { id: songId, name: song.name, artist: song.artists, len: song.duration });
-    }
-
-    function playAllSong(curSongId, song, curSongIndex) {
+    function playAllSong(curSongId, curSongIndex) {
       proxy.$Mitt.emit('clearSongList');
       for (let i = 0; i < newSongList.value.length; i++) {
         let item = newSongList.value[i];
-        proxy.$Mitt.emit('addSong', { id: item.id, name: item.name, artist: item.artists, len: item.duration });
+        let newItem = { id: item.id, name: item.name, artist: item.artists, len: item.duration }
+        proxy.$Mitt.emit('addSong', { song: newItem });
       }
       if (typeof curSongId === 'number') {
         proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
@@ -130,7 +126,6 @@ export default {
       changeType,
       changeRoute,
       toSongLen,
-      playSong,
       playAllSong,
       newSongList,
     }

@@ -13,7 +13,7 @@
             </div>
             <div class="songlist">
                 <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id"
-                    @dblclick="playSong(song.id)">
+                    @dblclick="playSong(song)">
                     <div class="song-num">{{ fixedNum(index + 1) }}</div>
                     <div class="song-title">
                         {{ song.name }}
@@ -97,9 +97,10 @@ export default {
             return timeFormat;
         }
 
-        function playSong(songId) {
-            proxy.$Mitt.emit('playSong', songId);
-            proxy.$Mitt.emit('addSong', songId);
+        function playSong(song) {
+            proxy.$Mitt.emit('playSong', { songId: song.id });
+            let newItem = { id: song.id, name: song.name, artist: song.ar, len: song.dt };
+            proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });
         }
 
         return {

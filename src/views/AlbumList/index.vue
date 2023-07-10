@@ -14,7 +14,8 @@
                     <div class="downloadall">下载全部</div>
                 </div>
                 <div class="artist">
-                    <span>歌手：</span><a :href="`/artisthome/${albumDesc.artist ? albumDesc.artist.id : ''}`">{{ albumDesc.artist
+                    <span>歌手：</span><a :href="`/artisthome/${albumDesc.artist ? albumDesc.artist.id : ''}`">{{
+                        albumDesc.artist
                         ? albumDesc.artist.name : '' }}</a>
                 </div>
                 <div class="date">
@@ -23,7 +24,8 @@
             </div>
         </div>
         <div class="container">
-            <div class="song-item" v-for="(item, index) in albumSong" :key="item.id" @dblclick="playAllSong(item.id, item, index)">
+            <div class="song-item" v-for="(item, index) in albumSong" :key="item.id"
+                @dblclick="playAllSong(item.id, index)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title" :class="{ deactive: item.dt === 0 }">
                     <span class="bold">{{ item.name }}</span>
@@ -67,16 +69,12 @@ export default {
             return num < 10 ? '0' + num : '' + num;
         }
 
-        function playSong(songId) {
-            proxy.$Mitt.emit('playSong', songId);
-            proxy.$Mitt.emit('addSong', songId);
-        }
-
-        function playAllSong(curSongId, song, curSongIndex) {
+        function playAllSong(curSongId, curSongIndex) {
             proxy.$Mitt.emit('clearSongList');
             for (let i = 0; i < albumSong.value.length; i++) {
                 let item = albumSong.value[i];
-                proxy.$Mitt.emit('addSong', { id: item.id, name: item.name, artist: item.ar, len: item.dt });
+                let newItem = { id: item.id, name: item.name, artist: item.ar, len: item.dt };
+                proxy.$Mitt.emit('addSong', { song: newItem});
             }
             if (typeof curSongId === 'number') {
                 proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
@@ -107,7 +105,6 @@ export default {
             fixedNum,
             fixedDate,
             toSongLen,
-            playSong,
             playAllSong,
             albumDesc: computed(() => albumDetail.value.album || []),
             albumDetailDynamic,
