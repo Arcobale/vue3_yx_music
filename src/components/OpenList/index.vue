@@ -25,7 +25,7 @@ import { ref, getCurrentInstance, onMounted, reactive } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
-    name: 'openlist',
+    name: 'OpenList',
     setup() {
         const store = useStore();
         const { proxy } = getCurrentInstance();
@@ -35,7 +35,6 @@ export default {
             ids: 1
         });
         const playData = reactive([]);
-        const songDetail = ref({});
 
         onMounted(() => {
 
@@ -66,25 +65,25 @@ export default {
         }
 
         function clearList() {
-            playData.length = 0;
-            proxy.$Mitt.emit('clearSong');
+            proxy.$Mitt.emit('clearSongList');
         }
+
+        proxy.$Mitt.on('clearSongList', () => {
+            playData.length = 0;
+            proxy.$Mitt.emit('stopCurSong');
+        })
 
         proxy.$Mitt.on('openList', () => {
             isOpen.value = true;
         })
 
-        proxy.$Mitt.on('addSong', (songId) => {
-            songDetailParams.ids = songId;
-            store.dispatch('getSongDetail', songDetailParams).then(() => {
-                songDetail.value = store.state.playlist.songDetail[0] || undefined;
-                playData.push({
-                    name: songDetail.value.name,
-                    artist: arrToString(songDetail.value.ar),
-                    len: toSongLen(songDetail.value.dt),
-                });
+        proxy.$Mitt.on('addSong', (song) => {
+            songDetailParams.ids = song.id;
+            playData.push({
+                name: song.name,
+                artist: arrToString(song.artist),
+                len: toSongLen(song.len),
             });
-
         })
 
         return {

@@ -4,6 +4,7 @@
             <img :src="playListDetail.coverImgUrl" alt="">
             <div class="right">
                 <div class="name">
+                    <div class="type">歌单</div>
                     {{ playListDetail.name }}
                 </div>
                 <div class="creator">
@@ -11,7 +12,7 @@
                     {{ playListDetail.creator ? playListDetail.creator.nickname : '' }}
                 </div>
                 <div class="func">
-                    <div class="playall">播放全部</div>
+                    <div class="playall" @click="playAllSong">播放全部</div>
                     <div class="collect">收藏</div>
                     <div class="share">分享</div>
                     <div class="downloadall">下载全部</div>
@@ -30,17 +31,17 @@
             </div>
         </div>
         <div class="container">
-            <div class="song-item" v-for="(item, index) in playListAll" :key="item.id" @dblclick="playSong(item.id)">
+            <div class="song-item" v-for="(item, index) in playListAll" :key="item.id" @dblclick="playAllSong(item.id, item)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title">
                     <span class="bold">{{ item.name }}</span>
                     <span class="alia" v-if="item.alia != ''">({{ item.alia[0] }})</span>
                 </div>
                 <div class="artist">
-                    <!-- <div class="artist-item" v-for="ar in item.ar" :key="ar.id">{{ ar.name }}</div> -->
                     {{ item.ar[0].name }}
+                    <span v-for="ar in item.ar.slice(1)" :key="ar.id">/{{ ar.name }}</span>
                 </div>
-                <div class="album">{{ item.al.name }}</div>
+                <div class="album">{{ item ? item.al.name : '' }}</div>
                 <div class="length">{{ toSongLen(item.dt) }}</div>
             </div>
         </div>
@@ -69,6 +70,8 @@ export default {
             id
         });
 
+        const playListAll = computed(() => store.state.playlist.playListAll || {});
+
         onMounted(() => {
             store.dispatch('getPlayListAll', playListAllParams);
             store.dispatch('getPlayListDetail', playListDetailParams);
@@ -78,9 +81,22 @@ export default {
             return num < 10 ? '0' + num : '' + num;
         }
 
-        function playSong(songId) {
+        function playSong(songId, song) {
             proxy.$Mitt.emit('playSong', songId);
-            proxy.$Mitt.emit('addSong', songId);
+            proxy.$Mitt.emit('addSong', { id: songId, name: song.name, artist: song.ar, len: song.dt });
+        }
+
+        function playAllSong(curSongId) {
+            proxy.$Mitt.emit('clearSongList');
+            for (let i = 0; i < playListAll.value.length; i++) {
+                let song = playListAll.value[i];
+                proxy.$Mitt.emit('addSong', { id: song.id, name: song.name, artist: song.ar, len: song.dt });
+            }
+            if (typeof curSongId === 'number') {
+                proxy.$Mitt.emit('playSong', curSongId);
+            } else {
+                proxy.$Mitt.emit('playSong', playListAll.value[0].id);
+            }
         }
 
         // 输出固定格式的时间
@@ -99,8 +115,9 @@ export default {
         return {
             fixedNum,
             playSong,
+            playAllSong,
             toSongLen,
-            playListAll: computed(() => store.state.playlist.playListAll || {}),
+            playListAll,
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
         }
     }
@@ -126,6 +143,21 @@ export default {
             .name {
                 font-size: 20px;
                 font-weight: 600;
+                display: flex;
+                align-items: center;
+
+                .type {
+                    width: 35px;
+                    height: 18px;
+                    border: 1px solid #e65d4c;
+                    border-radius: 3px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #e65d4c;
+                    text-align: center;
+                    line-height: 18px;
+                    margin-right: 8px;
+                }
             }
 
             .creator {

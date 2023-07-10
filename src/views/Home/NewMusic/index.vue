@@ -15,7 +15,7 @@
         </ul>
       </div>
       <div class="right">
-        <div class="play button">
+        <div class="play button" @click="playAllSong">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-bofang"></use>
           </svg>
@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="container">
-      <div class="container-item" v-for="(item, index) in newSongList" :key="item.id" @dblclick="playSong(item.id)">
+      <div class="container-item" v-for="(item, index) in newSongList" :key="item.id" @dblclick="playAllSong(item.id, item)">
         <div class="song-num">{{ fixedNum(index + 1) }}</div>
         <div class="song-cover">
           <img :src="item.album.picUrl" alt="">
@@ -40,9 +40,8 @@
           <span class="alia" v-if="item.alias != ''">({{ item.alias[0] }})</span>
         </div>
         <div class="song-artist">
-          <div class="artist-item" v-for="ar in item.artists" :key="ar.id">
-            {{ ar.name }}
-          </div>
+            {{ item.artists[0].name }}
+            <span v-for="ar in item.artists.slice(1)" :key="ar.id">/{{ ar.name }}</span>
         </div>
         <div class="song-album">{{ item.album.name }}</div>
         <div class="song-length">{{ toSongLen(item.duration) }}</div>
@@ -65,6 +64,8 @@ export default {
     const newSongListParams = reactive({
       type: 0
     })
+
+    const newSongList = computed(() => store.state.home.newSongList || {});
 
     onMounted(() => {
       getData();
@@ -105,9 +106,23 @@ export default {
       return res;
     }
 
-    function playSong(songId) {
+    function playSong(songId, song) {
       proxy.$Mitt.emit('playSong', songId);
-      proxy.$Mitt.emit('addSong', songId);
+      proxy.$Mitt.emit('addSong', { id: songId, name: song.name, artist: song.artists, len: song.duration });
+    }
+
+    function playAllSong(curSongId) {
+      proxy.$Mitt.emit('clearSongList');
+      console.log(newSongList.value.length)
+      for (let i = 0; i < newSongList.value.length; i++) {
+        let song = newSongList.value[i];
+        proxy.$Mitt.emit('addSong', { id: song.id, name: song.name, artist: song.artists, len: song.duration });
+      }
+      if (typeof curSongId === 'number') {
+        proxy.$Mitt.emit('playSong', curSongId);
+      } else {
+        proxy.$Mitt.emit('playSong', newSongList.value[0].id);
+      }
     }
 
     return {
@@ -116,7 +131,8 @@ export default {
       changeRoute,
       toSongLen,
       playSong,
-      newSongList: computed(() => store.state.home.newSongList || {})
+      playAllSong,
+      newSongList,
     }
   }
 

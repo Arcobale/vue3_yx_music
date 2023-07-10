@@ -8,13 +8,14 @@
                     {{ albumDesc.name }}
                 </div>
                 <div class="func">
-                    <div class="playall">播放全部</div>
+                    <div class="playall" @click="playAllSong">播放全部</div>
                     <div class="collect">收藏({{ albumDetailDynamic.subCount }})</div>
                     <div class="share">分享({{ albumDetailDynamic.shareCount }})</div>
                     <div class="downloadall">下载全部</div>
                 </div>
                 <div class="artist">
-                    <span>歌手：</span><a :href="`/artisthome/${albumDesc.artist?albumDesc.artist.id:''}`">{{ albumDesc.artist ? albumDesc.artist.name : '' }}</a>
+                    <span>歌手：</span><a :href="`/artisthome/${albumDesc.artist ? albumDesc.artist.id : ''}`">{{ albumDesc.artist
+                        ? albumDesc.artist.name : '' }}</a>
                 </div>
                 <div class="date">
                     <span>时间：</span>{{ fixedDate(albumDesc.publishTime) }}
@@ -22,15 +23,15 @@
             </div>
         </div>
         <div class="container">
-            <div class="song-item" v-for="(item, index) in albumSong" :key="item.id" @dblclick="playSong(item.id)">
+            <div class="song-item" v-for="(item, index) in albumSong" :key="item.id" @dblclick="playAllSong(item.id, item)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title" :class="{ deactive: item.dt === 0 }">
                     <span class="bold">{{ item.name }}</span>
                     <span class="alia" v-if="item.alia != ''">({{ item.alia[0] }})</span>
                 </div>
                 <div class="artist">
-                    <!-- <div class="artist-item" v-for="ar in item.ar" :key="ar.id">{{ ar.name }}</div> -->
                     {{ item.ar[0].name }}
+                    <span v-for="ar in item.ar.slice(1)" :key="ar.id">/{{ ar.name }}</span>
                 </div>
                 <div class="album">{{ item.al.name }}</div>
                 <div class="length">{{ toSongLen(item.dt) }}</div>
@@ -55,6 +56,7 @@ export default {
         const id = computed(() => router.currentRoute.value.params.id);
         const albumDetail = computed(() => store.state.playlist.albumDetail);
         const albumDetailDynamic = computed(() => store.state.playlist.albumDetailDynamic);
+        const albumSong = computed(() => albumDetail.value.songs || []);
 
         onMounted(() => {
             store.dispatch('getAlbumDetailDynamic', { id: id.value });
@@ -68,6 +70,19 @@ export default {
         function playSong(songId) {
             proxy.$Mitt.emit('playSong', songId);
             proxy.$Mitt.emit('addSong', songId);
+        }
+
+        function playAllSong(curSongId) {
+            proxy.$Mitt.emit('clearSongList');
+            for (let i = 0; i < albumSong.value.length; i++) {
+                let song = albumSong.value[i];
+                proxy.$Mitt.emit('addSong', { id: song.id, name: song.name, artist: song.ar, len: song.dt });
+            }
+            if (typeof curSongId === 'number') {
+                proxy.$Mitt.emit('playSong', curSongId);
+            } else {
+                proxy.$Mitt.emit('playSong', albumSong.value[0].id);
+            }
         }
 
         // 输出固定格式的时间
@@ -93,9 +108,10 @@ export default {
             fixedDate,
             toSongLen,
             playSong,
+            playAllSong,
             albumDesc: computed(() => albumDetail.value.album || []),
             albumDetailDynamic,
-            albumSong: computed(() => albumDetail.value.songs || []),
+            albumSong,
         }
     }
 }
@@ -122,6 +138,7 @@ export default {
                 font-weight: 600;
                 display: flex;
                 align-items: center;
+
                 .type {
                     width: 35px;
                     height: 18px;
@@ -160,6 +177,7 @@ export default {
             .date {
                 margin: 18px 0 10px;
                 font-weight: 300;
+
                 a {
                     text-decoration: none;
                     color: #39629a;

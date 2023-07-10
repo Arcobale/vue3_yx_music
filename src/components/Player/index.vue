@@ -11,7 +11,8 @@
         <div class="song-detail">
           <div class="song-detail-info">
             <span class="info-title">{{ songDetail.name }}</span>
-            - <span class="info-singer" v-for="ar in songDetail.ar" :key="ar.id">{{ ar.name }}/</span>
+             - {{ songDetail.ar[0].name }}
+            <span v-for="ar in songDetail.ar.slice(1)" :key="ar.id">/{{ ar.name }}</span>
           </div>
           <div class="song-detail-length">
             {{ curTime }} / {{ toSongLen(songDetail.dt) }}
@@ -127,7 +128,7 @@ export default {
       }, 1000);
     })
 
-    proxy.$Mitt.on('clearSong', () => {
+    proxy.$Mitt.on('stopCurSong', () => {
       let audio = document.querySelector('audio');
       percentage.value = 0;
       isPaused.value = true;
