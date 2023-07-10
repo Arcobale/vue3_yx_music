@@ -2,7 +2,13 @@
   <audio :src="songPlayDetail ? songPlayDetail.url : ''"></audio>
 
   <div id="footer">
-    <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2"></el-progress>
+    <div class="progress" @mousedown="dragStart" @mouseenter="isIconVisible=true" @mouseleave="isIconVisible=false">
+      <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2" :duration="0"
+        style="cursor: pointer;"></el-progress>
+      <div class="progress-icon-wrapper">
+        <span v-show="isIconVisible"></span>
+      </div>
+    </div>
     <div class="wrapper">
       <div class="song" v-if="!isEmpty">
         <div class="cover">
@@ -83,8 +89,10 @@ export default {
     const curTime = ref('00:00');
     const percentage = ref(0);
     const isEmpty = ref(true);
+    const isIconVisible = ref(false);
     // 循环状态。0:单曲循环，1:列表循环，2:随机播放
     const curCycle = computed(() => store.state.curCycle);
+    let isDragEnd = false;
     const songPlayDetail = computed(() => store.state.playlist.songUrl ? store.state.playlist.songUrl[0] : {});
     const songDetail = computed(() => store.state.playlist.songDetail[0] || undefined);
 
@@ -127,6 +135,8 @@ export default {
       audio.addEventListener('timeupdate', () => {
         curTime.value = toSongLen(audio.currentTime * 1000);
         percentage.value = songDetail.value ? calcPlayProgress(audio.currentTime * 1000, songDetail.value.dt) : 0;
+        let progressIcon = document.querySelector('.progress-icon-wrapper span');
+        progressIcon.style.left = percentage.value + '%';
       });
       // 监听歌曲播放是否完成
       audio.addEventListener('ended', () => {
@@ -137,6 +147,8 @@ export default {
       setTimeout(() => {
         audio.play();
         isPaused.value = false;
+        let progressIcon = document.querySelector('.progress-icon-wrapper span');
+        progressIcon.style.left = '0%';
         if (songPlayDetail.freeTrialInfo) {
           alert('您正在试听会员歌曲！');
         }
@@ -184,6 +196,41 @@ export default {
       store.commit('CHANGECYCLE');
     }
 
+    function dragStart() {
+      isDragEnd = false;
+      let element = event.target;
+      element.addEventListener("mouseup", dragEnd);
+      document.body.addEventListener("mousemove", dragMove);
+    }
+
+    function dragMove() {
+      if (!isDragEnd) {
+        const progressBox = document.querySelector(".progress");
+        const rect = progressBox.getBoundingClientRect();
+        const width = rect.width;
+        const offsetX = event.clientX - rect.left;
+
+        percentage.value = Math.round((offsetX / width) * 100);
+        percentage.value = Math.max(0, Math.min(percentage.value, 100));
+
+        const currentTime = songDetail.value.dt * percentage.value / 100 / 1000;
+        curTime.value = toSongLen(currentTime * 1000);
+      }
+    }
+
+    function dragEnd() {
+      isDragEnd = true;
+      const progressBox = document.querySelector(".progress");
+      const rect = progressBox.getBoundingClientRect();
+      const width = rect.width;
+      const offsetX = event.clientX - rect.left;
+
+      percentage.value = Math.round((offsetX / width) * 100);
+      percentage.value = Math.max(0, Math.min(percentage.value, 100));
+      let audio = document.querySelector('audio');
+      audio.currentTime = songDetail.value.dt * percentage.value / 100 / 1000;
+    }
+
     return {
       curTime,
       curCycle,
@@ -196,8 +243,10 @@ export default {
       calcPlayProgress,
       openList,
       changeCycle,
+      dragStart,
       isPaused,
-      isEmpty
+      isEmpty,
+      isIconVisible
     }
   }
 }
@@ -208,8 +257,22 @@ export default {
   width: 100%;
   background-color: white;
 
-  .el-progress {
-    width: 100%;
+  .progress {
+    .progress-icon-wrapper {
+      height: 16px;
+      width: 100%;
+      position: absolute;
+
+      span {
+        width: 8px;
+        height: 8px;
+        background-color: #cf756c;
+        border-radius: 50%;
+        position: absolute;
+        margin-left: -4px;
+        margin-top: -4px;
+      }
+    }
   }
 
   .wrapper {
