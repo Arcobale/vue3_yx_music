@@ -30,7 +30,8 @@
       </div>
     </div>
     <div class="container">
-      <div class="container-item" v-for="(item, index) in newSongList" :key="item.id" @dblclick="playAllSong(item.id, item)">
+      <div class="container-item" v-for="(item, index) in newSongList" :key="item.id"
+        @dblclick="playAllSong(item.id, item, index)">
         <div class="song-num">{{ fixedNum(index + 1) }}</div>
         <div class="song-cover">
           <img :src="item.album.picUrl" alt="">
@@ -40,8 +41,8 @@
           <span class="alia" v-if="item.alias != ''">({{ item.alias[0] }})</span>
         </div>
         <div class="song-artist">
-            {{ item.artists[0].name }}
-            <span v-for="ar in item.artists.slice(1)" :key="ar.id">/{{ ar.name }}</span>
+          {{ item.artists[0].name }}
+          <span v-for="ar in item.artists.slice(1)" :key="ar.id">/{{ ar.name }}</span>
         </div>
         <div class="song-album">{{ item.album.name }}</div>
         <div class="song-length">{{ toSongLen(item.duration) }}</div>
@@ -111,17 +112,16 @@ export default {
       proxy.$Mitt.emit('addSong', { id: songId, name: song.name, artist: song.artists, len: song.duration });
     }
 
-    function playAllSong(curSongId) {
+    function playAllSong(curSongId, song, curSongIndex) {
       proxy.$Mitt.emit('clearSongList');
-      console.log(newSongList.value.length)
       for (let i = 0; i < newSongList.value.length; i++) {
-        let song = newSongList.value[i];
-        proxy.$Mitt.emit('addSong', { id: song.id, name: song.name, artist: song.artists, len: song.duration });
+        let item = newSongList.value[i];
+        proxy.$Mitt.emit('addSong', { id: item.id, name: item.name, artist: item.artists, len: item.duration });
       }
       if (typeof curSongId === 'number') {
-        proxy.$Mitt.emit('playSong', curSongId);
+        proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
       } else {
-        proxy.$Mitt.emit('playSong', newSongList.value[0].id);
+        proxy.$Mitt.emit('playSong', { songId: newSongList.value[0].id, songIndex: 0 });
       }
     }
 

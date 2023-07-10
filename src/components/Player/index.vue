@@ -11,7 +11,7 @@
         <div class="song-detail">
           <div class="song-detail-info">
             <span class="info-title">{{ songDetail.name }}</span>
-             - {{ songDetail.ar[0].name }}
+            - {{ songDetail.ar[0].name }}
             <span v-for="ar in songDetail.ar.slice(1)" :key="ar.id">/{{ ar.name }}</span>
           </div>
           <div class="song-detail-length">
@@ -24,7 +24,7 @@
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-heart"></use>
         </svg>
-        <svg class="icon skip" aria-hidden="true">
+        <svg class="icon skip" aria-hidden="true" @click="skipSong(-1)">
           <use xlink:href="#icon-skipback"></use>
         </svg>
         <div class="play" @click="changePlayState">
@@ -36,7 +36,7 @@
             <use xlink:href="#icon-pause"></use>
           </svg>
         </div>
-        <svg class="icon skip" aria-hidden="true">
+        <svg class="icon skip" aria-hidden="true" @click="skipSong(1)">
           <use xlink:href="#icon-skipforward"></use>
         </svg>
         <svg class="icon" aria-hidden="true">
@@ -100,13 +100,18 @@ export default {
     }
 
     // 监听双击歌曲播放的事件，使用歌曲id请求歌曲详情及其URL
-    proxy.$Mitt.on('playSong', songId => {
+    proxy.$Mitt.on('playSong', ({ songId, songIndex }) => {
       let audio = document.querySelector('audio');
       songUrlParams.id = songId;
       songDetailParams.ids = songId;
       store.dispatch('getSongUrl', songUrlParams);
       store.dispatch('getSongDetail', songDetailParams);
       isEmpty.value = false;
+
+      // 切换为当前播放列表指定index的歌曲
+      if (songIndex) {
+        proxy.$Mitt.emit('changeSong', songIndex);
+      }
 
       // 监听歌曲播放的实时进度
       audio.addEventListener('timeupdate', () => {
@@ -159,11 +164,17 @@ export default {
       proxy.$Mitt.emit('openList');
     }
 
+    // 切歌
+    function skipSong(step) {
+      proxy.$Mitt.emit('skipSong', step);
+    }
+
     return {
       curTime,
       percentage,
       songPlayDetail,
       songDetail,
+      skipSong,
       changePlayState,
       toSongLen,
       calcPlayProgress,
@@ -215,6 +226,7 @@ export default {
       .song-detail {
         .song-detail-info {
           margin-bottom: 4px;
+
           .info-title {
             font-size: 12px;
             color: #000000;

@@ -31,7 +31,8 @@
             </div>
         </div>
         <div class="container">
-            <div class="song-item" v-for="(item, index) in playListAll" :key="item.id" @dblclick="playAllSong(item.id, item)">
+            <div class="song-item" v-for="(item, index) in playListAll" :key="item.id"
+                @dblclick="playAllSong(item.id, item, index)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title">
                     <span class="bold">{{ item.name }}</span>
@@ -86,16 +87,16 @@ export default {
             proxy.$Mitt.emit('addSong', { id: songId, name: song.name, artist: song.ar, len: song.dt });
         }
 
-        function playAllSong(curSongId) {
+        function playAllSong(curSongId, song, curSongIndex) {
             proxy.$Mitt.emit('clearSongList');
             for (let i = 0; i < playListAll.value.length; i++) {
-                let song = playListAll.value[i];
-                proxy.$Mitt.emit('addSong', { id: song.id, name: song.name, artist: song.ar, len: song.dt });
+                let item = playListAll.value[i];
+                proxy.$Mitt.emit('addSong', { id: item.id, name: item.name, artist: item.ar, len: item.dt });
             }
             if (typeof curSongId === 'number') {
-                proxy.$Mitt.emit('playSong', curSongId);
+                proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
             } else {
-                proxy.$Mitt.emit('playSong', playListAll.value[0].id);
+                proxy.$Mitt.emit('playSong', { songId: playListAll.value[0].id, songIndex: 0 });
             }
         }
 

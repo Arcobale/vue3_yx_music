@@ -22,15 +22,14 @@
 
 <script>
 import { ref, getCurrentInstance, onMounted, reactive } from 'vue'
-import { useStore } from 'vuex'
 
 export default {
     name: 'OpenList',
     setup() {
-        const store = useStore();
         const { proxy } = getCurrentInstance();
 
         const isOpen = ref(false);
+        const curSongIndex = ref(0);
         const songDetailParams = reactive({
             ids: 1
         });
@@ -80,15 +79,28 @@ export default {
         proxy.$Mitt.on('addSong', (song) => {
             songDetailParams.ids = song.id;
             playData.push({
+                id: song.id,
                 name: song.name,
                 artist: arrToString(song.artist),
                 len: toSongLen(song.len),
             });
         })
 
+        proxy.$Mitt.on('skipSong', (step) => {
+            curSongIndex.value = (curSongIndex.value + step) % playData.length;
+            curSongIndex.value += curSongIndex.value < 0 ? playData.length : 0;
+            let nextSongId = playData[curSongIndex.value].id;
+            proxy.$Mitt.emit('playSong', { songId: nextSongId });
+        })
+
+        proxy.$Mitt.on('changeSong', (index) => {
+            curSongIndex.value = index;
+        })
+
         return {
             isOpen,
             playData,
+            curSongIndex,
             clearList,
         }
 
