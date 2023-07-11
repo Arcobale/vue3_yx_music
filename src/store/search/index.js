@@ -85,7 +85,7 @@ const actions = {
     async getSearchHot({commit}) {
         let res = await reqSearchHot();
         if (res.code == 200) {
-            commit('SEARCHHOT', res.data);
+            commit('SEARCHHOT', res.result.hots);
         }
     },
     async getSearchHotDetail({commit}) {

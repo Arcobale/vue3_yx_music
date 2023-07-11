@@ -17,6 +17,7 @@
   </el-container>
   <SongDetail class="songdetail"></SongDetail>
   <OpenList class="openlist"></OpenList>
+  <HotSearchList class="hotsearchlist"></HotSearchList>
 </template>
 
 <script>
@@ -25,6 +26,7 @@ import Navigation from './components/Navigation'
 import Player from './components/Player'
 import SongDetail from './components/SongDetail'
 import OpenList from './components/OpenList'
+import HotSearchList from './components/HotSearchList'
 
 export default {
   name: 'App',
@@ -33,7 +35,8 @@ export default {
     Navigation,
     Player,
     SongDetail,
-    OpenList
+    OpenList,
+    HotSearchList
   }
 }
 </script>
@@ -82,5 +85,8 @@ export default {
 }
 .openlist {
   // display: none;
+}
+.hotsearchlist {
+  
 }
 </style>

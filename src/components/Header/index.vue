@@ -30,7 +30,7 @@
         <div id="search">
             <div class="searchbox">
                 <el-input v-model="searchWords" :placeholder="searchDefault" :prefix-icon="Search"
-                    @keyup.enter="submitData" />
+                    @keyup.enter="submitData" @focus="openHotSearchList" />
             </div>
             <el-icon>
                 <Setting />
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Search } from '@element-plus/icons-vue'
@@ -60,10 +60,11 @@ export default {
     setup() {
         const router = useRouter();
         const store = useStore();
+        const { proxy } = getCurrentInstance();
+
         const option = computed(() => {
             return router.currentRoute.value.fullPath.split('/')[1];
         });
-
         const searchWords = ref('');
 
         onMounted(() => {
@@ -78,12 +79,17 @@ export default {
             });
         }
 
+        function openHotSearchList() {
+            proxy.$Mitt.emit('openHotSearchList');
+        }
+
         return {
             option,
             searchWords,
             searchDefault: computed(() => store.state.search.searchDefault),
             Search,
             submitData,
+            openHotSearchList
         }
     }
 }
