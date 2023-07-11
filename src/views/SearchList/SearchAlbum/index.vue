@@ -23,7 +23,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
-    name: 'SearchArtist',
+    name: 'SearchAlbum',
     setup() {
         const store = useStore();
         const router = useRouter();
