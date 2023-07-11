@@ -1,7 +1,7 @@
 <template>
     <div class="search-song">
         最佳匹配
-        <div class="bestmatch">
+        <div class="bestmatch" @click="showArtistHome(bestMatchArtist.id)">
             <div class="cover">
                 <img :src="bestMatchArtist.img1v1Url" alt="">
             </div>
@@ -37,11 +37,13 @@
 <script>
 import { computed, onMounted, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'SearchSong',
     setup() {
         const store = useStore();
+        const router = useRouter();
         const { proxy } = getCurrentInstance();
 
         const songList = computed(() => store.state.search.searchList.songs || []);
@@ -73,10 +75,19 @@ export default {
             proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });
         }
 
+        function showArtistHome(artistId) {
+            router.push({
+                name: 'artisthome', params: {
+                    id: artistId
+                }
+            })
+        }
+
         return {
             fixedNum,
             toSongLen,
             playSong,
+            showArtistHome,
             songList,
             bestMatchArtist
         }
@@ -121,6 +132,7 @@ export default {
 
     .container {
         width: 730px;
+
         .head {
             height: 35px;
             color: #696969;
@@ -132,13 +144,16 @@ export default {
                 margin-left: 58px;
                 width: 290px;
             }
+
             .head-artist {
                 width: 140px;
             }
+
             .head-album {
                 width: 180px;
             }
         }
+
         .container-item {
             height: 30px;
             display: flex;
@@ -184,5 +199,4 @@ export default {
     }
 
     .pagination {}
-}
-</style>
+}</style>
