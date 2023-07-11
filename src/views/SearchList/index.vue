@@ -2,11 +2,11 @@
     <div class="search-list">
         <div class="result">
             {{ searchListParams.keywords }}
-            <span v-if="searchList.type === 1">找到 {{ searchList.songCount }} 首单曲</span>
-            <span v-else-if="searchList.type === 100">找到 {{ searchList.songCount }} 位歌手</span>
-            <span v-else-if="searchList.type === 10">找到 {{ searchList.songCount }} 张专辑</span>
-            <span v-else-if="searchList.type === 1000">找到 {{ searchList.songCount }} 个歌单</span>
-            <span v-else>找到 {{ searchList.songCount }} 个视频</span>
+            <span v-if="searchListParams.type === 1">找到 {{ count }} 首单曲</span>
+            <span v-else-if="searchListParams.type === 100">找到 {{ count }} 位歌手</span>
+            <span v-else-if="searchListParams.type === 10">找到 {{ count }} 张专辑</span>
+            <span v-else-if="searchListParams.type === 1000">找到 {{ count }} 个歌单</span>
+            <span v-else>找到 {{ count }} 个视频</span>
         </div>
 
         <div class="nav" @click="changeRoute()">
@@ -57,22 +57,22 @@ export default {
             let routeName = element.getAttribute('value');
             let type = element.getAttribute('type');
 
+            element.classList.add('active');
+            curActiveElement.classList.remove('active');
+
+            searchListParams.type = parseInt(type);
+            getData();
+
             let routes = router.currentRoute.value.fullPath.split('/');
             routes.pop();
             routes.push(routeName);
             router.push(routes.join('/'));
-
-            element.classList.add('active');
-            curActiveElement.classList.remove('active');
-
-            searchListParams.type = type;
-            getData();
         }
 
         return {
             searchListParams,
             changeRoute,
-            searchList: computed(() => store.state.search.searchList),
+            count: computed(() => store.state.search.count),
         }
     }
 

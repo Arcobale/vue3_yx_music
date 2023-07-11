@@ -1,8 +1,15 @@
 import { reqSearch, reqSearchDefault, reqSearchHot, reqSearchHotDetail, reqSearchSuggest, reqSearchMultiMatch } from "@/api";
 
 const state = {
-    searchList: [],
+    searchListSong: [],
     bestMatch: {},
+    count: 0,
+
+    searchListArtist: [],
+    searchListAlbum: [],
+    searchListPlayList: [],
+    searchListVideo: [],
+
     searchDefault: '',
     searchHot: [],
     searchHotDetail: [],
@@ -11,10 +18,29 @@ const state = {
 };
 
 const mutations = {
-    SEARCHLIST(state, res) {
-        state.searchList = res.result;
+    SEARCHLISTSONG(state, res) {
+        state.searchListSong = res.result.songs;
+        state.count = res.result.songCount;
         state.bestMatch = res.result.songs[0].artists[0];
     },
+    SEARCHLISTARTIST(state, res) {
+        state.searchListArtist = res.result.artists;
+        state.count = res.result.artistCount;
+    },
+    SEARCHLISTALBUM(state, res) {
+        state.searchListAlbum = res.result.albums;
+        state.count = res.result.albumCount;
+    },
+    SEARCHLISTPLAYLIST(state, res) {
+        state.searchListPlayList = res.result.playlists;
+        state.count = res.result.playlistCount;
+    },
+    SEARCHLISTVIDEO(state, res) {
+        state.searchListVideo = res.result.mvs;
+        state.count = res.result.mvCount;
+    },
+
+
     SEARCHDEFAULT(state, searchDefault) {
         state.searchDefault = searchDefault;
     },
@@ -36,7 +62,18 @@ const actions = {
     async getSearchList({commit}, params) {
         let res = await reqSearch(params);
         if (res.code == 200) {
-            commit('SEARCHLIST', res);
+            // 1:单曲，10:专辑，100:歌手，1000:歌单，1004:MV，1014:视频
+            if (params.type === 1) {
+                commit('SEARCHLISTSONG', res);
+            } else if (params.type === 100) {
+                commit('SEARCHLISTARTIST', res);
+            } else if (params.type === 10) {
+                commit('SEARCHLISTALBUM', res);
+            } else if (params.type === 1000) {
+                commit('SEARCHLISTPLAYLIST', res);
+            } else {
+                commit('SEARCHLISTVIDEO', res);
+            }
         }
     },
     async getSearchDefault({commit}) {

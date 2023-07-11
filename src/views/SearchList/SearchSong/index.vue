@@ -16,7 +16,7 @@
                 <div class="head-album">专辑</div>
                 <div class="head-length">时长</div>
             </div>
-            <div class="container-item" v-for="(item, index) in songList" :key="item.id" @dblclick="playSong(item)">
+            <div class="container-item" v-for="(item, index) in searchListSong" :key="item.id" @dblclick="playSong(item)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title">
                     <span class="bold">{{ item.name }}</span>
@@ -46,7 +46,7 @@ export default {
         const router = useRouter();
         const { proxy } = getCurrentInstance();
 
-        const songList = computed(() => store.state.search.searchList.songs || []);
+        const searchListSong = computed(() => store.state.search.searchListSong || []);
         const bestMatchArtist = computed(() => store.state.search.bestMatch || {});
 
         onMounted(() => {
@@ -88,7 +88,7 @@ export default {
             toSongLen,
             playSong,
             showArtistHome,
-            songList,
+            searchListSong,
             bestMatchArtist
         }
     }
