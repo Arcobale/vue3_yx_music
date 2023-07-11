@@ -29,8 +29,9 @@
         </div>
         <div id="search">
             <div class="searchbox">
-                <el-input v-model="searchWords" :placeholder="searchDefault" :prefix-icon="Search"
-                    @keyup.enter="submitData" @focus="openHotSearchList" />
+                <el-input v-model="searchWords" :placeholder="searchDefault" :prefix-icon="Search" @keyup.enter="submitData"
+                    @input="suggestWord(searchWords)" />
+                <!-- @click="openHotSearchList" -->
             </div>
             <el-icon>
                 <Setting />
@@ -83,13 +84,25 @@ export default {
             proxy.$Mitt.emit('openHotSearchList');
         }
 
+        function suggestWord(keywords) {
+            // 防抖
+            let timer = null;
+            if (!timer) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(() => {
+                proxy.$Mitt.emit('openSuggestList', keywords);
+            }, 500)
+        }
+
         return {
             option,
             searchWords,
             searchDefault: computed(() => store.state.search.searchDefault),
             Search,
             submitData,
-            openHotSearchList
+            openHotSearchList,
+            suggestWord
         }
     }
 }

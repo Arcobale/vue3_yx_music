@@ -11,7 +11,6 @@ const state = {
     searchListVideo: [],
 
     searchDefault: '',
-    searchHot: [],
     searchHotDetail: [],
     searchSuggest: [],
     searchMultiMatch: [],
@@ -43,9 +42,6 @@ const mutations = {
 
     SEARCHDEFAULT(state, searchDefault) {
         state.searchDefault = searchDefault;
-    },
-    SEARCHHOT(state, searchHot) {
-        state.searchHot = searchHot;
     },
     SEARCHHOTDETAIL(state, searchHotDetail) {
         state.searchHotDetail = searchHotDetail;
@@ -82,12 +78,6 @@ const actions = {
             commit('SEARCHDEFAULT', res.data.realkeyword);
         }
     },
-    async getSearchHot({commit}) {
-        let res = await reqSearchHot();
-        if (res.code == 200) {
-            commit('SEARCHHOT', res.result.hots);
-        }
-    },
     async getSearchHotDetail({commit}) {
         let res = await reqSearchHotDetail();
         if (res.code == 200) {
@@ -97,7 +87,7 @@ const actions = {
     async getSearchSuggest({commit}, params) {
         let res = await reqSearchSuggest(params);
         if (res.code == 200) {
-            commit('SEARCHSUGGEST', res.data);
+            commit('SEARCHSUGGEST', res.result);
         }
     },
     async getSearchMultiMatch({commit}, params) {

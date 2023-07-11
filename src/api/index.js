@@ -264,7 +264,7 @@ export function reqSearchHotDetail() {
 }
 
 // 搜索建议
-export function reqSearchSuggest() {
+export function reqSearchSuggest(params) {
     return requests({
         method: 'get',
         url: `/search/suggest`,
@@ -273,7 +273,7 @@ export function reqSearchSuggest() {
 }
 
 // 搜索多重匹配
-export function reqSearchMultiMatch() {
+export function reqSearchMultiMatch(params) {
     return requests({
         method: 'get',
         url: `/search/multimatch`,

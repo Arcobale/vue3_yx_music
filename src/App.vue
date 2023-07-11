@@ -15,9 +15,10 @@
       <Player></Player>
     </el-footer>
   </el-container>
-  <SongDetail class="songdetail"></SongDetail>
-  <OpenList class="openlist"></OpenList>
-  <HotSearchList class="hotsearchlist"></HotSearchList>
+  <SongDetail></SongDetail>
+  <OpenList></OpenList>
+  <HotSearchList></HotSearchList>
+  <SuggestList></SuggestList>
 </template>
 
 <script>
@@ -27,6 +28,7 @@ import Player from './components/Player'
 import SongDetail from './components/SongDetail'
 import OpenList from './components/OpenList'
 import HotSearchList from './components/HotSearchList'
+import SuggestList from './components/SuggestList'
 
 export default {
   name: 'App',
@@ -36,7 +38,8 @@ export default {
     Player,
     SongDetail,
     OpenList,
-    HotSearchList
+    HotSearchList,
+    SuggestList
   }
 }
 </script>
@@ -78,15 +81,5 @@ export default {
     height: auto;
     z-index: 100;
   }
-}
-
-.songdetail {
-  display: none;
-}
-.openlist {
-  // display: none;
-}
-.hotsearchlist {
-  
 }
 </style>
