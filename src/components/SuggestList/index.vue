@@ -1,7 +1,7 @@
 <template>
     <div class="suggest-list">
-        <el-drawer v-model="isOpen" direction="rtl" size="35%" z-index="10">
-            <div class="head">搜“<span>{{ curWord }}</span>”相关的结果></div>
+        <el-drawer v-model="isOpen" direction="rtl" size="35%" z-index="10" @opened="blurDrawer">
+            <div class="head" ref="tempRef" tabindex="0">搜“<span>{{ curWord }}</span>”相关的结果></div>
             <div class="container">
                 <div class="subtitle">
                     单曲
@@ -45,8 +45,9 @@ export default {
         const router = useRouter();
         const { proxy } = getCurrentInstance();
 
-        const isOpen = ref(true);
+        const isOpen = ref(false);
         const curWord = ref('');
+        const tempRef = ref(null);
         const searchSuggest = computed(() => store.state.search.searchSuggest || {});
 
         const songs = computed(() => searchSuggest.value.songs);
@@ -80,13 +81,24 @@ export default {
             });
         }
 
+        function blurDrawer() {
+            tempRef.value.focus();
+            tempRef.value.blur();
+        }
+
         proxy.$Mitt.on('openSuggestList', (keywords) => {
             isOpen.value = true;
             curWord.value = keywords;
             store.dispatch('getSearchSuggest', { keywords })
         })
 
+        proxy.$Mitt.on('closeSuggestList', () => {
+            isOpen.value = false;
+            curWord.value = '';
+        })
+
         return {
+            tempRef,
             isOpen,
             curWord,
             songs,
@@ -95,6 +107,7 @@ export default {
             playSong,
             showArtistHome,
             showAlbumDetail,
+            blurDrawer
         }
     }
 

@@ -1,7 +1,7 @@
 <template>
     <div class="hotsearch-list">
-        <el-drawer v-model="isOpen" direction="rtl" size="35%" z-index="10">
-            <div class="head">热搜榜</div>
+        <el-drawer v-model="isOpen" direction="rtl" size="35%" z-index="10" @opened="blurDrawer">
+            <div class="head" ref="tempRef" tabindex="0">热搜榜</div>
             <div class="container">
                 <div class="container-item" v-for="(item, index) in searchHotDetail" :key="index"
                     @click="search(item.searchWord)">
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, getCurrentInstance } from 'vue'
+import { computed, ref, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -32,9 +32,7 @@ export default {
         const { proxy } = getCurrentInstance();
 
         const isOpen = ref(false);
-        onMounted(() => {
-            
-        })
+        const tempRef = ref(null);
 
         function search(keyword) {
             isOpen.value = false;
@@ -45,15 +43,27 @@ export default {
             });
         }
 
+        // 解决打开抽屉焦点丢失问题
+        function blurDrawer() {
+            tempRef.value.focus();
+            tempRef.value.blur();
+        }
+
         proxy.$Mitt.on('openHotSearchList', () => {
             isOpen.value = true;
             store.dispatch('getSearchHotDetail');
         })
 
+        proxy.$Mitt.on('closeHotSearchList', () => {
+            isOpen.value = false;
+        })
+
         return {
             isOpen,
+            tempRef,
             searchHotDetail: computed(() => store.state.search.searchHotDetail || {}),
             search,
+            blurDrawer
         }
     }
 
@@ -131,4 +141,5 @@ export default {
             background-color: #f0f0f0;
         }
     }
-}</style>
+}
+</style>

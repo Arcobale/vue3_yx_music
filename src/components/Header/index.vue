@@ -29,9 +29,8 @@
         </div>
         <div id="search">
             <div class="searchbox">
-                <el-input v-model="searchWords" :placeholder="searchDefault" :prefix-icon="Search" @keyup.enter="submitData"
-                    @input="suggestWord(searchWords)" />
-                <!-- @click="openHotSearchList" -->
+                <el-input ref="inputBox" v-model="searchWords" :placeholder="searchDefault" :prefix-icon="Search"
+                    @keyup.enter="submitData" @input="suggestWord()" @click="openHotSearchList" />
             </div>
             <el-icon>
                 <Setting />
@@ -50,7 +49,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, getCurrentInstance, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Search } from '@element-plus/icons-vue'
@@ -67,6 +66,7 @@ export default {
             return router.currentRoute.value.fullPath.split('/')[1];
         });
         const searchWords = ref('');
+        const inputBox = ref(null);
 
         onMounted(() => {
             store.dispatch('getSearchDefault');
@@ -81,21 +81,39 @@ export default {
         }
 
         function openHotSearchList() {
-            proxy.$Mitt.emit('openHotSearchList');
+            // 搜索词为空时才打开热搜列表
+            if (!searchWords.value) {
+                setTimeout(() => {
+                    inputBox.value.focus();
+                }, 500);
+                proxy.$Mitt.emit('openHotSearchList');
+            } else {
+                suggestWord();
+            }
         }
 
-        function suggestWord(keywords) {
-            // 防抖
-            let timer = null;
-            if (!timer) {
-                clearTimeout(timer);
+        function suggestWord() {
+            // 搜索词非空时才打开搜索建议
+            if (searchWords.value) {
+                proxy.$Mitt.emit('closeHotSearchList');
+                // 防抖
+                let timer = null;
+                if (!timer) {
+                    clearTimeout(timer);
+                }
+                timer = setTimeout(() => {
+                    setTimeout(() => {
+                        inputBox.value.focus();
+                    }, 500);
+                    proxy.$Mitt.emit('openSuggestList', searchWords.value);
+                }, 500);
+            } else {
+                proxy.$Mitt.emit('closeSuggestList');
             }
-            timer = setTimeout(() => {
-                proxy.$Mitt.emit('openSuggestList', keywords);
-            }, 500)
         }
 
         return {
+            inputBox,
             option,
             searchWords,
             searchDefault: computed(() => store.state.search.searchDefault),
@@ -178,6 +196,7 @@ export default {
                 background-color: rgba(209, 113, 104, 0.9);
                 border: 0px;
                 box-shadow: 0 0 0 0;
+                z-index: 101;
             }
 
             :deep(.el-input__inner) {
