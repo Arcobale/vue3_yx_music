@@ -229,3 +229,54 @@ export function reqAlbumDetailDynamic(params) {
         params
     })
 }
+
+// 搜索
+export function reqSearch(params) {
+    return requests({
+        method: 'get',
+        url: `/search`,
+        params
+    })
+}
+
+// 默认搜索关键词
+export function reqSearchDefault() {
+    return requests({
+        method: 'get',
+        url: `/search/default`
+    })
+}
+
+// 热搜列表-简略
+export function reqSearchHot() {
+    return requests({
+        method: 'get',
+        url: `/search/hot`
+    })
+}
+
+// 热搜列表-详细
+export function reqSearchHotDetail() {
+    return requests({
+        method: 'get',
+        url: `/search/hot/detail`
+    })
+}
+
+// 搜索建议
+export function reqSearchSuggest() {
+    return requests({
+        method: 'get',
+        url: `/search/suggest`,
+        params
+    })
+}
+
+// 搜索多重匹配
+export function reqSearchMultiMatch() {
+    return requests({
+        method: 'get',
+        url: `/search/multimatch`,
+        params
+    })
+}

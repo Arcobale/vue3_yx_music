@@ -164,6 +164,38 @@ const router = createRouter({
                     component: () => import('@/views/ArtistHome/SimiArtist')
                 },
             ]
+        },
+        {
+            path: '/searchlist/:keyword',
+            redirect: {
+                name: 'searchsong'
+            },
+            name: 'searchlist',
+            component: () => import('@/views/SearchList'),
+            hidden: true,
+            children: [
+                {
+                    path: 'song',
+                    name: 'searchsong',
+                    component: () => import('@/views/SearchList/SearchSong')
+                },
+                {
+                    path: 'artist',
+                    component: () => import('@/views/SearchList/SearchArtist')
+                },
+                {
+                    path: 'album',
+                    component: () => import('@/views/SearchList/SearchAlbum')
+                },
+                {
+                    path: 'video',
+                    component: () => import('@/views/SearchList/SearchVideo')
+                },
+                {
+                    path: 'playlist',
+                    component: () => import('@/views/SearchList/SearchPlayList')
+                },
+            ]
         }
     ],
     history: createWebHistory()

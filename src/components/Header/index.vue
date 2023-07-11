@@ -29,7 +29,8 @@
         </div>
         <div id="search">
             <div class="searchbox">
-                <el-input v-model="searchWords" placeholder="搜索" :prefix-icon="Search" />
+                <el-input v-model="searchWords" :placeholder="searchDefault" :prefix-icon="Search"
+                    @keyup.enter="submitData" />
             </div>
             <el-icon>
                 <Setting />
@@ -48,8 +49,9 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import { Search } from '@element-plus/icons-vue'
 
 
@@ -57,16 +59,31 @@ export default {
     name: 'Header',
     setup() {
         const router = useRouter();
+        const store = useStore();
         const option = computed(() => {
             return router.currentRoute.value.fullPath.split('/')[1];
         });
 
         const searchWords = ref('');
 
+        onMounted(() => {
+            store.dispatch('getSearchDefault');
+        })
+
+        function submitData() {
+            router.push({
+                name: 'searchlist', params: {
+                    keyword: searchWords.value
+                }
+            });
+        }
+
         return {
             option,
             searchWords,
-            Search
+            searchDefault: computed(() => store.state.search.searchDefault),
+            Search,
+            submitData,
         }
     }
 }
@@ -147,6 +164,7 @@ export default {
             :deep(.el-input__inner) {
                 color: #f7e6e5;
             }
+
             :deep(.el-input__inner::placeholder) {
                 color: #f5d3d1;
             }

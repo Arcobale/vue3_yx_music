@@ -37,13 +37,9 @@
 import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import ArtistAlbum from './ArtistAlbum'
 
 export default {
     name: 'ArtistHome',
-    components: {
-        ArtistAlbum,
-    },
 
     setup() {
         const store = useStore();

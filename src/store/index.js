@@ -4,6 +4,7 @@ import recent from '@/store/recent/index.js'
 import playlist from '@/store/playlist/index.js'
 import artisthome from '@/store/artisthome/index.js'
 import mv from '@/store/mv/index.js'
+import search from '@/store/search/index.js'
 
 const store = createStore({
     state: {
@@ -30,7 +31,8 @@ const store = createStore({
         recent,
         playlist,
         artisthome,
-        mv
+        mv,
+        search
     }
 });
 
