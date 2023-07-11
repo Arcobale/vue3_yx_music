@@ -133,7 +133,13 @@ export default {
     function bannerHandler(banner, type) {
       if (type === 1) {
         // 新歌首发/热歌推荐，根据targetId播放歌曲
-        playSong(banner.targetId);
+        store.dispatch('getSongDetail', { ids: banner.targetId }).then(() => {
+          const song = store.state.playlist.songDetail[0];
+
+          proxy.$Mitt.emit('playSong', { songId: song.id });
+          let newItem = { id: song.id, name: song.name, artist: song.ar, len: song.dt };
+          proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });     
+        });
       } else if (type === 3000) {
         // 数字专辑/独家策划/活动，根据url属性的id参数跳转歌单详情页
         // let url = banner.url;
