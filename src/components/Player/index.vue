@@ -12,16 +12,16 @@
     <div class="wrapper">
       <div class="song" v-if="!isEmpty">
         <div class="cover" @click="openOrCloseLyric">
-          <img :src="songDetail ? songDetail.al.picUrl : ''" alt="">
+          <img :src="songDetail?.al?.picUrl" alt="">
         </div>
         <div class="song-detail">
           <div class="song-detail-info">
-            <span class="info-title">{{ songDetail.name }}</span>
-            - {{ songDetail.ar[0].name }}
-            <span v-for="ar in songDetail.ar.slice(1)" :key="ar.id">/{{ ar.name }}</span>
+            <span class="info-title">{{ songDetail?.name }}</span>
+            - {{ songDetail?.ar?.[0]?.name }}
+            <span v-for="ar in songDetail?.ar?.slice(1)" :key="ar.id">/{{ ar.name }}</span>
           </div>
           <div class="song-detail-length">
-            {{ curTime }} / {{ toSongLen(songDetail.dt) }}
+            {{ curTime }} / {{ songDetail?.dt ? toSongLen(songDetail.dt) : '' }}
           </div>
         </div>
       </div>

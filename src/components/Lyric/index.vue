@@ -5,7 +5,7 @@
             <div class="top">
                 <div class="left">
                     <div class="cover">
-                        <img :src="songDetail.al.picUrl" alt="">
+                        <img :src="songDetail?.al?.picUrl" alt="">
                     </div>
                     <div class="func">
                         <div class="button">喜欢</div>
@@ -16,17 +16,17 @@
                 </div>
 
                 <div class="right">
-                    <div class="title">{{ songDetail.name }}</div>
+                    <div class="title">{{ songDetail?.name }}</div>
                     <div class="subtitle">
                         <div class="album">
                             专辑：
-                            <span class="clickable" @click="showAlbumDetail(songDetail.al.id)">{{ songDetail.al.name }}</span>
+                            <span class="clickable" @click="showAlbumDetail(songDetail.al.id)">{{ songDetail?.al?.name }}</span>
                         </div>
                         <div class="artist">
                             歌手：
-                            <span class="clickable" @click="showArtistHome(songDetail.ar[0].id)">{{ songDetail.ar[0].name }}</span>
-                            <div v-if="songDetail.ar.length > 1">
-                                <span v-for="ar in songDetail.ar.slice(1)" :key="ar.id">
+                            <span class="clickable" @click="showArtistHome(songDetail.ar[0].id)">{{ songDetail?.ar?.[0]?.name }}</span>
+                            <div v-if="songDetail?.ar?.length > 1">
+                                <span v-for="ar in songDetail?.ar?.slice(1)" :key="ar.id">
                                     / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
                                 </span>
                             </div>
@@ -85,7 +85,7 @@ export default {
         const router = useRouter();
         const { proxy } = getCurrentInstance();
 
-        const isOpen = ref(true);
+        const isOpen = ref(false);
         const curSongId = computed(() => store.state.lyric.curSongId);
         const curSongTime = computed(() => store.state.lyric.curSongTime);
         const curLyricIndex = ref(-1);
@@ -110,10 +110,6 @@ export default {
             // time,
         });
 
-        onMounted(() => {
-            getData();
-        })
-
         function getData() {
             store.dispatch('getLyric', { id: curSongId.value });
             store.dispatch('getLyricWordByWord', { id: curSongId.value });
@@ -135,6 +131,11 @@ export default {
             store.commit('CHANGELYRICSTATE');
         })
 
+        proxy.$Mitt.on('closeLyric', () => {
+            isOpen.value = false;
+            store.commit('CHANGELYRICSTATE');
+        })
+
         watch(curSongId, () => {
             // 只有在歌词界面打开时切歌才重新发请求
             if (isOpen.value) {
@@ -148,8 +149,7 @@ export default {
                     curLyricIndex.value = i - 1;
 
                     // 开始滚动
-                    if (curLyricIndex.value > 5) {
-                        console.log(lyricContainer.value.scrollTop)
+                    if (isOpen.value && curLyricIndex.value > 5) {
                         lyricContainer.value.scrollTop = 30 * (curLyricIndex.value - 5);
                     }
                     break;
@@ -175,11 +175,6 @@ export default {
                 }
             });
         }
-
-        proxy.$Mitt.on('closeLyric', () => {
-            isOpen.value = false;
-            store.commit('CHANGELYRICSTATE');
-        })
 
         return {
             isOpen,
