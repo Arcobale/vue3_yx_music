@@ -6,12 +6,12 @@
           语种：
         </div>
         <ul class="value" @click="changeArea">
-          <li class="active" value="-1">全部</li>
-          <li value="7">华语</li>
-          <li value="96">欧美</li>
-          <li value="8">日本</li>
-          <li value="16">韩国</li>
-          <li value="0">其他</li>
+          <li class="active clickable" value="-1">全部</li>
+          <li class="clickable" value="7">华语</li>
+          <li class="clickable" value="96">欧美</li>
+          <li class="clickable" value="8">日本</li>
+          <li class="clickable" value="16">韩国</li>
+          <li class="clickable" value="0">其他</li>
         </ul>
       </div>
       <div class="category-type">
@@ -19,19 +19,19 @@
           分类：
         </div>
         <ul class="value" @click="changeType">
-          <li class="active" value="-1">全部</li>
-          <li value="1">男歌手</li>
-          <li value="2">女歌手</li>
-          <li value="3">乐队组合</li>
+          <li class="active clickable" value="-1">全部</li>
+          <li class="clickable" value="1">男歌手</li>
+          <li class="clickable" value="2">女歌手</li>
+          <li class="clickable" value="3">乐队组合</li>
         </ul>
       </div>
     </div>
     <div class="container">
       <div class="singer-item" v-for="item in artistList" :key="item.id" @click="showArtistHome(item.id)">
-        <div class="cover">
-            <img :src="item.img1v1Url" alt="" style="width: 134px; height: 134px;">
-          </div>
-          <div class="desc">{{ item.name }}</div>
+        <div class="cover clickable">
+          <img :src="item.img1v1Url" alt="" style="width: 134px; height: 134px;">
+        </div>
+        <div class="desc clickable">{{ item.name }}</div>
       </div>
     </div>
   </div>
@@ -80,9 +80,11 @@ export default {
     }
 
     function showArtistHome(artistId) {
-      router.push({name: 'artisthome', params: {
-        id: artistId
-      }})
+      router.push({
+        name: 'artisthome', params: {
+          id: artistId
+        }
+      })
     }
 
     return {
@@ -97,22 +99,36 @@ export default {
 
 <style lang="less" scoped>
 .artist {
+  .clickable {
+    cursor: pointer;
+  }
+
+  ul .clickable:hover {
+    font-weight: 500;
+  }
+
   img {
     border-radius: 5px;
   }
+
   .breadcrumb {
     font-size: 10px;
     line-height: 18px;
-    .category-area, .category-type {
+
+    .category-area,
+    .category-type {
       display: flex;
       margin-bottom: 14px;
+
       .key {
         font-weight: 600;
       }
+
       ul {
         display: flex;
         justify-content: space-evenly;
         font-weight: 400;
+
         li {
           display: block;
           width: 76px;
@@ -120,9 +136,11 @@ export default {
           text-align: center;
           border-left: 1px solid #e0e0e0;
         }
+
         li:first-child {
           border-left: none;
         }
+
         .active {
           font-weight: 600;
           color: #c24639;
@@ -130,6 +148,7 @@ export default {
       }
     }
   }
+
   .container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -143,6 +162,10 @@ export default {
         margin-top: 8px;
         margin-left: 2px;
         font-weight: 400;
+      }
+
+      .desc .clickable:hover {
+        font-weight: 500;
       }
     }
   }

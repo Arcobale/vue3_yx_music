@@ -20,7 +20,7 @@
 
     <div class="breadcrumb" @mouseleave="isOpen = false">
       <div class="category">
-        <div class="current-tag" @click="isOpen = true">
+        <div class="current-tag clickable" @click="isOpen = true">
           {{ curCat }}
           <el-icon>
             <ArrowRight />
@@ -28,20 +28,20 @@
         </div>
         <div class="hot-tag">
           <div class="hot-tag-item" v-for="item in playListHotTag" :key="item.id" @click="changeCat(item.name)">
-            <span>{{ item.name }}</span>
+            <span class="clickable">{{ item.name }}</span>
           </div>
         </div>
       </div>
 
       <div class="nav" v-if="isOpen">
         <div class="all" @click="changeCat('全部')">
-          <span>全部歌单</span>
+          <span class="clickable">全部歌单</span>
         </div>
         <div class="menu">
           <div class="menu-item" v-for="(key, index) in playListCategories" :key="index">
             <div class="key">{{ key }}</div>
             <ul class="categorytwo">
-              <li v-for="(cat, index2) in playListSortedCategories[index]" :key="index2" @click="changeCat(cat.name)">
+              <li class="clickable" v-for="(cat, index2) in playListSortedCategories[index]" :key="index2" @click="changeCat(cat.name)">
                 {{ cat.name }}
                 <span class="hot" v-if="cat.hot">HOT</span>
               </li>
@@ -53,8 +53,8 @@
 
     <div class="songlist">
       <div v-for="item in playListHQ" :key="item.id" @click="showDetail(item.id)">
-        <img :src="item.coverImgUrl" :alt="item.name" class="cover" style="width: 170px; height: 170px;">
-        <div class="mask">
+        <img :src="item.coverImgUrl" :alt="item.name" class="cover clickable" style="width: 170px; height: 170px;">
+        <div class="mask clickable">
           <div class="creator">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-user"></use>
@@ -68,7 +68,7 @@
             {{ fixedNum(item.playCount) }}
           </div>
         </div>
-        <div class="desc">{{ item.name }}</div>
+        <div class="desc clickable">{{ item.name }}</div>
       </div>
     </div>
 
@@ -157,6 +157,14 @@ export default {
   font-size: 12px;
   color: #363636;
 
+  .clickable {
+    cursor: pointer;
+  }
+
+  .clickable:hover {
+    color: #c24639;
+  }
+
   .banner {
     width: 740px;
     height: 170px;
@@ -232,6 +240,9 @@ export default {
         font-size: 14px;
         line-height: 28px;
         padding-left: 14px;
+      }
+      .current-tag:hover {
+        background-color: #edeced;
       }
 
       .hot-tag {
@@ -334,6 +345,10 @@ export default {
       line-height: 16px;
     }
 
+    .desc .clickable:hover {
+      font-weight: 500;
+    }
+
     .mask {
       height: 170px;
       width: 170px;
@@ -355,4 +370,5 @@ export default {
       }
     }
   }
-}</style>
+}
+</style>

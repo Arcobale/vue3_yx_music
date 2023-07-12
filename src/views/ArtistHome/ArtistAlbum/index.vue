@@ -7,13 +7,21 @@
             <div class="header">
                 <div class="album-title">热门50首</div>
                 <div class="button">
-                    <span>播放</span>
-                    <span>收藏</span>
+                    <span class="clickable" @click="playAllSong">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-bofang"></use>
+                        </svg>
+                    </span>
+                    <span class="clickable">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-tianjia"></use>
+                        </svg>
+                    </span>
                 </div>
             </div>
             <div class="songlist">
                 <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id"
-                    @dblclick="playSong(song)">
+                    @dblclick="playAllSong(song.id, index)">
                     <div class="song-num">{{ fixedNum(index + 1) }}</div>
                     <div class="song-title">
                         {{ song.name }}
@@ -24,24 +32,17 @@
                     <div class="song-length">{{ toSongLen(song.dt) }}</div>
                 </div>
             </div>
-            <div class="all">查看全部50首 ></div>
+            <div class="all clickable">查看全部50首 ></div>
         </div>
     </div>
 
     <div class="top-song" v-for="album in artistAlbum" :key="album.id">
         <div class="album-cover">
-            <img :src="album.picUrl" alt="">
+            <img class="clickable" :src="album.picUrl" alt="" @click="showAlbumDetail(album.id)">
             <div class="date">{{ fixedDate(album.publishTime) }}</div>
         </div>
         <div class="album-detail">
-            <div class="header">
-                <div class="album-title">{{ album.name }}</div>
-                <div class="button">
-                    <span>播放</span>
-                    <span>收藏</span>
-                </div>
-            </div>
-
+            
             <AlbumSongList :albumId="album.id"></AlbumSongList>
 
         </div>
@@ -53,6 +54,7 @@ import { computed, onMounted, reactive, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
 import AlbumSongList from './AlbumSongList'
 import { dayjs } from 'element-plus'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'ArtistAlbum',
@@ -62,6 +64,7 @@ export default {
     },
     setup(props) {
         const store = useStore();
+        const router = useRouter();
         const { proxy } = getCurrentInstance();
 
         const artistAlbumParams = reactive({
@@ -69,6 +72,8 @@ export default {
             limit: 30,
             offset: 0
         })
+
+        const artistTopSong = computed(() => store.state.artisthome.artistTopSong || {});
 
         onMounted(() => {
             store.dispatch('getArtistTopSong', { id: props.artistId });
@@ -103,13 +108,38 @@ export default {
             proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });
         }
 
+        function playAllSong(curSongId, curSongIndex) {
+            proxy.$Mitt.emit('clearSongList');
+            for (let i = 0; i < artistTopSong.value.length; i++) {
+                let item = artistTopSong.value[i];
+                let newItem = { id: item.id, name: item.name, artist: item.ar, len: item.dt };
+                proxy.$Mitt.emit('addSong', { song: newItem });
+            }
+            if (typeof curSongId === 'number') {
+                proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
+            } else {
+                proxy.$Mitt.emit('playSong', { songId: artistTopSong.value[0].id, songIndex: 0 });
+            }
+        }
+
+        function showAlbumDetail(albumId) {
+            router.push({
+                name: 'albumlist',
+                params: {
+                    id: albumId
+                }
+            });
+        }
+
         return {
-            artistTopSong: computed(() => store.state.artisthome.artistTopSong || {}),
+            artistTopSong,
             artistAlbum: computed(() => store.state.artisthome.artistAlbum || {}),
             fixedNum,
             toSongLen,
             fixedDate,
-            playSong
+            playSong,
+            playAllSong,
+            showAlbumDetail
         }
     }
 }
@@ -119,6 +149,21 @@ export default {
 .top-song {
     display: flex;
     margin-bottom: 50px;
+    .clickable {
+        cursor: pointer;
+    }
+    .clickable:hover {
+        font-weight: 500;
+        .icon {
+            fill: black;
+        }
+    }
+
+    .icon {
+        width: 16px;
+        height: 16px;
+        fill: #666666;
+    }
 
     .album-cover {
         img {

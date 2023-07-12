@@ -7,21 +7,21 @@
     <div class="breadcrumb">
       <div class="left">
         <ul @click="changeType">
-          <li class="active" value="0">全部</li>
-          <li value="7">华语</li>
-          <li value="96">欧美</li>
-          <li value="8">日本</li>
-          <li value="16">韩国</li>
+          <li class="active clickable" value="0">全部</li>
+          <li class="clickable" value="7">华语</li>
+          <li class="clickable" value="96">欧美</li>
+          <li class="clickable" value="8">日本</li>
+          <li class="clickable" value="16">韩国</li>
         </ul>
       </div>
       <div class="right">
-        <div class="play button" @click="playAllSong">
+        <div class="play button clickable" @click="playAllSong">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-bofang"></use>
           </svg>
           播放全部
         </div>
-        <div class="collect button">
+        <div class="collect button clickable">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-tianjia"></use>
           </svg>
@@ -41,10 +41,16 @@
           <span class="alia" v-if="item.alias != ''">({{ item.alias[0] }})</span>
         </div>
         <div class="song-artist">
-          {{ item.artists[0].name }}
-          <span v-for="ar in item.artists.slice(1)" :key="ar.id">/{{ ar.name }}</span>
+          <!-- {{ item.artists[0].name }} -->
+          <!-- <span v-for="ar in item.artists.slice(1)" :key="ar.id">/{{ ar.name }}</span> -->
+          <span class="clickable" @click="showArtistHome(item.artists[0].id)">{{ item?.artists?.[0]?.name }}</span>
+          <div v-if="item?.artists?.length > 1">
+            <span v-for="ar in item?.artists?.slice(1)" :key="ar.id">
+              / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+            </span>
+          </div>
         </div>
-        <div class="song-album">{{ item.album.name }}</div>
+        <div class="song-album clickable" @click="showAlbumDetail(item?.album?.id)">{{ item?.album?.name }}</div>
         <div class="song-length">{{ toSongLen(item.duration) }}</div>
       </div>
     </div>
@@ -54,12 +60,14 @@
 <script>
 import { computed, reactive, onMounted, getCurrentInstance } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'NewMusic',
 
   setup() {
     const store = useStore();
+    const router = useRouter();
     const { proxy } = getCurrentInstance();
 
     const newSongListParams = reactive({
@@ -82,7 +90,7 @@ export default {
 
     function changeType(e) {
       newSongListParams.type = parseInt(e.target.value);
-      let curActiveElement = document.querySelector('.active');
+      let curActiveElement = document.querySelector('ul .active');
       curActiveElement.classList.remove('active');
       e.target.classList.add('active');
       getData();
@@ -121,12 +129,31 @@ export default {
       }
     }
 
+    function showArtistHome(artistId) {
+      router.push({
+        name: 'artisthome', params: {
+          id: artistId
+        }
+      })
+    }
+
+    function showAlbumDetail(albumId) {
+      router.push({
+        name: 'albumlist',
+        params: {
+          id: albumId
+        }
+      });
+    }
+
     return {
       fixedNum,
       changeType,
       changeRoute,
       toSongLen,
       playAllSong,
+      showAlbumDetail,
+      showArtistHome,
       newSongList,
     }
   }
@@ -136,6 +163,14 @@ export default {
 
 <style lang="less" scoped>
 .newmusic {
+  .clickable {
+    cursor: pointer;
+  }
+
+  .clickable:hover {
+    font-weight: 500;
+  }
+
   .title {
     width: 230px;
     height: 30px;

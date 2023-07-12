@@ -6,7 +6,7 @@
       </div>
       <div class="container">
         <div class="container-item" v-for="item in topList.slice(0, 4)" :key="item.id">
-          <div class="cover" @click="showDetail(item.id)">
+          <div class="cover clickable" @click="showDetail(item.id)">
             <img :src="item.coverImgUrl" alt="" style="width: 170px; height: 170px;">
             <div class="mask">
               <div class="frequency">
@@ -27,10 +27,10 @@
       </div>
       <div class="container">
         <div class="container-item" v-for="item in topList.slice(4)" :key="item.id" @click="showDetail(item.id)">
-          <div class="cover">
+          <div class="cover clickable">
             <img :src="item.coverImgUrl" alt="" style="width: 170px;">
           </div>
-          <div class="mask">
+          <div class="mask clickable">
             <div class="playcount">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-play1"></use>
@@ -38,7 +38,7 @@
               {{ fixedNum(item.playCount) }}
             </div>
           </div>
-          <div class="desc">{{ item.name }}</div>
+          <div class="desc clickable">{{ item.name }}</div>
         </div>
       </div>
     </div>
@@ -91,6 +91,10 @@ export default {
 <style lang="less" scoped>
 .rank {
 
+  .clickable {
+    cursor: pointer;
+  }
+
   img {
     border-radius: 10px;
   }
@@ -112,6 +116,7 @@ export default {
       .container-item {
         margin: 30px 0;
         display: flex;
+
         .mask {
           height: 170px;
           width: 170px;
@@ -157,6 +162,10 @@ export default {
 
         .desc {
           margin-top: 8px;
+        }
+
+        .desc .clickable:hover {
+          font-weight: 500;
         }
       }
     }

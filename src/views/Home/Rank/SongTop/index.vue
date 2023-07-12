@@ -13,7 +13,7 @@
                 </div>
             </div>
         </div>
-        <div class="all" @click="showDetail(rankId)">
+        <div class="all clickable" @click="showDetail(rankId)">
             查看全部
             <el-icon>
                 <ArrowRight />
@@ -77,6 +77,14 @@ export default {
     width: 535px;
     margin-left: 32px;
     font-size: 12px;
+
+    .clickable {
+        cursor: pointer;
+    }
+
+    .clickable:hover {
+        font-weight: 500;
+    }
 
     .song-item {
         display: flex;

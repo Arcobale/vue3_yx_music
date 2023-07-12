@@ -8,21 +8,42 @@
                     {{ playListDetail.name }}
                 </div>
                 <div class="creator">
-                    <img :src="playListDetail.creator ? playListDetail.creator.avatarUrl : ''" alt="">
-                    {{ playListDetail.creator ? playListDetail.creator.nickname : '' }}
+                    <img class="clickable" :src="playListDetail?.creator?.avatarUrl" alt="">
+                    <span class="clickable">{{ playListDetail?.creator?.nickname }}</span>
+                    <span class="publish-time">{{ fixedDate(playListDetail?.createTime) }}创建</span>
                 </div>
                 <div class="func">
-                    <div class="playall" @click="playAllSong">播放全部</div>
-                    <div class="collect">收藏</div>
-                    <div class="share">分享</div>
-                    <div class="downloadall">下载全部</div>
+                    <div class="playall clickable" @click="playAllSong">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-bofang"></use>
+                        </svg>
+                        播放全部
+                    </div>
+                    <div class="collect clickable">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-tianjia"></use>
+                        </svg>
+                        收藏({{ fixedCount(playListDetail?.subscribedCount) }})
+                    </div>
+                    <div class="share clickable">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-share"></use>
+                        </svg>
+                        分享({{ fixedCount(playListDetail?.shareCount) }})
+                    </div>
+                    <div class="downloadall clickable">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-xiazai"></use>
+                        </svg>
+                        下载全部
+                    </div>
                 </div>
                 <div class="count">
                     <div class="trackcount">
                         <span>歌曲数：</span>{{ playListDetail.trackCount }}
                     </div>
                     <div class="playcount">
-                        <span>播放数：</span>{{ playListDetail.playCount }}
+                        <span>播放数：</span>{{ fixedCount(playListDetail?.playCount) }}
                     </div>
                 </div>
                 <div class="desc">
@@ -39,10 +60,14 @@
                     <span class="alia" v-if="item.alia != ''">({{ item.alia[0] }})</span>
                 </div>
                 <div class="artist">
-                    {{ item.ar[0].name }}
-                    <span v-for="ar in item.ar.slice(1)" :key="ar.id">/{{ ar.name }}</span>
+                    <span class="clickable" @click="showArtistHome(item.ar[0].id)">{{ item?.ar?.[0]?.name }}</span>
+                    <div v-if="item?.ar?.length > 1">
+                        <span v-for="ar in item?.ar?.slice(1)" :key="ar.id">
+                            / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+                        </span>
+                    </div>
                 </div>
-                <div class="album">{{ item ? item.al.name : '' }}</div>
+                <div class="album clickable" @click="showAlbumDetail(item?.al?.id)">{{ item?.al?.name }}</div>
                 <div class="length">{{ toSongLen(item.dt) }}</div>
             </div>
         </div>
@@ -53,6 +78,7 @@
 import { onMounted, computed, reactive, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { dayjs } from 'element-plus'
 
 export default {
     name: 'PlayList',
@@ -87,7 +113,7 @@ export default {
             for (let i = 0; i < playListAll.value.length; i++) {
                 let item = playListAll.value[i];
                 let newItem = { id: item.id, name: item.name, artist: item.ar, len: item.dt };
-                proxy.$Mitt.emit('addSong', { song: newItem});
+                proxy.$Mitt.emit('addSong', { song: newItem });
             }
             if (typeof curSongId === 'number') {
                 proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
@@ -109,10 +135,40 @@ export default {
             return res;
         }
 
+        function fixedDate(time) {
+            let timeFormat = dayjs(time).format("YYYY-MM-DD");
+            return timeFormat;
+        }
+
+        function fixedCount(num) {
+            return num > 99999999 ? parseInt(num / 100000000) + '亿' : num > 99999 ? parseInt(num / 10000) + '万' : num + '';
+        }
+
+        function showArtistHome(artistId) {
+            router.push({
+                name: 'artisthome', params: {
+                    id: artistId
+                }
+            })
+        }
+
+        function showAlbumDetail(albumId) {
+            router.push({
+                name: 'albumlist',
+                params: {
+                    id: albumId
+                }
+            });
+        }
+
         return {
             fixedNum,
             playAllSong,
             toSongLen,
+            fixedDate,
+            fixedCount,
+            showAlbumDetail,
+            showArtistHome,
             playListAll,
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
         }
@@ -122,6 +178,22 @@ export default {
 
 <style lang="less" scoped>
 .playlist {
+    .clickable {
+        cursor: pointer;
+    }
+
+    .clickable:hover {
+        font-weight: 500;
+    }
+
+    .icon {
+        width: 14px;
+        height: 14px;
+        fill: #9b9b9b;
+        position: relative;
+        top: 2px;
+    }
+
     .playlist-detail {
         display: flex;
         font-size: 10px;
@@ -161,17 +233,26 @@ export default {
                 font-size: 12px;
                 display: flex;
                 align-items: center;
-                color: #39629a;
 
                 img {
                     width: 21px;
                     height: 21px;
                     margin-right: 8px;
                 }
+
+                .publish-time {
+                    margin-left: 8px;
+                    font-weight: 300;
+                }
+            }
+            .creator .clickable {
+                color: #4c70a4;
+                cursor: pointer;
             }
 
             .func {
                 font-size: 12px;
+                line-height: 14px;
                 display: flex;
 
                 div {
@@ -185,6 +266,9 @@ export default {
                 .playall {
                     background-color: #e65d4c;
                     color: white;
+                }
+                .playall .icon {
+                    fill: white;
                 }
             }
 

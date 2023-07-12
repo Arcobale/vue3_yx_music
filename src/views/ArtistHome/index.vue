@@ -10,7 +10,12 @@
                 <div class="alias">
                     <span v-for="(alia, index) in artist.alias" :key="index">{{ alia }}; </span>
                 </div>
-                <div class="followstate">收藏</div>
+                <div class="followstate clickable">
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-tianjia"></use>
+                    </svg>
+                    收藏
+                </div>
                 <div class="count">
                     <div class="count-item">单曲数：{{ artist.musicSize }}</div>
                     <div class="count-item">专辑数：{{ artist.albumSize }}</div>
@@ -79,6 +84,22 @@ export default {
 .artist-home {
     font-size: 12px;
 
+    .clickable {
+        cursor: pointer;
+    }
+
+    .clickable:hover {
+        font-weight: 500;
+    }
+
+    .icon {
+        width: 14px;
+        height: 14px;
+        fill: #9b9b9b;
+        position: relative;
+        top: 2px;
+    }
+
     .artist-detail {
         display: flex;
 
@@ -116,6 +137,10 @@ export default {
                 line-height: 30px;
             }
 
+            .followstate:hover {
+                background-color: #edeced;
+            }
+
             .count {
                 display: flex;
 
@@ -135,18 +160,22 @@ export default {
         align-items: center;
         font-size: 14px;
         font-weight: 500;
+
         div {
             height: 100%;
             margin-right: 30px;
             line-height: 30px;
         }
+
         .active {
             color: #af0900;
             border-bottom: 2px solid #af0900;
         }
     }
+
     .container {
         font-size: 12px;
         margin-top: 20px;
     }
-}</style>
+}
+</style>

@@ -8,10 +8,26 @@
                         <img :src="songDetail?.al?.picUrl" alt="">
                     </div>
                     <div class="func">
-                        <div class="button">喜欢</div>
-                        <div class="button">收藏</div>
-                        <div class="button">下载</div>
-                        <div class="button">分享</div>
+                        <div class="button">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-heart"></use>
+                            </svg>
+                        </div>
+                        <div class="button">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-tianjia"></use>
+                            </svg>
+                        </div>
+                        <div class="button">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-xiazai"></use>
+                            </svg>
+                        </div>
+                        <div class="button">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-share"></use>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -67,10 +83,23 @@
                                         {{ fixedDate(comment?.time) }}
                                     </div>
                                     <div class="operation">
-                                        <span class="report">举报</span>
-                                        <span>点赞{{ comment.likedCount }}</span>
-                                        <span>分享</span>
-                                        <span>评论</span>
+                                        <span class="ope report">举报</span>
+                                        <span class="ope">
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-dianzan"></use>
+                                            </svg>
+                                            <span v-if="comment?.likedCount > 0">{{ comment?.likedCount }}</span>
+                                        </span>
+                                        <span class="ope">
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-redo"></use>
+                                            </svg>
+                                        </span>
+                                        <span class="ope">
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-pinglun"></use>
+                                            </svg>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -91,13 +120,23 @@
                                         {{ fixedDate(comment?.time) }}
                                     </div>
                                     <div class="operation">
-                                        <span class="report">举报</span>
-                                        <span>
-                                            点赞
+                                        <span class="ope report">举报</span>
+                                        <span class="ope">
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-dianzan"></use>
+                                            </svg>
                                             <span v-if="comment?.likedCount > 0">{{ comment?.likedCount }}</span>
                                         </span>
-                                        <span>分享</span>
-                                        <span>评论</span>
+                                        <span class="ope">
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-redo"></use>
+                                            </svg>
+                                        </span>
+                                        <span class="ope">
+                                            <svg class="icon" aria-hidden="true">
+                                                <use xlink:href="#icon-pinglun"></use>
+                                            </svg>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -293,7 +332,13 @@ export default {
                     border-radius: 50%;
                     background-color: #eaeaea;
                     text-align: center;
-                    line-height: 40px;
+
+                    .icon {
+                        width: 18px;
+                        height: 18px;
+                        fill: black;
+                        margin: 11px;
+                    }
                 }
             }
         }
@@ -360,8 +405,7 @@ export default {
         .comment {
             width: 568px;
 
-            .writecomment {
-            }
+            .writecomment {}
 
             .comment-container {
 
@@ -381,6 +425,7 @@ export default {
                         width: 516px;
                         padding: 18px 0;
                         border-bottom: 1px solid #eeeeee;
+
                         .user-top {
                             line-height: 18px;
                         }
@@ -395,13 +440,22 @@ export default {
                             .operation {
                                 display: flex;
 
-                                span {
+                                .icon {
+                                    width: 12px;
+                                    height: 12px;
+                                    fill: #9b9b9b;
+                                }
+
+                                span.ope {
                                     display: block;
                                     padding: 0 10px;
                                     height: 10px;
                                     font-size: 10px;
                                     border-right: 1px solid #9b9b9b;
                                     text-align: center;
+                                    span {
+                                        margin-left: 4px;
+                                    }
                                 }
 
                                 span:last-child {
@@ -430,4 +484,5 @@ export default {
             .simisong {}
         }
     }
-}</style>
+}
+</style>

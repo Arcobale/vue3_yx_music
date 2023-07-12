@@ -1,6 +1,23 @@
 <template>
+    <div class="header">
+        <div class="album-title clickable" @click="showAlbumDetail(props.albumId)">{{ albumName }}</div>
+        <div class="button">
+            <span class="clickable" @click="playAllSong">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-bofang"></use>
+                </svg>
+            </span>
+            <span class="clickable">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-tianjia"></use>
+                </svg>
+            </span>
+        </div>
+    </div>
+
     <div class="songlist">
-        <div class="song-item" v-for="(song, index) in albumSong.slice(0, 10)" :key="song.id" @dblclick="playSong(song)">
+        <div class="song-item" v-for="(song, index) in albumSong.slice(0, 10)" :key="song.id"
+            @dblclick="playAllSong(song.id, index)">
             <div class="song-num">{{ fixedNum(index + 1) }}</div>
             <div class="song-title" :class="{ deactive: song.dt === 0 }">
                 {{ song.name }}
@@ -12,7 +29,7 @@
         </div>
     </div>
 
-    <div class="all" v-if="albumSong.length > 10" @click="showDetail(albumId)">查看全部 ></div>
+    <div class="all clickable" v-if="albumSong.length > 10" @click="showDetail(albumId)">查看全部 ></div>
 </template>
 
 <script>
@@ -29,6 +46,8 @@ export default {
         const { proxy } = getCurrentInstance();
 
         const albumDetail = ref('');
+        const albumName = computed(() => albumDetail.value.album?.name || '');
+        const albumSong = computed(() => albumDetail.value.songs || []);
 
         onMounted(() => {
             store.dispatch('getAlbumDetail', { id: props.albumId }).then(() => {
@@ -67,13 +86,40 @@ export default {
             });
         }
 
+        function playAllSong(curSongId, curSongIndex) {
+            proxy.$Mitt.emit('clearSongList');
+            for (let i = 0; i < albumSong.value.length; i++) {
+                let item = albumSong.value[i];
+                let newItem = { id: item.id, name: item.name, artist: item.ar, len: item.dt };
+                proxy.$Mitt.emit('addSong', { song: newItem });
+            }
+            if (typeof curSongId === 'number') {
+                proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
+            } else {
+                proxy.$Mitt.emit('playSong', { songId: albumSong.value[0].id, songIndex: 0 });
+            }
+        }
+
+        function showAlbumDetail(albumId) {
+            router.push({
+                name: 'albumlist',
+                params: {
+                    id: albumId
+                }
+            });
+        }
+
         return {
+            props,
             albumId: ref(props.albumId),
-            albumSong: computed(() => albumDetail.value.songs || []),
+            albumName,
+            albumSong,
             fixedNum,
             toSongLen,
             playSong,
-            showDetail
+            showDetail,
+            showAlbumDetail,
+            playAllSong
         }
     }
 
@@ -81,9 +127,52 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    font-weight: 500;
+
+    .icon {
+        fill: black;
+    }
+}
+
+.header {
+    display: flex;
+
+    .icon {
+        width: 16px;
+        height: 16px;
+        fill: #666666;
+    }
+
+
+    .album-title {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .button {
+        margin-left: 20px;
+        text-align: center;
+        line-height: 16px;
+
+        span {
+            padding: 0px 10px;
+        }
+
+        span:first-child {
+            border-right: 1px solid #e0e0e0;
+        }
+    }
+}
+
 .songlist {
     width: 520px;
     margin-top: 10px;
+
 
     .song-item {
         height: 30px;
