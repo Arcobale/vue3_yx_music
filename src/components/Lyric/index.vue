@@ -20,14 +20,16 @@
                     <div class="subtitle">
                         <div class="album">
                             专辑：
-                            <span class="clickable" @click="showAlbumDetail(songDetail.al.id)">{{ songDetail?.al?.name }}</span>
+                            <span class="clickable" @click="showAlbumDetail(songDetail.al.id)">{{ songDetail?.al?.name
+                            }}</span>
                         </div>
                         <div class="artist">
                             歌手：
-                            <span class="clickable" @click="showArtistHome(songDetail.ar[0].id)">{{ songDetail?.ar?.[0]?.name }}</span>
+                            <span class="clickable" @click="showArtistHome(songDetail.ar[0].id)">{{
+                                songDetail?.ar?.[0]?.name }}</span>
                             <div v-if="songDetail?.ar?.length > 1">
-                                <span v-for="ar in songDetail?.ar?.slice(1)" :key="ar.id">
-                                    / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+                                <span v-for="ar in songDetail?.ar?.slice(1)" :key="ar.id"> / <span class="clickable"
+                                        @click="showArtistHome(ar.id)">{{ ar.name }}</span>
                                 </span>
                             </div>
                         </div>
@@ -38,7 +40,7 @@
                     <div class="lyric-container" ref="lyricContainer">
                         <div class="sentence" :class="{ active: index === curLyricIndex }" v-for="(lyric, index) in lyrics"
                             :key="index">
-                            {{ lyric.content }}
+                            {{ lyric?.content }}
                         </div>
                     </div>
                 </div>
@@ -46,26 +48,62 @@
 
             <div class="bottom">
                 <div class="comment">
-                    <span>听友评论<span class="small">（已有66条评论）</span></span>
+                    <span class="large">听友评论<span class="small">（已有{{ total }}条评论）</span></span>
                     <div class="writecomment">
                         <input type="text">
                     </div>
 
-                    <span class="middle">最新评论（66）</span>
-                    <div class="comment-container">
-                        <div class="comment-container-item">
+                    <span class="middle" v-if="commentMusicHot?.length !== 0">精彩评论</span>
+                    <div class="comment-container" v-if="commentMusicHot?.length !== 0">
+                        <div class="comment-container-item" v-for="comment in commentMusicHot" :key="comment.commentId">
+                            <img :src="comment?.user?.avatarUrl" alt="">
+                            <div class="user-info">
+                                <div class="user-top">
+                                    <span class="clickable">{{ comment?.user?.nickname }}：</span>
+                                    <span class="user-content">{{ comment?.content }}</span>
+                                </div>
+                                <div class="user-bottom">
+                                    <div class="publish-time">
+                                        {{ fixedDate(comment?.time) }}
+                                    </div>
+                                    <div class="operation">
+                                        <span class="report">举报</span>
+                                        <span>点赞{{ comment.likedCount }}</span>
+                                        <span>分享</span>
+                                        <span>评论</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <span class="middle">最新评论（{{ total }}）</span>
+                    <div class="comment-container" v-if="commentMusicHot?.length !== 0">
+                        <div class="comment-container-item" v-for="comment in commentMusic" :key="comment.commentId">
+                            <img :src="comment?.user?.avatarUrl" alt="">
+                            <div class="user-info">
+                                <div class="user-top">
+                                    <span class="clickable">{{ comment?.user?.nickname }}：</span>
+                                    <span class="user-content">{{ comment?.content }}</span>
+                                </div>
+                                <div class="user-bottom">
+                                    <div class="publish-time">
+                                        {{ fixedDate(comment?.time) }}
+                                    </div>
+                                    <div class="operation">
+                                        <span class="report">举报</span>
+                                        <span>
+                                            点赞
+                                            <span v-if="comment?.likedCount > 0">{{ comment?.likedCount }}</span>
+                                        </span>
+                                        <span>分享</span>
+                                        <span>评论</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="pagination"></div>
-                </div>
-                <div class="recommend">
-                    <div class="playlist">
-                        <span>包含这首歌的歌单</span>
-                    </div>
-                    <div class="simisong">
-                        <span>相似歌曲</span>
-                    </div>
                 </div>
             </div>
 
@@ -74,9 +112,10 @@
 </template>
 
 <script>
-import { ref, getCurrentInstance, computed, reactive, watch, onMounted } from 'vue'
+import { ref, getCurrentInstance, computed, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { dayjs } from 'element-plus'
 
 export default {
     name: "Lyric",
@@ -176,13 +215,22 @@ export default {
             });
         }
 
+        function fixedDate(time) {
+            let timeFormat = dayjs(time).format("YYYY年MM月DD日 HH:mm");
+            return timeFormat;
+        }
+
         return {
             isOpen,
             songDetail,
             lyrics,
             lyricWordByWord: computed(() => store.state.lyric.lyricWordByWord || ''),
+            commentMusic: computed(() => store.state.lyric.commentMusic || {}),
+            commentMusicHot: computed(() => store.state.lyric.commentMusicHot || {}),
+            total: computed(() => store.state.lyric.total),
             showArtistHome,
             showAlbumDetail,
+            fixedDate,
             lyricContainer,
             curLyricIndex
         }
@@ -204,6 +252,11 @@ export default {
         padding-left: 55px;
         padding-right: 55px;
         padding-bottom: 60px;
+    }
+
+    .clickable {
+        color: #4c70a4;
+        cursor: pointer;
     }
 
     .top {
@@ -257,11 +310,6 @@ export default {
             .subtitle {
                 display: flex;
 
-                .clickable {
-                    color: #4c70a4;
-                    cursor: pointer;
-                }
-
                 .album {
                     width: 150px;
                 }
@@ -290,30 +338,82 @@ export default {
     }
 
     .bottom {
-        margin-top: 60px;
         display: flex;
 
-        span {
+        span.large {
             font-size: 16px;
             font-weight: 600;
             line-height: 30px;
+        }
+
+        span.middle {
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 60px;
+            display: block;
+        }
+
+        span.small {
+            font-size: 12px;
         }
 
         .comment {
             width: 568px;
 
             .writecomment {
-                margin-bottom: 42px;
-            }
-
-            span.middle {
-                font-size: 14px;
             }
 
             .comment-container {
 
                 .comment-container-item {
-                    height: 76px;
+                    min-height: 76px;
+                    display: flex;
+                    align-items: center;
+
+                    img {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 50%;
+                    }
+
+                    .user-info {
+                        margin-left: 10px;
+                        width: 516px;
+                        padding: 18px 0;
+                        border-bottom: 1px solid #eeeeee;
+                        .user-top {
+                            line-height: 18px;
+                        }
+
+                        .user-bottom {
+                            margin-top: 10px;
+                            display: flex;
+                            justify-content: space-between;
+                            color: #9b9b9b;
+
+
+                            .operation {
+                                display: flex;
+
+                                span {
+                                    display: block;
+                                    padding: 0 10px;
+                                    height: 10px;
+                                    font-size: 10px;
+                                    border-right: 1px solid #9b9b9b;
+                                    text-align: center;
+                                }
+
+                                span:last-child {
+                                    border-right: none;
+                                }
+
+                                span.report {
+                                    display: none;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -330,5 +430,4 @@ export default {
             .simisong {}
         }
     }
-}
-</style>
+}</style>

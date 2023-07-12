@@ -10,6 +10,7 @@ const state = {
 
     commentMusic: [],
     commentMusicHot: [],
+    total: -1,
     commentFloor: [],
 };
 
@@ -34,6 +35,7 @@ const mutations = {
     COMMENTMUSIC(state, res) {
         state.commentMusic = res.comments;
         state.commentMusicHot = res.hotComments;
+        state.total = res.total;
     },
     COMMENTFLOOR(state, commentFloor) {
         state.commentFloor = commentFloor;

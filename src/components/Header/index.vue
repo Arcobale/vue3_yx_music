@@ -183,6 +183,7 @@ export default {
         display: flex;
         justify-content: space-evenly;
         align-items: center;
+        z-index: 40;
 
         .searchbox {
             // background-color: rgba(209, 113, 104, 0.6);
