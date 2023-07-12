@@ -109,6 +109,10 @@ export default {
                 }, 500);
             } else {
                 proxy.$Mitt.emit('closeSuggestList');
+                setTimeout(() => {
+                    inputBox.value.focus();
+                }, 500);
+                proxy.$Mitt.emit('openHotSearchList');
             }
         }
 

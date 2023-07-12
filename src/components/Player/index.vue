@@ -11,7 +11,7 @@
     </div>
     <div class="wrapper">
       <div class="song" v-if="!isEmpty">
-        <div class="cover">
+        <div class="cover" @click="openOrCloseLyric">
           <img :src="songDetail ? songDetail.al.picUrl : ''" alt="">
         </div>
         <div class="song-detail">
@@ -122,6 +122,8 @@ export default {
       let audio = document.querySelector('audio');
       songUrlParams.id = songId;
       songDetailParams.ids = songId;
+      store.commit('CHANGECURSONGID', songId);
+      
       store.dispatch('getSongUrl', songUrlParams);
       store.dispatch('getSongDetail', songDetailParams);
       isEmpty.value = false;
@@ -134,6 +136,7 @@ export default {
       // 监听歌曲播放的实时进度
       audio.addEventListener('timeupdate', () => {
         curTime.value = toSongLen(audio.currentTime * 1000);
+        store.commit('CHANGECURSONGTIME', audio.currentTime * 1000);
         percentage.value = songDetail.value ? calcPlayProgress(audio.currentTime * 1000, songDetail.value.dt) : 0;
         let progressIcon = document.querySelector('.progress-icon-wrapper span');
         progressIcon.style.left = percentage.value + '%';
@@ -231,6 +234,15 @@ export default {
       audio.currentTime = songDetail.value.dt * percentage.value / 100 / 1000;
     }
 
+    function openOrCloseLyric() {
+      let isOpen = store.state.lyric.isLyricOpen;
+      if (isOpen) {
+        proxy.$Mitt.emit('closeLyric');
+      } else {
+        proxy.$Mitt.emit('openLyric');
+      }
+    }
+
     return {
       curTime,
       curCycle,
@@ -244,6 +256,7 @@ export default {
       openList,
       changeCycle,
       dragStart,
+      openOrCloseLyric,
       isPaused,
       isEmpty,
       isIconVisible

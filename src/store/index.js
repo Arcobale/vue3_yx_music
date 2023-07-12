@@ -5,6 +5,7 @@ import playlist from '@/store/playlist/index.js'
 import artisthome from '@/store/artisthome/index.js'
 import mv from '@/store/mv/index.js'
 import search from '@/store/search/index.js'
+import lyric from '@/store/lyric/index.js'
 
 const store = createStore({
     state: {
@@ -32,7 +33,8 @@ const store = createStore({
         playlist,
         artisthome,
         mv,
-        search
+        search,
+        lyric
     }
 });
 

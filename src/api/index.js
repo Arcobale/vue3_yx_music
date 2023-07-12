@@ -280,3 +280,39 @@ export function reqSearchMultiMatch(params) {
         params
     })
 }
+
+// 获取歌词
+export function reqLyric(params) {
+    return requests({
+        method: 'get',
+        url: `/lyric`,
+        params
+    })
+}
+
+// 获取逐字歌词
+export function reqLyricWordByWord(params) {
+    return requests({
+        method: 'get',
+        url: `/lyric/new`,
+        params
+    })
+}
+
+// 获取歌曲评论
+export function reqCommentMusic(params) {
+    return requests({
+        method: 'get',
+        url: `/comment/music`,
+        params
+    })
+}
+
+// 获取楼层评论
+export function reqCommentFloor(params) {
+    return requests({
+        method: 'get',
+        url: `/comment/floor`,
+        params
+    })
+}

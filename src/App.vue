@@ -15,20 +15,20 @@
       <Player></Player>
     </el-footer>
   </el-container>
-  <SongDetail></SongDetail>
   <OpenList></OpenList>
   <HotSearchList></HotSearchList>
   <SuggestList></SuggestList>
+  <Lyric></Lyric>
 </template>
 
 <script>
 import Header from './components/Header'
 import Navigation from './components/Navigation'
 import Player from './components/Player'
-import SongDetail from './components/SongDetail'
 import OpenList from './components/OpenList'
 import HotSearchList from './components/HotSearchList'
 import SuggestList from './components/SuggestList'
+import Lyric from './components/Lyric'
 
 export default {
   name: 'App',
@@ -36,10 +36,10 @@ export default {
     Header,
     Navigation,
     Player,
-    SongDetail,
     OpenList,
     HotSearchList,
-    SuggestList
+    SuggestList,
+    Lyric
   }
 }
 </script>
