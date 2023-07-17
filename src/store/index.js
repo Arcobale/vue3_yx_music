@@ -6,6 +6,7 @@ import artisthome from '@/store/artisthome/index.js'
 import mv from '@/store/mv/index.js'
 import search from '@/store/search/index.js'
 import lyric from '@/store/lyric/index.js'
+import login from '@/store/login/index.js'
 
 const store = createStore({
     state: {
@@ -34,7 +35,8 @@ const store = createStore({
         artisthome,
         mv,
         search,
-        lyric
+        lyric,
+        login
     }
 });
 

@@ -316,3 +316,285 @@ export function reqCommentFloor(params) {
         params
     })
 }
+
+// 二维码登录
+// 生成key
+export function reqQRKey() {
+    return requests({
+        method: 'get',
+        url: `/login/qr/key`
+    })
+}
+
+// 生成二维码
+export function reqQRCodeLink(params) {
+    return requests({
+        method: 'get',
+        url: `/login/qr/create`,
+        params
+    })
+}
+
+// 检测扫码状态
+export function reqQRCheck(params) {
+    return requests({
+        method: 'get',
+        url: `/login/qr/check`,
+        params
+    })
+}
+
+// 注册
+export function reqRegister(params) {
+    return requests({
+        method: 'get',
+        url: `/register/cellphone`,
+        params
+    })
+}
+
+// 检测手机号码是否已注册
+export function reqPhoneExistence(params) {
+    return requests({
+        method: 'get',
+        url: `/cellphone/existence/check`,
+        params
+    })
+}
+
+// 重复昵称检测
+export function reqCheckNickname(params) {
+    return requests({
+        method: 'get',
+        url: `/nickname/check`,
+        params
+    })
+}
+
+// 初始化昵称
+export function reqInitNickname(params) {
+    return requests({
+        method: 'get',
+        url: `/activate/init/profile`,
+        params
+    })
+}
+
+// 手机登录
+export function reqLoginPhone(params) {
+    return requests({
+        method: 'get',
+        url: `/login/cellphone`,
+        params
+    })
+}
+
+// 发送验证码
+export function reqSentCaptcha(params) {
+    return requests({
+        method: 'get',
+        url: `/captcha/sent`,
+        params
+    })
+}
+
+// 验证验证码
+export function reqVerifyCaptcha(params) {
+    return requests({
+        method: 'get',
+        url: `/captcha/verify`,
+        params
+    })
+}
+
+// 退出登录
+export function reqLogout() {
+    return requests({
+        method: 'get',
+        url: `/logout`
+    })
+}
+
+// 获取登录状态
+export function reqLoginStatus() {
+    return requests({
+        method: 'get',
+        url: `/login/status`
+    })
+}
+
+// 获取用户详情
+export function reqUserDetail(params) {
+    return requests({
+        method: 'get',
+        url: `/user/detail`,
+        params
+    })
+}
+
+// 获取用户信息，歌单，收藏，mv数量
+export function reqUserSubcount() {
+    return requests({
+        method: 'get',
+        url: `/user/subcount`
+    })
+}
+
+// 获取用户歌单
+export function reqUserPlaylist(params) {
+    return requests({
+        method: 'get',
+        url: `/user/playlist`,
+        params
+    })
+}
+
+// 新建歌单
+export function reqCreatePlaylist(params) {
+    return requests({
+        method: 'put',
+        url: `/playlist/create`,
+        params
+    })
+}
+
+// 删除歌单
+export function reqDeletePlaylist(params) {
+    return requests({
+        method: 'put',
+        url: `/playlist/delete`,
+        params
+    })
+}
+
+// 更新歌单
+export function reqUpdatePlaylist(params) {
+    return requests({
+        method: 'put',
+        url: `/update/playlist`,
+        params
+    })
+}
+
+// 对歌单添加或删除歌曲
+export function reqUpdatePlaylistTrack(params) {
+    return requests({
+        method: 'put',
+        url: `/playlist/tracks`,
+        params
+    })
+}
+
+// 歌单封面上传
+export function reqUploadPlaylistCover(params) {
+    return requests({
+        method: 'post',
+        url: `/playlist/cover`,
+        params
+    })
+}
+
+// 收藏/取消歌手
+export function reqSubArtist(params) {
+    return requests({
+        method: 'post',
+        url: `/artist/sub`,
+        params
+    })
+}
+
+// 收藏/取消视频
+export function reqSubVideo(params) {
+    return requests({
+        method: 'post',
+        url: `/video/sub`,
+        params
+    })
+}
+
+// 收藏/取消MV
+export function reqSubMV(params) {
+    return requests({
+        method: 'post',
+        url: `/mv/sub`,
+        params
+    })
+}
+
+// 收藏/取消歌单
+export function reqSubPlaylist(params) {
+    return requests({
+        method: 'post',
+        url: `/playlist/subscribe`,
+        params
+    })
+}
+
+// 收藏/取消专辑
+export function reqSubAlbum(params) {
+    return requests({
+        method: 'post',
+        url: `/album/sub`,
+        params
+    })
+}
+
+// 喜欢音乐
+export function reqComment(params) {
+    return requests({
+        method: 'put',
+        url: `/like`,
+        params
+    })
+}
+
+// 获取收藏的歌手列表
+export function reqArtistSublist() {
+    return requests({
+        method: 'post',
+        url: `/artist/sublist`
+    })
+}
+
+// 获取收藏的MV列表
+export function reqMVSublist() {
+    return requests({
+        method: 'post',
+        url: `/mv/sublist`
+    })
+}
+
+// 获取收藏的专辑列表
+export function reqAlbumSublist() {
+    return requests({
+        method: 'post',
+        url: `/album/sublist`
+    })
+}
+
+// 获取喜欢的音乐列表
+export function reqLikeList(params) {
+    return requests({
+        method: 'get',
+        url: `/likelist`,
+        params
+    })
+}
+
+// 发送/删除评论
+export function reqUpdateComment(params) {
+    return requests({
+        method: 'put',
+        url: `/comment`,
+        params
+    })
+}
+
+// 给评论点赞
+export function reqLikeComment(params) {
+    return requests({
+        method: 'put',
+        url: `/comment/like`,
+        params
+    })
+}
