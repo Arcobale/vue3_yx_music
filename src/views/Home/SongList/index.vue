@@ -41,7 +41,8 @@
           <div class="menu-item" v-for="(key, index) in playListCategories" :key="index">
             <div class="key">{{ key }}</div>
             <ul class="categorytwo">
-              <li class="clickable" v-for="(cat, index2) in playListSortedCategories[index]" :key="index2" @click="changeCat(cat.name)">
+              <li class="clickable" v-for="(cat, index2) in playListSortedCategories[index]" :key="index2"
+                @click="changeCat(cat.name)">
                 {{ cat.name }}
                 <span class="hot" v-if="cat.hot">HOT</span>
               </li>
@@ -73,13 +74,13 @@
     </div>
 
     <div class="pagination">
-
+      <el-pagination background layout="prev, pager, next" :page-count="pageCount" pager-count="9" v-model:current-page="currentPage" @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
 
 <script>
-import { onMounted, computed, reactive, ref } from 'vue'
+import { onMounted, computed, reactive, ref, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -91,6 +92,8 @@ export default {
 
     const isOpen = ref(false);
     const curCat = ref('全部歌单');
+    const pageCount = ref(0);
+    const currentPage = ref(1);
 
     const playListHQParams = reactive({
       order: 'hot',
@@ -101,7 +104,9 @@ export default {
     const playListHQ = computed(() => store.state.home.playListHQ ? store.state.home.playListHQ : []);
 
     onMounted(() => {
-      store.dispatch('getPlayListHQ', playListHQParams);
+      store.dispatch('getPlayListHQ', playListHQParams).then((total) => {
+        pageCount.value = Math.ceil(total / playListHQParams.limit);
+      });
       store.dispatch('getPlayListTag');
       store.dispatch('getPlayListHotTag');
     })
@@ -121,7 +126,9 @@ export default {
 
     function changeCat(cat) {
       playListHQParams.cat = cat;
-      store.dispatch('getPlayListHQ', playListHQParams);
+      store.dispatch('getPlayListHQ', playListHQParams).then((total) => {
+        pageCount.value = Math.ceil(total / playListHQParams.limit);
+      });
 
       curCat.value = cat === '全部' ? '全部歌单' : cat;
       isOpen.value = false;
@@ -136,9 +143,16 @@ export default {
       // event.target.classList.add('.active-cat');
     }
 
+    function handleCurrentChange(val) {
+      playListHQParams.offset = (val - 1) * playListHQParams.limit;
+      store.dispatch('getPlayListHQ', playListHQParams);
+    }
+
     return {
       isOpen,
       curCat,
+      pageCount,
+      currentPage,
       fixedNum,
       playListHQ,
       bannerCover: computed(() => playListHQ.value[0] || {}),
@@ -146,7 +160,8 @@ export default {
       playListSortedCategories: computed(() => store.getters.playListSortedCategories || {}),
       playListHotTag: computed(() => store.state.home.playListHotTag || {}),
       showDetail,
-      changeCat
+      changeCat,
+      handleCurrentChange
     }
   }
 }
@@ -241,6 +256,7 @@ export default {
         line-height: 28px;
         padding-left: 14px;
       }
+
       .current-tag:hover {
         background-color: #edeced;
       }
@@ -370,5 +386,10 @@ export default {
       }
     }
   }
-}
-</style>
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0 80px;
+  }
+}</style>

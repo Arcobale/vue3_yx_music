@@ -91,6 +91,7 @@ const actions = {
         let res = await reqPlayListHQ(params);
         if (res.code == 200) {
             commit('PLAYLISTHQ', res.playlists);
+            return Promise.resolve(res.total);
         }
     },
     async getPlayListTag({commit}) {
