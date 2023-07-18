@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="songlist">
-                <div class="song-item" v-for="(song, index) in artistTopSong.slice(0, 10)" :key="song.id"
+                <div class="song-item" v-for="(song, index) in artistPartSong" :key="song.id"
                     @dblclick="playAllSong(song.id, index)">
                     <div class="song-num">{{ fixedNum(index + 1) }}</div>
                     <div class="song-title">
@@ -32,7 +32,7 @@
                     <div class="song-length">{{ toSongLen(song.dt) }}</div>
                 </div>
             </div>
-            <div class="all clickable">查看全部50首 ></div>
+            <div class="all clickable" v-if="!isAllSong" @click="isAllSong=true">查看全部50首 ></div>
         </div>
     </div>
 
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { computed, onMounted, reactive, getCurrentInstance } from 'vue'
+import { computed, onMounted, reactive, getCurrentInstance, ref } from 'vue'
 import { useStore } from 'vuex'
 import AlbumSongList from './AlbumSongList'
 import { dayjs } from 'element-plus'
@@ -67,6 +67,7 @@ export default {
         const router = useRouter();
         const { proxy } = getCurrentInstance();
 
+        const isAllSong = ref(false);
         const artistAlbumParams = reactive({
             id: props.artistId,
             limit: 30,
@@ -74,6 +75,7 @@ export default {
         })
 
         const artistTopSong = computed(() => store.state.artisthome.artistTopSong || {});
+        const artistPartSong = computed(() => isAllSong.value ? artistTopSong.value : artistTopSong.value.slice(0, 10));
 
         onMounted(() => {
             store.dispatch('getArtistTopSong', { id: props.artistId });
@@ -132,6 +134,8 @@ export default {
         }
 
         return {
+            isAllSong,
+            artistPartSong,
             artistTopSong,
             artistAlbum: computed(() => store.state.artisthome.artistAlbum || {}),
             fixedNum,
