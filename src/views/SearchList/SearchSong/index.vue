@@ -30,7 +30,6 @@
                 <div class="length">{{ toSongLen(item.duration) }}</div>
             </div>
         </div>
-        <div class="pagination"></div>
     </div>
 </template>
 
@@ -197,6 +196,5 @@ export default {
             background-color: #f0f0f0;
         }
     }
-
-    .pagination {}
-}</style>
+}
+</style>

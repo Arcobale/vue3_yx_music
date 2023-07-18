@@ -20,11 +20,16 @@
         <div class="container">
             <router-view></router-view>
         </div>
+
+        <div class="pagination" v-if="pageCount > 1">
+            <el-pagination background layout="prev, pager, next" :page-count="pageCount" pager-count="9"
+                v-model:current-page="currentPage" @current-change="handleCurrentChange" />
+        </div>
     </div>
 </template>
 
 <script>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -33,12 +38,16 @@ export default {
     setup() {
         const store = useStore();
         const router = useRouter();
+
+        const count = computed(() => store.state.search.count);
+        const pageCount = ref(0);
+        const currentPage = ref(1);
         
         // type值意义
         // 1:单曲，10:专辑，100:歌手，1000:歌单，1004:MV，1014:视频
         const searchListParams = reactive({
             keywords: router.currentRoute.value.params.keyword,
-            limit: 30,
+            limit: 100,
             offset: 0,
             type: 1,
         })
@@ -48,7 +57,9 @@ export default {
         });
 
         function getData() {
-            store.dispatch('getSearchList', searchListParams);
+            store.dispatch('getSearchList', searchListParams).then(() => {
+                pageCount.value = Math.ceil(count.value / searchListParams.limit);
+            });
         }
 
         function changeRoute() {
@@ -61,6 +72,15 @@ export default {
             curActiveElement.classList.remove('active');
 
             searchListParams.type = parseInt(type);
+            searchListParams.offset = 0;
+            currentPage.value = 1;
+            if (type == 1) {
+                searchListParams.limit = 100;
+            } else if (type == 10 || type == 1000) {
+                searchListParams.limit = 20;
+            } else if (type == 1004) {
+                searchListParams.limit = 21;
+            }
             getData();
 
             let routes = router.currentRoute.value.fullPath.split('/');
@@ -69,10 +89,19 @@ export default {
             router.push(routes.join('/'));
         }
 
+
+        function handleCurrentChange(val) {
+            searchListParams.offset = (val - 1) * searchListParams.limit;
+            getData();
+        }
+
         return {
+            pageCount,
+            currentPage,
             searchListParams,
             changeRoute,
-            count: computed(() => store.state.search.count),
+            count,
+            handleCurrentChange
         }
     }
 
@@ -114,6 +143,13 @@ export default {
     .container {
         font-size: 12px;
         margin-top: 20px;
+    }
+
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
     }
 }
 </style>
