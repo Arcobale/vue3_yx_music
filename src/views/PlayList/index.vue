@@ -52,7 +52,7 @@
             </div>
         </div>
         <div class="container">
-            <div class="song-item" v-for="(item, index) in playListAll" :key="item.id"
+            <div class="song-item" v-for="(item, index) in playListTracks" :key="item.id"
                 @dblclick="playAllSong(item.id, index)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title">
@@ -88,19 +88,11 @@ export default {
         const { proxy } = getCurrentInstance();
 
         const id = computed(() => router.currentRoute.value.params.id);
-        const playListAllParams = reactive({
-            id,
-            limit: 10,
-            offset: 0,
-        });
         const playListDetailParams = reactive({
             id
         });
 
-        const playListAll = computed(() => store.state.playlist.playListAll || {});
-
         onMounted(() => {
-            store.dispatch('getPlayListAll', playListAllParams);
             store.dispatch('getPlayListDetail', playListDetailParams);
         })
 
@@ -169,8 +161,8 @@ export default {
             fixedCount,
             showAlbumDetail,
             showArtistHome,
-            playListAll,
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
+            playListTracks: computed(() => store.state.playlist.playListDetail?.tracks || {})
         }
     }
 }
