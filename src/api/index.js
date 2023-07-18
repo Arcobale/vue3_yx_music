@@ -432,6 +432,15 @@ export function reqUserDetail(params) {
     })
 }
 
+// 获取账号信息
+export function reqUserAccount(params) {
+    return requests({
+        method: 'get',
+        url: `/user/account`,
+        params
+    })
+}
+
 // 获取用户信息，歌单，收藏，mv数量
 export function reqUserSubcount() {
     return requests({
@@ -540,7 +549,7 @@ export function reqSubAlbum(params) {
 }
 
 // 喜欢音乐
-export function reqComment(params) {
+export function reqLike(params) {
     return requests({
         method: 'put',
         url: `/like`,

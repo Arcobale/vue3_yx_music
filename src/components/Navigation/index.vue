@@ -1,13 +1,13 @@
 <template>
   <div id="nav">
     <div class="login">
-      <div class="no" v-if="userInfo.nickname == ''">
+      <div class="no" v-if="!isLogin">
         <img src="" alt="" class="user" @click="openQR">
         <span class="status" @click="openQR">未登录 ></span>
       </div>
       <div class="yes" v-else>
-        <img :src="userInfo.avatarUrl" alt="" class="user">
-        <span class="status">{{ userInfo.nickname }}</span>
+        <img :src="userInfo?.avatarUrl" alt="" class="user">
+        <span class="status">{{ userInfo?.nickname }}</span>
       </div>
     </div>
 
@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { computed, ref, reactive, watch, getCurrentInstance } from 'vue'
+import { computed, ref, reactive, watch, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import QRCodeVue from 'qrcode.vue'
@@ -117,9 +117,17 @@ export default {
     const isExpire = ref(false);
     const isQRLogin = ref(true);
     const userInfo = reactive({
-      avatarUrl: '',
-      nickname: ''
+      avatarUrl: localStorage.getItem('avatarUrl'),
+      nickname: localStorage.getItem('nickname'),
+    })
+    const isLogin = computed(() => {
+      if (localStorage.getItem('nickname')) {
+        return true;
+      } else {
+        return false;
+      }
     });
+
     const formData = reactive({
       phone: '',
       captcha: ''
@@ -160,8 +168,9 @@ export default {
       timer = setInterval(() => {
         store.dispatch('getQRCheck', { key: QRCodeLinkParams.key, timestamp: new Date().getTime() }).then(() => {
           if (store.state.login.status === 803) {
-            userInfo.avatarUrl = store.state.login.avatarUrl;
-            userInfo.nickname = store.state.login.nickname;
+            localStorage.setItem("avatarUrl", store.state.login.avatarUrl);
+            localStorage.setItem("nickname", store.state.login.nickname);
+
             proxy.$cookies.set('token', store.state.login.cookie);
             centerDialogVisible.value = false;
             stopTimer();
@@ -184,6 +193,11 @@ export default {
       closeQR();
     }
 
+    function logout() {
+      localStorage.removeItem('avatarUrl');
+      localStorage.removeItem('nickname');
+    }
+
     watch(QRCodeLinkParams, () => {
       store.dispatch('getQRCodeLink', QRCodeLinkParams).then(() => {
         QRImgUrl.value = store.state.login.QRCodeLink;
@@ -197,11 +211,12 @@ export default {
       openQR,
       stopTimer,
       QRImgUrl,
-      userInfo,
       isExpire,
-      refreshQR,
+      isLogin,
       isQRLogin,
       formData,
+      userInfo,
+      refreshQR,
       sentCaptcha,
       login
     }
