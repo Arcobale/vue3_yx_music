@@ -1,10 +1,10 @@
 <template>
     <div id="header">
         <div id="history">
-            <el-icon class="back">
+            <el-icon class="back" @click="changeRoute(-1)">
                 <ArrowLeft />
             </el-icon>
-            <el-icon class="go">
+            <el-icon class="go" @click="changeRoute(1)">
                 <ArrowRight />
             </el-icon>
         </div>
@@ -116,6 +116,10 @@ export default {
             }
         }
 
+        function changeRoute(num) {
+            router.go(num);
+        }
+
         return {
             inputBox,
             option,
@@ -124,7 +128,8 @@ export default {
             Search,
             submitData,
             openHotSearchList,
-            suggestWord
+            suggestWord,
+            changeRoute
         }
     }
 }
@@ -150,6 +155,7 @@ export default {
 
         .el-icon {
             margin: 0 10px;
+            cursor: pointer;
         }
     }
 
