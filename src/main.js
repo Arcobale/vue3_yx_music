@@ -8,6 +8,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import mitt from 'mitt'
+import VueCookies from 'vue-cookies'
 
 const app = createApp(App);
 app.config.globalProperties.$https = axios;
@@ -18,4 +19,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component);
 }
 app.config.globalProperties.$Mitt = new mitt();
+app.config.globalProperties.$cookies = VueCookies;
 app.mount('#app');

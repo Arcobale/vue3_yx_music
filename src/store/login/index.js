@@ -1,4 +1,4 @@
-import { reqQRKey, reqQRCodeLink, reqQRCheck } from "@/api";
+import { reqQRKey, reqQRCodeLink, reqQRCheck, reqSentCaptcha, reqVerifyCaptcha, reqLoginPhone } from "@/api";
 
 const state = {
     QRKey: '',
@@ -25,6 +25,9 @@ const mutations = {
         state.cookie = res.cookie;
         state.status = res.code;
     },
+    LOGINPHONE(state, res) {
+        
+    }
 };
 
 const actions = {
@@ -48,6 +51,24 @@ const actions = {
             commit('COOKIE', res);
         }
     },
+    async getSentCaptcha({commit}, params) {
+        let res = await reqSentCaptcha(params);
+        if (res.code == 200) {
+            return 'ok';
+        }
+    },
+    async getVerifyCaptcha({commit}, params) {
+        let res = await reqVerifyCaptcha(params);
+        if (res.code == 200) {
+            return 'ok';
+        }
+    },
+    async getLoginPhone({commit}, params) {
+        let res = await reqLoginPhone(params);
+        if (res.code == 200) {
+            commit('LOGINPHONE', res);
+        }
+    }
 };
 
 const getters = {};
