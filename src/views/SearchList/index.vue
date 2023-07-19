@@ -10,11 +10,11 @@
         </div>
 
         <div class="nav" @click="changeRoute()">
-            <div class="nav-item active" value="song" type="1">单曲</div>
-            <div class="nav-item" value="artist" type="100">歌手</div>
-            <div class="nav-item" value="album" type="10">专辑</div>
-            <div class="nav-item" value="video" type="1004">视频</div>
-            <div class="nav-item" value="playlist" type="1000">歌单</div>
+            <div class="nav-item active clickable" value="song" type="1">单曲</div>
+            <div class="nav-item clickable" value="artist" type="100">歌手</div>
+            <div class="nav-item clickable" value="album" type="10">专辑</div>
+            <div class="nav-item clickable" value="video" type="1004">视频</div>
+            <div class="nav-item clickable" value="playlist" type="1000">歌单</div>
         </div>
 
         <div class="container">
@@ -111,6 +111,13 @@ export default {
 <style lang="less" scoped>
 .search-list {
     font-size: 12px;
+    .clickable {
+        cursor: pointer;
+    }
+
+    .clickable:hover {
+        font-weight: 500;
+    }
 
     .result {
         font-size: 22px;

@@ -284,6 +284,7 @@ export default {
   overflow: hidden;
   padding-right: 7px;
   box-sizing: border-box;
+  margin-bottom: 60px;
 
   .icon {
     height: 16px;
@@ -349,6 +350,7 @@ export default {
       span {
         max-width: 130px;
         overflow: hidden;
+        white-space: nowrap;
         text-overflow: ellipsis;
       }
     }

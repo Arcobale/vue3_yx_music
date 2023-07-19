@@ -1,7 +1,7 @@
 <template>
     <div class="search-video">
         <div class="container">
-            <div class="container-item" v-for="item in searchListVideo" :key="item.id" @click="showDetail(item.id)">
+            <div class="container-item clickable" v-for="item in searchListVideo" :key="item.id" @click="showDetail(item.id)">
                 <img :src="item.cover" alt="">
                 <div class="mask">
                     <div class="count">
@@ -75,6 +75,9 @@ export default {
 <style lang="less" scoped>
 .search-video {
     font-size: 14px;
+    .clickable {
+        cursor: pointer;
+    }
 
     .container {
         width: 730px;

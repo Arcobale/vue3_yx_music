@@ -74,7 +74,8 @@
     </div>
 
     <div class="pagination">
-      <el-pagination background layout="prev, pager, next" :page-count="pageCount" pager-count="9" v-model:current-page="currentPage" @current-change="handleCurrentChange" />
+      <el-pagination background layout="prev, pager, next" :page-count="pageCount" pager-count="9"
+        v-model:current-page="currentPage" @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -227,6 +228,11 @@ export default {
 
         .desc {
           line-height: 16px;
+          max-width: 400px;
+          min-width: 400px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
     }
@@ -392,4 +398,5 @@ export default {
     justify-content: center;
     margin: 40px 0 80px;
   }
-}</style>
+}
+</style>

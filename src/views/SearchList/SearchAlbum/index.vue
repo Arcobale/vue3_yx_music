@@ -1,7 +1,7 @@
 <template>
     <div class="search-album">
         <div class="container">
-            <div class="container-item" v-for="item in searchListAlbum" :key="item.id" @click="showDetail(item.id)">
+            <div class="container-item clickable" v-for="item in searchListAlbum" :key="item.id" @click="showDetail(item.id)">
                 <div class="cover">
                     <img :src="item.picUrl" alt="">
                 </div>
@@ -55,7 +55,9 @@ export default {
 <style lang="less" scoped>
 .search-album {
     font-size: 14px;
-
+    .clickable {
+        cursor: pointer;
+    }
     .container {
         .container-item {
             height: 80px;

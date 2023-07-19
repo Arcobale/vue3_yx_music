@@ -1,7 +1,7 @@
 <template>
     <div class="search-playlist">
         <div class="container">
-            <div class="container-item" v-for="item in searchListPlayList" :key="item.id" @click="showDetail(item.id)">
+            <div class="container-item clickable" v-for="item in searchListPlayList" :key="item.id" @click="showDetail(item.id)">
                 <div class="cover">
                     <img :src="item.coverImgUrl" alt="">
                 </div>
@@ -57,6 +57,9 @@ export default {
 <style lang="less" scoped>
 .search-playlist {
     font-size: 14px;
+    .clickable {
+        cursor: pointer;
+    }
 
     .container {
         .container-item {

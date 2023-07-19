@@ -187,8 +187,13 @@ export default {
         }
 
         .song-title {
-            width: 400px;
             font-weight: 400;
+            margin-right: 10px;
+            max-width: 400px;
+            min-width: 400px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
 
             .song-alias {
                 color: #656464;

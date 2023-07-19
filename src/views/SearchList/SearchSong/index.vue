@@ -1,7 +1,7 @@
 <template>
     <div class="search-song">
         最佳匹配
-        <div class="bestmatch" @click="showArtistHome(bestMatchArtist.id)">
+        <div class="bestmatch clickable" @click="showArtistHome(bestMatchArtist.id)">
             <div class="cover">
                 <img :src="bestMatchArtist.img1v1Url" alt="">
             </div>
@@ -23,10 +23,14 @@
                     <span class="alia" v-if="item.alias != ''">({{ item.alias[0] }})</span>
                 </div>
                 <div class="artist">
-                    {{ item.artists[0].name }}
-                    <span v-for="ar in item.artists.slice(1)" :key="ar.id">/{{ ar.name }}</span>
+                    <span class="clickable" @click="showArtistHome(item.artists[0].id)">{{ item?.artists?.[0]?.name }}</span>
+                    <span v-if="item?.artists?.length > 1">
+                        <span v-for="ar in item?.artists?.slice(1)" :key="ar.id">
+                            / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+                        </span>
+                    </span>
                 </div>
-                <div class="album">{{ item ? item.album.name : '' }}</div>
+                <div class="album clickable" @click="showAlbumDetail(item?.album?.id)">{{ item ? item.album.name : '' }}</div>
                 <div class="length">{{ toSongLen(item.duration) }}</div>
             </div>
         </div>
@@ -82,11 +86,21 @@ export default {
             })
         }
 
+        function showAlbumDetail(albumId) {
+            router.push({
+                name: 'albumlist',
+                params: {
+                    id: albumId
+                }
+            });
+        }
+
         return {
             fixedNum,
             toSongLen,
             playSong,
             showArtistHome,
+            showAlbumDetail,
             searchListSong,
             bestMatchArtist
         }
@@ -98,6 +112,14 @@ export default {
 <style lang="less" scoped>
 .search-song {
     font-size: 12px;
+
+    .clickable {
+        cursor: pointer;
+    }
+
+    .clickable:hover {
+        font-weight: 500;
+    }
 
     .bestmatch {
         width: 354px;
@@ -168,7 +190,12 @@ export default {
 
             .title {
                 margin-left: 8px;
-                width: 290px;
+                margin-right: 20px;
+                max-width: 270px;
+                min-width: 270px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
 
                 .bold {
                     color: black;
@@ -180,11 +207,21 @@ export default {
             }
 
             .artist {
-                width: 140px;
+                margin-right: 10px;
+                max-width: 130px;
+                min-width: 130px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
             .album {
-                width: 180px;
+                margin-right: 10px;
+                max-width: 170px;
+                min-width: 170px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
         }
 

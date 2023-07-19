@@ -32,7 +32,7 @@
                     <div class="song-length">{{ toSongLen(song.dt) }}</div>
                 </div>
             </div>
-            <div class="all clickable" v-if="!isAllSong" @click="isAllSong=true">查看全部50首 ></div>
+            <div class="all clickable" v-if="!isAllSong" @click="isAllSong = true">查看全部50首 ></div>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
             <div class="date">{{ fixedDate(album.publishTime) }}</div>
         </div>
         <div class="album-detail">
-            
+
             <AlbumSongList :albumId="album.id"></AlbumSongList>
 
         </div>
@@ -153,11 +153,14 @@ export default {
 .top-song {
     display: flex;
     margin-bottom: 50px;
+
     .clickable {
         cursor: pointer;
     }
+
     .clickable:hover {
         font-weight: 500;
+
         .icon {
             fill: black;
         }
@@ -224,7 +227,12 @@ export default {
                 }
 
                 .song-title {
-                    width: 400px;
+                    margin-right: 10px;
+                    max-width: 400px;
+                    min-width: 400px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                     font-weight: 400;
 
                     .song-alias {
@@ -257,5 +265,4 @@ export default {
             box-sizing: border-box;
         }
     }
-}
-</style>
+}</style>

@@ -44,11 +44,11 @@
           <!-- {{ item.artists[0].name }} -->
           <!-- <span v-for="ar in item.artists.slice(1)" :key="ar.id">/{{ ar.name }}</span> -->
           <span class="clickable" @click="showArtistHome(item.artists[0].id)">{{ item?.artists?.[0]?.name }}</span>
-          <div v-if="item?.artists?.length > 1">
+          <span v-if="item?.artists?.length > 1">
             <span v-for="ar in item?.artists?.slice(1)" :key="ar.id">
               / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
             </span>
-          </div>
+          </span>
         </div>
         <div class="song-album clickable" @click="showAlbumDetail(item?.album?.id)">{{ item?.album?.name }}</div>
         <div class="song-length">{{ toSongLen(item.duration) }}</div>
@@ -285,7 +285,12 @@ export default {
       .song-title {
         margin-left: 8px;
         font-size: 13px;
-        width: 290px;
+        margin-right: 20px;
+        max-width: 270px;
+        min-width: 270px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
 
         .bold {
           color: black;
@@ -297,11 +302,21 @@ export default {
       }
 
       .song-artist {
-        width: 140px;
+        margin-right: 20px;
+        max-width: 120px;
+        min-width: 120px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
 
       .song-album {
-        width: 180px;
+        margin-right: 20px;
+        max-width: 150px;
+        min-width: 150px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
 
       .song-length {

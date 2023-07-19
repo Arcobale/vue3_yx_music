@@ -47,7 +47,17 @@
                     </div>
                 </div>
                 <div class="desc">
-                    <span>简介：</span>{{ playListDetail.description }}
+                    <div class="content" :class="{descToggle: !isToggle}">
+                        <span>简介：</span>{{ playListDetail.description }}
+                    </div>
+                    <div class="toggle">
+                        <svg class="icon" aria-hidden="true" v-if="isToggle" @click="isToggle=!isToggle">
+                            <use xlink:href="#icon-xiajiantou"></use>
+                        </svg>
+                        <svg class="icon" aria-hidden="true" v-else @click="isToggle=!isToggle">
+                            <use xlink:href="#icon-shangjiantou"></use>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,11 +71,11 @@
                 </div>
                 <div class="artist">
                     <span class="clickable" @click="showArtistHome(item.ar[0].id)">{{ item?.ar?.[0]?.name }}</span>
-                    <div v-if="item?.ar?.length > 1">
+                    <span v-if="item?.ar?.length > 1">
                         <span v-for="ar in item?.ar?.slice(1)" :key="ar.id">
                             / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
                         </span>
-                    </div>
+                    </span>
                 </div>
                 <div class="album clickable" @click="showAlbumDetail(item?.al?.id)">{{ item?.al?.name }}</div>
                 <div class="length">{{ toSongLen(item.dt) }}</div>
@@ -102,6 +112,7 @@ export default {
             return -1;
         });
         const isSelf = computed(() => userId.value === creatorId.value);
+        const isToggle = ref(true);
 
         onMounted(() => {
             store.dispatch('getPlayListDetail', playListDetailParams);
@@ -183,7 +194,7 @@ export default {
                 let t = isSubscribe.value ? 2 : 1;
                 store.dispatch('getSubPlaylist', { t, id: playlistId.value }).then(() => {
                     isSubscribe.value = !isSubscribe.value;
-    
+
                     // 获取创建歌单数量和收藏歌单数量
                     store.dispatch('getUserSubcount').then(() => {
                         // 获取用户歌单
@@ -198,6 +209,7 @@ export default {
         return {
             isSubscribe,
             isSelf,
+            isToggle,
             fixedNum,
             playAllSong,
             toSongLen,
@@ -333,8 +345,26 @@ export default {
             }
 
             .desc {
-                line-height: 1.75;
-                font-weight: 300;
+                display: flex;
+                justify-content: space-between;
+                .content {
+                    line-height: 1.75;
+                    font-weight: 300;
+                    max-width: 500px;
+                    min-width: 500px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+    
+                .descToggle {
+                    white-space: normal;
+                }
+    
+                .toggle {
+                    margin-left: 15px;
+                    cursor: pointer;
+                }
             }
 
             span {
@@ -362,7 +392,12 @@ export default {
 
             .title {
                 margin-left: 0;
-                width: 330px;
+                margin-right: 30px;
+                max-width: 300px;
+                min-width: 300px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
 
                 .bold {
                     color: black;
@@ -374,11 +409,21 @@ export default {
             }
 
             .artist {
-                width: 150px;
+                margin-right: 20px;
+                max-width: 150px;
+                min-width: 150px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
             .album {
-                width: 200px;
+                margin-right: 20px;
+                max-width: 180px;
+                min-width: 180px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
             .length {

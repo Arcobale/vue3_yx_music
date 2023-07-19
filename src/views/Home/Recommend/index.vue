@@ -11,14 +11,14 @@
       </el-carousel>
     </div>
     <div class="recommend-songlist">
-      <div class="title">
+      <div class="title clickable" @click="changeRoute('/home/songlist')">
         推荐歌单
         <el-icon>
           <ArrowRight />
         </el-icon>
       </div>
       <div class="container">
-        <div v-for="item in personalizedList" :key="item.id">
+        <div class="clickable" v-for="item in personalizedList" :key="item.id">
           <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 134px; height: 134px;"
             @click="showDetail(item.id)">
           <div class="desc">{{ item.name }}</div>
@@ -26,21 +26,21 @@
       </div>
     </div>
     <div class="recommend-privatecontent">
-      <div class="title">
+      <div class="title clickable">
         独家放送
         <el-icon>
           <ArrowRight />
         </el-icon>
       </div>
       <div class="container">
-        <div v-for="item in privateContent" :key="item.id">
+        <div class="clickable" v-for="item in privateContent" :key="item.id">
           <img :src="item.sPicUrl" :alt="item.name" class="cover" style="weight: 170px; height: 95px;">
           <div class="desc">{{ item.name }}</div>
         </div>
       </div>
     </div>
     <div class="recommend-newsong">
-      <div class="title">
+      <div class="title clickable" @click="changeRoute('/home/newmusic')">
         最新音乐
         <el-icon>
           <ArrowRight />
@@ -60,14 +60,14 @@
       </div>
     </div>
     <div class="recommend-privatecontent">
-      <div class="title">
+      <div class="title clickable" @click="changeRoute('/video/mv')">
         推荐MV
         <el-icon>
           <ArrowRight />
         </el-icon>
       </div>
       <div class="container">
-        <div v-for="item in personalizedMV" :key="item.id">
+        <div class="clickable" v-for="item in personalizedMV" :key="item.id">
           <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 170px; height: 95px;">
           <div class="desc">${{ item.name }}</div>
         </div>
@@ -156,6 +156,10 @@ export default {
       }
     }
 
+    function changeRoute(routePath) {
+      router.push(routePath);
+    }
+
     return {
       store,
       personalizedList: computed(() => store.state.home.personalizedList || {}),
@@ -166,15 +170,19 @@ export default {
       fixedNum,
       showDetail,
       playSong,
-      bannerHandler
+      bannerHandler,
+      changeRoute
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.home-recomment {
+.home-recommend {
   background-color: #ffffff;
+  .clickable {
+        cursor: pointer;
+    }
 }
 
 .banner {
