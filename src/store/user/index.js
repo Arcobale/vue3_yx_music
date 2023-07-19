@@ -1,4 +1,4 @@
-import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist } from '@/api'
+import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -25,13 +25,13 @@ const mutations = {
 };
 
 const actions = {
-    async getUserSubcount({commit}) {
+    async getUserSubcount({ commit }) {
         let res = await reqUserSubcount();
         if (res.code == 200) {
             commit('USERSUBCOUNT', res);
         }
     },
-    async getUserAccount({commit}) {
+    async getUserAccount({ commit }) {
         let res = await reqUserAccount();
         if (res.code == 200) {
             commit('USERACCOUNT', res);
@@ -44,15 +44,34 @@ const actions = {
             commit('LIKELIST', res.ids);
         }
     },
-    async getUserPlaylist({commit}, params) {
+    async getUserPlaylist({ commit }, params) {
         let res = await reqUserPlaylist(params);
         if (res.code == 200) {
             commit('USERPLAYLIST', res.playlist);
         }
+    },
+
+    async getSubPlaylist({commit}, params) {
+        let res = await reqSubPlaylist(params);
+        if (res.code == 200) {
+            return 'ok';
+        } else {
+            Promise.reject('操作失败！');
+        }
     }
 };
 
-const getters = {};
+const getters = {
+    userPlaylistId(state) {
+        let { userPlaylist } = state;
+        let ids = new Map();
+        for (let playlist of userPlaylist) {
+            // ids.push({ id: playlist.id, creatorId: playlist.creator.userId });
+            ids.set(playlist.id, playlist.creator.userId);
+        }
+        return ids;
+    }
+};
 
 export default {
     state,

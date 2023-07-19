@@ -16,26 +16,26 @@
                     <div class="playall clickable" @click="playAllSong">
                         <svg class="icon" aria-hidden="true">
                             <use xlink:href="#icon-bofang"></use>
-                        </svg>
-                        播放全部
+                        </svg>播放全部
                     </div>
-                    <div class="collect clickable">
-                        <svg class="icon" aria-hidden="true">
+                    <div class="collect clickable" :class="{ disabled: isSelf }" @click="changeSubscribe">
+                        <svg class="icon" aria-hidden="true" v-if="!isSubscribe">
                             <use xlink:href="#icon-tianjia"></use>
                         </svg>
-                        收藏({{ fixedCount(playListDetail?.subscribedCount) }})
+                        <svg class="icon" aria-hidden="true" v-else>
+                            <use xlink:href="#icon-icon"></use>
+                        </svg>
+                        <span v-if="isSubscribe && !isSelf">已</span>收藏({{ fixedCount(playListDetail?.subscribedCount) }})
                     </div>
                     <div class="share clickable">
                         <svg class="icon" aria-hidden="true">
                             <use xlink:href="#icon-share"></use>
-                        </svg>
-                        分享({{ fixedCount(playListDetail?.shareCount) }})
+                        </svg>分享({{ fixedCount(playListDetail?.shareCount) }})
                     </div>
                     <div class="downloadall clickable">
                         <svg class="icon" aria-hidden="true">
                             <use xlink:href="#icon-xiazai"></use>
-                        </svg>
-                        下载全部
+                        </svg>下载全部
                     </div>
                 </div>
                 <div class="count">
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive, getCurrentInstance, watch } from 'vue';
+import { onMounted, computed, reactive, getCurrentInstance, watch, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { dayjs } from 'element-plus'
@@ -87,19 +87,39 @@ export default {
         const router = useRouter();
         const { proxy } = getCurrentInstance();
 
-        const id = computed(() => router.currentRoute.value.params.id);
+        const playlistId = computed(() => router.currentRoute.value.params.id);
         const playListDetailParams = reactive({
-            id
+            id: playlistId
         });
         const playListTracks = computed(() => store.state.playlist.playListDetail?.tracks || {});
+        const isSubscribe = ref(false);
+        const userPlaylistId = computed(() => store.getters.userPlaylistId);
+        const userId = computed(() => store.state.user.userId);
+        const creatorId = computed(() => {
+            if (userPlaylistId.value.has(parseInt(playlistId.value))) {
+                return userPlaylistId.value.get(parseInt(playlistId.value));
+            }
+            return -1;
+        });
+        const isSelf = computed(() => userId.value === creatorId.value);
 
         onMounted(() => {
             store.dispatch('getPlayListDetail', playListDetailParams);
+            checkSubscribe();
         })
 
         watch(router.currentRoute, () => {
             store.dispatch('getPlayListDetail', playListDetailParams);
+            checkSubscribe();
         })
+
+        function checkSubscribe() {
+            if (userPlaylistId.value.has(parseInt(playlistId.value))) {
+                isSubscribe.value = true;
+            } else {
+                isSubscribe.value = false;
+            }
+        }
 
         function fixedNum(num) {
             return num < 10 ? '0' + num : '' + num;
@@ -158,7 +178,26 @@ export default {
             });
         }
 
+        function changeSubscribe() {
+            if (!isSelf) {
+                let t = isSubscribe.value ? 2 : 1;
+                store.dispatch('getSubPlaylist', { t, id: playlistId.value }).then(() => {
+                    isSubscribe.value = !isSubscribe.value;
+    
+                    // 获取创建歌单数量和收藏歌单数量
+                    store.dispatch('getUserSubcount').then(() => {
+                        // 获取用户歌单
+                        store.dispatch('getUserPlaylist', { uid: userId.value });
+                    });
+                }, (msg) => {
+                    alert(msg);
+                });
+            }
+        }
+
         return {
+            isSubscribe,
+            isSelf,
             fixedNum,
             playAllSong,
             toSongLen,
@@ -166,6 +205,7 @@ export default {
             fixedCount,
             showAlbumDetail,
             showArtistHome,
+            changeSubscribe,
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
             playListTracks,
         }
@@ -183,12 +223,22 @@ export default {
         font-weight: 500;
     }
 
+    .disabled {
+        color: #c3c3c3;
+        cursor: default;
+
+        .icon {
+            fill: #c3c3c3;
+        }
+    }
+
     .icon {
         width: 14px;
         height: 14px;
         fill: #9b9b9b;
         position: relative;
         top: 2px;
+        margin-right: 2px;
     }
 
     .playlist-detail {
@@ -242,6 +292,7 @@ export default {
                     font-weight: 300;
                 }
             }
+
             .creator .clickable {
                 color: #4c70a4;
                 cursor: pointer;
@@ -264,6 +315,7 @@ export default {
                     background-color: #e65d4c;
                     color: white;
                 }
+
                 .playall .icon {
                     fill: white;
                 }

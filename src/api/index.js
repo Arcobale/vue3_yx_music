@@ -533,7 +533,7 @@ export function reqSubMV(params) {
 // 收藏/取消歌单
 export function reqSubPlaylist(params) {
     return requests({
-        method: 'post',
+        method: 'get',
         url: `/playlist/subscribe`,
         params
     })
