@@ -66,7 +66,6 @@ const getters = {
         let { userPlaylist } = state;
         let ids = new Map();
         for (let playlist of userPlaylist) {
-            // ids.push({ id: playlist.id, creatorId: playlist.creator.userId });
             ids.set(playlist.id, playlist.creator.userId);
         }
         return ids;

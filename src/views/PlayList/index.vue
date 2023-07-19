@@ -102,8 +102,13 @@ export default {
             id: playlistId
         });
         const playListTracks = computed(() => store.state.playlist.playListDetail?.tracks || {});
-        const isSubscribe = ref(false);
         const userPlaylistId = computed(() => store.getters.userPlaylistId);
+        const isSubscribe = computed(() => {
+            if (userPlaylistId.value.size > 0) {
+                return userPlaylistId.value.has(parseInt(playlistId.value))
+            }
+            return false;
+        });
         const userId = computed(() => store.state.user.userId);
         const creatorId = computed(() => {
             if (userPlaylistId.value.has(parseInt(playlistId.value))) {
@@ -190,12 +195,14 @@ export default {
         }
 
         function changeSubscribe() {
-            if (!isSelf) {
+            if (!isSelf.value) {
                 let t = isSubscribe.value ? 2 : 1;
+                // 收藏歌单
                 store.dispatch('getSubPlaylist', { t, id: playlistId.value }).then(() => {
+                    // 切换显示状态
                     isSubscribe.value = !isSubscribe.value;
 
-                    // 获取创建歌单数量和收藏歌单数量
+                    // 获取当前创建歌单数量和收藏歌单数量
                     store.dispatch('getUserSubcount').then(() => {
                         // 获取用户歌单
                         store.dispatch('getUserPlaylist', { uid: userId.value });
