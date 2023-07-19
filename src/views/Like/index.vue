@@ -86,24 +86,22 @@ export default {
 
     const likeList = ref([]);
     const listDetail = computed(() => store.state.user.userPlaylist?.[0] || {});
+    const userId = computed(() => store.state.login.userId);
 
     onMounted(() => {
       getData();
     });
 
     function getData() {
-      // 获取用户id
-      store.dispatch('getUserAccount').then((userId) => {
-        // 获取用户喜欢的音乐ids
-        store.dispatch('getLikeList', { uid: userId }).then(() => {
-          // 获取每首歌曲的详情，传入id数组，返回歌曲数组
-          store.dispatch('getSongDetail', { ids: store.state.user.likeListId.join(',') }).then(() => {
-            likeList.value = store.state.playlist.songDetail;
-          });
+      // 获取用户喜欢的音乐ids
+      store.dispatch('getLikeList', { uid: userId.value }).then(() => {
+        // 获取每首歌曲的详情，传入id数组，返回歌曲数组
+        store.dispatch('getSongDetail', { ids: store.state.user.likeListId.join(',') }).then(() => {
+          likeList.value = store.state.playlist.songDetail;
         });
-        // 获取用户歌单
-        store.dispatch('getUserPlaylist', { uid: userId });
       });
+      // 获取用户歌单
+      store.dispatch('getUserPlaylist', { uid: userId.value });
     }
 
     function fixedNum(num) {
@@ -192,6 +190,7 @@ export default {
   .disabled {
     color: #c3c3c3;
     cursor: default;
+
     .icon {
       fill: #c3c3c3;
     }

@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive, getCurrentInstance } from 'vue';
+import { onMounted, computed, reactive, getCurrentInstance, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { dayjs } from 'element-plus'
@@ -91,8 +91,13 @@ export default {
         const playListDetailParams = reactive({
             id
         });
+        const playListTracks = computed(() => store.state.playlist.playListDetail?.tracks || {});
 
         onMounted(() => {
+            store.dispatch('getPlayListDetail', playListDetailParams);
+        })
+
+        watch(router.currentRoute, () => {
             store.dispatch('getPlayListDetail', playListDetailParams);
         })
 
@@ -102,15 +107,15 @@ export default {
 
         function playAllSong(curSongId, curSongIndex) {
             proxy.$Mitt.emit('clearSongList');
-            for (let i = 0; i < playListAll.value.length; i++) {
-                let item = playListAll.value[i];
+            for (let i = 0; i < playListTracks.value.length; i++) {
+                let item = playListTracks.value[i];
                 let newItem = { id: item.id, name: item.name, artist: item.ar, len: item.dt };
                 proxy.$Mitt.emit('addSong', { song: newItem });
             }
             if (typeof curSongId === 'number') {
                 proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
             } else {
-                proxy.$Mitt.emit('playSong', { songId: playListAll.value[0].id, songIndex: 0 });
+                proxy.$Mitt.emit('playSong', { songId: playListTracks.value[0].id, songIndex: 0 });
             }
         }
 
@@ -162,7 +167,7 @@ export default {
             showAlbumDetail,
             showArtistHome,
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
-            playListTracks: computed(() => store.state.playlist.playListDetail?.tracks || {})
+            playListTracks,
         }
     }
 }

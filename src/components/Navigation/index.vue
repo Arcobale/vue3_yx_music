@@ -12,6 +12,7 @@
     </div>
 
     <el-menu router :default-active="activePath.split('/')[1]" class="el-menu-vertical-demo" active-text-color="#d74d45">
+
       <template v-for="(menu, index) in menus">
         <el-menu-item :index="menu.path" :key="index" v-if="!menu.hidden">
           <template #title>
@@ -20,6 +21,27 @@
           </template>
         </el-menu-item>
       </template>
+
+      <el-sub-menu v-if="isLogin" index="createPlaylist">
+        <template #title>创建的歌单</template>
+        <el-menu-item v-for="playlist in userPlaylist?.slice(1, createdPlaylistCount)" :key="playlist.id" :index="activePath" @click="showDetail(playlist.id)">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-24gl-playlistMusic4"></use>
+          </svg>
+          <span>{{ playlist.name }}</span>
+        </el-menu-item>
+      </el-sub-menu>
+
+      <el-sub-menu v-if="isLogin" index="subPlaylist">
+        <template #title>收藏的歌单</template>
+        <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist.id" :index="activePath" @click="showDetail(playlist.id)">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-24gl-playlistMusic4"></use>
+          </svg>
+          <span>{{ playlist.name }}</span>
+        </el-menu-item>
+      </el-sub-menu>
+
     </el-menu>
 
     <el-dialog v-model="centerDialogVisible" width="350px" align-center draggable @close="stopTimer">
@@ -119,6 +141,7 @@ export default {
     const userInfo = reactive({
       avatarUrl: localStorage.getItem('avatarUrl'),
       nickname: localStorage.getItem('nickname'),
+      id: -1,
     })
     const isLogin = computed(() => {
       if (localStorage.getItem('nickname')) {
@@ -128,11 +151,11 @@ export default {
       }
     });
 
+    let timer = null;
     const formData = reactive({
       phone: '',
       captcha: ''
     });
-    let timer = null;
     const QRCodeLinkParams = reactive({
       key: computed(() => store.state.login.QRKey),
       qrimg: true,
@@ -143,6 +166,23 @@ export default {
     const activePath = computed(() => {
       return router.currentRoute.value.fullPath;
     });
+
+    const createdPlaylistCount = computed(() => store.state.user.userSubcount?.createdPlaylistCount);
+    const userPlaylist = computed(() => store.state.user.userPlaylist);
+
+    onMounted(() => {
+      if (isLogin) {
+        // 获取用户id
+        store.dispatch('getUserAccount').then(() => {
+          userInfo.id = store.state.user.userId;
+          // 获取创建歌单数量和收藏歌单数量
+          store.dispatch('getUserSubcount').then(() => {
+            // 获取用户歌单
+            store.dispatch('getUserPlaylist', { uid: userInfo.id });
+          });
+        });
+      }
+    })
 
     function openQR() {
       centerDialogVisible.value = true;
@@ -198,6 +238,15 @@ export default {
       localStorage.removeItem('nickname');
     }
 
+    function showDetail(playListId) {
+      router.push({
+        name: 'playlist',
+        params: {
+          id: playListId
+        }
+      });
+    }
+
     watch(QRCodeLinkParams, () => {
       store.dispatch('getQRCodeLink', QRCodeLinkParams).then(() => {
         QRImgUrl.value = store.state.login.QRCodeLink;
@@ -218,7 +267,10 @@ export default {
       userInfo,
       refreshQR,
       sentCaptcha,
-      login
+      login,
+      showDetail,
+      createdPlaylistCount,
+      userPlaylist
     }
   }
 }
@@ -232,6 +284,12 @@ export default {
   overflow: hidden;
   padding-right: 7px;
   box-sizing: border-box;
+
+  .icon {
+    height: 16px;
+    width: 16px;
+    margin-right: 8px;
+  }
 
   .login {
 
@@ -261,12 +319,12 @@ export default {
 
   .el-menu {
     border: none;
+    background: #edeced;
 
     .el-menu-item {
       height: 35px;
       line-height: 35px;
       font-size: 12px;
-      background: #edeced;
     }
 
     .el-menu-item:hover {
@@ -275,6 +333,24 @@ export default {
 
     .is-active {
       background-color: #e1e1e1;
+    }
+
+    .el-sub-menu:hover {
+      background-color: #e1e1e1;
+    }
+
+    :deep(.el-sub-menu__title) {
+      font-size: 12px;
+      height: 35px;
+      line-height: 35px;
+    }
+    .el-sub-menu .el-menu-item {
+      padding: 0px 20px;
+      span {
+        max-width: 130px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 

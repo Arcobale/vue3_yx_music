@@ -3,6 +3,7 @@ import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist } from '@
 const state = {
     userSubcount: {},
     userAccount: {},
+    userId: -1,
     likeListId: [],
     userPlaylist: [],
 };
@@ -11,8 +12,9 @@ const mutations = {
     USERSUBCOUNT(state, userSubcount) {
         state.userSubcount = userSubcount;
     },
-    USERACCOUNT(state, userAccount) {
-        state.userAccount = userAccount;
+    USERACCOUNT(state, res) {
+        state.userAccount = res.profile;
+        state.userId = res.profile.userId;
     },
     LIKELIST(state, likeListId) {
         state.likeListId = likeListId;
@@ -32,7 +34,7 @@ const actions = {
     async getUserAccount({commit}) {
         let res = await reqUserAccount();
         if (res.code == 200) {
-            commit('USERACCOUNT', res.profile);
+            commit('USERACCOUNT', res);
             return Promise.resolve(res.profile.userId);
         }
     },
