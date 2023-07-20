@@ -16,10 +16,10 @@
                 <router-link to="/home/artist" class="link" active-class="active">歌手</router-link>
                 <router-link to="/home/newmusic" class="link" active-class="active">最新音乐</router-link>
             </ul>
-            <ul v-else-if="option === 'collection'">
-                <router-link to="/collection/album" class="link" active-class="active">专辑</router-link>
-                <router-link to="/collection/singer" class="link" active-class="active">歌手</router-link>
-                <router-link to="/collection/video" class="link" active-class="active">视频</router-link>
+            <ul v-else-if="option === 'subscribe'">
+                <router-link to="/subscribe/album" class="link" active-class="active">专辑</router-link>
+                <router-link to="/subscribe/artist" class="link" active-class="active">歌手</router-link>
+                <router-link to="/subscribe/video" class="link" active-class="active">视频</router-link>
             </ul>
             <ul v-else-if="option === 'video'">
                 <router-link to="/video/videolist" class="link" active-class="active">视频</router-link>

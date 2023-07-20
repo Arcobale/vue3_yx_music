@@ -7,8 +7,9 @@ const state = {
     likeListId: [],
     userPlaylist: [],
     userAlbumSublist: [],
-    userAlbumSubCount: -1,
+    userAlbumSubCount: 0,
     userArtistSublist: [],
+    userArtistSubCount: 0,
 };
 
 const mutations = {
@@ -31,6 +32,7 @@ const mutations = {
     },
     USERARTISTSUBLIST(state, res) {
         state.userArtistSublist = res.data;
+        state.userArtistSubCount = res.count;
     }
 };
 

@@ -101,7 +101,7 @@ const router = createRouter({
             component: () => import('@/views/RecentSong')
         },
         {
-            path: '/Subscribe',
+            path: '/subscribe',
             redirect: {
                 name: '收藏专辑'
             },
@@ -114,9 +114,9 @@ const router = createRouter({
                     component: () => import('@/views/Subscribe/Album'),
                 },
                 {
-                    path: 'singer',
+                    path: 'artist',
                     name: '收藏歌手',
-                    component: () => import('@/views/Subscribe/Singer'),
+                    component: () => import('@/views/Subscribe/Artist'),
                 },
                 {
                     path: 'video',
