@@ -109,7 +109,7 @@ export default {
 
         function changeSubscribe() {
             let t = isSubscribe.value ? 0 : 1;
-            // 收藏歌单
+            // 收藏专辑
             store.dispatch('getSubAlbum', { t, id: albumId.value }).then(() => {
                 // 切换显示状态
                 isSubscribe.value = !isSubscribe.value;

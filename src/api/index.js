@@ -506,7 +506,7 @@ export function reqUploadPlaylistCover(params) {
 // 收藏/取消歌手
 export function reqSubArtist(params) {
     return requests({
-        method: 'post',
+        method: 'get',
         url: `/artist/sub`,
         params
     })
@@ -560,7 +560,7 @@ export function reqLike(params) {
 // 获取收藏的歌手列表
 export function reqArtistSublist() {
     return requests({
-        method: 'post',
+        method: 'get',
         url: `/artist/sublist`
     })
 }
@@ -568,7 +568,7 @@ export function reqArtistSublist() {
 // 获取收藏的MV列表
 export function reqMVSublist() {
     return requests({
-        method: 'post',
+        method: 'get',
         url: `/mv/sublist`
     })
 }

@@ -10,11 +10,14 @@
                 <div class="alias">
                     <span v-for="(alia, index) in artist.alias" :key="index">{{ alia }}; </span>
                 </div>
-                <div class="followstate clickable">
-                    <svg class="icon" aria-hidden="true">
+                <div class="followstate clickable" @click="changeSubscribe">
+                    <svg class="icon" aria-hidden="true" v-if="!isSubscribe">
                         <use xlink:href="#icon-tianjia"></use>
                     </svg>
-                    收藏
+                    <svg class="icon" aria-hidden="true" v-else>
+                        <use xlink:href="#icon-icon"></use>
+                    </svg>
+                    <span v-if="isSubscribe">已</span>收藏
                 </div>
                 <div class="count">
                     <div class="count-item">单曲数：{{ artist.musicSize }}</div>
@@ -25,10 +28,10 @@
         </div>
 
         <div class="nav" @click="changeRoute()">
-            <div class="nav-item active" value="album">专辑</div>
-            <div class="nav-item" value="mv">MV</div>
-            <div class="nav-item" value="detail">歌手详情</div>
-            <div class="nav-item" value="simi">相似歌手</div>
+            <div class="nav-item active clickable" value="album">专辑</div>
+            <div class="nav-item clickable" value="mv">MV</div>
+            <div class="nav-item clickable" value="detail">歌手详情</div>
+            <div class="nav-item clickable" value="simi">相似歌手</div>
         </div>
 
         <div class="container">
@@ -39,7 +42,7 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -52,9 +55,33 @@ export default {
 
         const artistId = computed(() => router.currentRoute.value.params.id)
 
+        const userArtistSublistId = computed(() => store.getters.userArtistSublistId);
+        const isSubscribe = ref(false);
+
         onMounted(() => {
+            store.dispatch('getArtistSublist');
             store.dispatch('getArtistDetail', { id: artistId.value });
-        });
+            checkSubscribe();
+        })
+
+        function checkSubscribe() {
+            if (userArtistSublistId.value.has(parseInt(artistId.value))) {
+                isSubscribe.value = true;
+            } else {
+                isSubscribe.value = false;
+            }
+        }
+
+        function changeSubscribe() {
+            let t = isSubscribe.value ? 0 : 1;
+            // 收藏歌手
+            store.dispatch('getSubArtist', { t, id: artistId.value }).then(() => {
+                // 切换显示状态
+                isSubscribe.value = !isSubscribe.value;
+            }, (msg) => {
+                alert(msg);
+            });
+        }
 
         function changeRoute() {
             let element = event.target;
@@ -71,9 +98,11 @@ export default {
 
 
         return {
+            isSubscribe,
             artistId,
             artist: computed(() => store.state.artisthome.artistDetail || {}),
             changeRoute,
+            changeSubscribe
         }
     }
 

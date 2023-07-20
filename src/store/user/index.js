@@ -1,4 +1,4 @@
-import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqSubAlbum, reqUserDetail } from '@/api'
+import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqSubAlbum, reqUserDetail, reqSubArtist } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -8,6 +8,7 @@ const state = {
     userPlaylist: [],
     userAlbumSublist: [],
     userAlbumSubCount: -1,
+    userArtistSublist: [],
 };
 
 const mutations = {
@@ -27,6 +28,9 @@ const mutations = {
     USERALBUMSUBLIST(state, res) {
         state.userAlbumSublist = res.data;
         state.userAlbumSubCount = res.count;
+    },
+    USERARTISTSUBLIST(state, res) {
+        state.userArtistSublist = res.data;
     }
 };
 
@@ -68,6 +72,12 @@ const actions = {
             commit('USERALBUMSUBLIST', res);
         }
     },
+    async getArtistSublist({commit}) {
+        let res = await reqArtistSublist();
+        if (res.code == 200) {
+            commit('USERARTISTSUBLIST', res);
+        }
+    },
 
     async getSubPlaylist({commit}, params) {
         let res = await reqSubPlaylist(params);
@@ -79,6 +89,14 @@ const actions = {
     },
     async getSubAlbum({commit}, params) {
         let res = await reqSubAlbum(params);
+        if (res.code == 200) {
+            return 'ok';
+        } else {
+            Promise.reject('操作失败！');
+        }
+    },
+    async getSubArtist({commit}, params) {
+        let res = await reqSubArtist(params);
         if (res.code == 200) {
             return 'ok';
         } else {
@@ -103,7 +121,15 @@ const getters = {
             ids.add(album.id);
         }
         return ids;
-    }
+    },
+    userArtistSublistId(state) {
+        let { userArtistSublist } = state;
+        let ids = new Set();
+        for (let artist of userArtistSublist) {
+            ids.add(artist.id);
+        }
+        return ids;
+    },
 };
 
 export default {
