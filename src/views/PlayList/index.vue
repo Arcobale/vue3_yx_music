@@ -103,12 +103,7 @@ export default {
         });
         const playListTracks = computed(() => store.state.playlist.playListDetail?.tracks || {});
         const userPlaylistId = computed(() => store.getters.userPlaylistId);
-        const isSubscribe = computed(() => {
-            if (userPlaylistId.value.size > 0) {
-                return userPlaylistId.value.has(parseInt(playlistId.value))
-            }
-            return false;
-        });
+        const isSubscribe = ref(false);
         const userId = computed(() => store.state.user.userId);
         const creatorId = computed(() => {
             if (userPlaylistId.value.has(parseInt(playlistId.value))) {
@@ -398,7 +393,7 @@ export default {
             }
 
             .title {
-                margin-left: 0;
+                margin-left: 10px;
                 margin-right: 30px;
                 max-width: 300px;
                 min-width: 300px;

@@ -14,11 +14,14 @@
                         </svg>
                         播放全部
                     </div>
-                    <div class="collect clickable">
-                        <svg class="icon" aria-hidden="true">
+                    <div class="collect clickable" @click="changeSubscribe">
+                        <svg class="icon" aria-hidden="true" v-if="!isSubscribe">
                             <use xlink:href="#icon-tianjia"></use>
                         </svg>
-                        收藏({{ fixedCount(albumDetailDynamic?.subCount) }})
+                        <svg class="icon" aria-hidden="true" v-else>
+                            <use xlink:href="#icon-icon"></use>
+                        </svg>
+                        <span v-if="isSubscribe">已</span>收藏({{ fixedCount(albumDetailDynamic?.subCount) }})
                     </div>
                     <div class="share clickable">
                         <svg class="icon" aria-hidden="true">
@@ -35,7 +38,8 @@
                 </div>
                 <div class="artist">
                     <span>歌手：</span>
-                    <span class="clickable" @click="showArtistHome(albumDesc?.artist?.id)">{{ albumDesc?.artist?.name }}</span>
+                    <span class="clickable" @click="showArtistHome(albumDesc?.artist?.id)">{{ albumDesc?.artist?.name
+                    }}</span>
                 </div>
                 <div class="date">
                     <span>时间：</span>{{ fixedDate(albumDesc.publishTime) }}
@@ -56,7 +60,7 @@
                     <span class="clickable" @click="showArtistHome(item.ar[0].id)">{{ item?.ar?.[0]?.name }}</span>
                     <span v-if="item?.ar?.length > 1">
                         <span v-for="ar in item?.ar?.slice(1)" :key="ar.id">
-                         / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+                            / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
                         </span>
                     </span>
                 </div>
@@ -68,7 +72,7 @@
 </template>
 
 <script>
-import { onMounted, computed, getCurrentInstance } from 'vue';
+import { onMounted, computed, ref, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { dayjs } from 'element-plus'
@@ -80,15 +84,39 @@ export default {
         const router = useRouter();
         const { proxy } = getCurrentInstance();
 
-        const id = computed(() => router.currentRoute.value.params.id);
+        const albumId = computed(() => router.currentRoute.value.params.id);
         const albumDetail = computed(() => store.state.playlist.albumDetail);
         const albumDetailDynamic = computed(() => store.state.playlist.albumDetailDynamic);
         const albumSong = computed(() => albumDetail.value.songs || []);
 
+        const userAlbumSublistId = computed(() => store.getters.userAlbumSublistId);
+        const isSubscribe = ref(false);
+
         onMounted(() => {
-            store.dispatch('getAlbumDetailDynamic', { id: id.value });
-            store.dispatch('getAlbumDetail', { id: id.value })
+            store.dispatch('getUserAlbumSublist', { limit: store.state.user.userAlbumSubCount, offset: 0 });
+            store.dispatch('getAlbumDetailDynamic', { id: albumId.value });
+            store.dispatch('getAlbumDetail', { id: albumId.value })
+            checkSubscribe();
         })
+
+        function checkSubscribe() {
+            if (userAlbumSublistId.value.has(parseInt(albumId.value))) {
+                isSubscribe.value = true;
+            } else {
+                isSubscribe.value = false;
+            }
+        }
+
+        function changeSubscribe() {
+            let t = isSubscribe.value ? 0 : 1;
+            // 收藏歌单
+            store.dispatch('getSubAlbum', { t, id: albumId.value }).then(() => {
+                // 切换显示状态
+                isSubscribe.value = !isSubscribe.value;
+            }, (msg) => {
+                alert(msg);
+            });
+        }
 
         function fixedNum(num) {
             return num < 10 ? '0' + num : '' + num;
@@ -99,7 +127,7 @@ export default {
             for (let i = 0; i < albumSong.value.length; i++) {
                 let item = albumSong.value[i];
                 let newItem = { id: item.id, name: item.name, artist: item.ar, len: item.dt };
-                proxy.$Mitt.emit('addSong', { song: newItem});
+                proxy.$Mitt.emit('addSong', { song: newItem });
             }
             if (typeof curSongId === 'number') {
                 proxy.$Mitt.emit('playSong', { songId: curSongId, songIndex: curSongIndex });
@@ -148,6 +176,7 @@ export default {
         }
 
         return {
+            isSubscribe,
             fixedNum,
             fixedDate,
             fixedCount,
@@ -155,6 +184,7 @@ export default {
             playAllSong,
             showAlbumDetail,
             showArtistHome,
+            changeSubscribe,
             albumDesc: computed(() => albumDetail.value.album || []),
             albumDetailDynamic,
             albumSong,
@@ -168,6 +198,7 @@ export default {
     .clickable {
         cursor: pointer;
     }
+
     .clickable:hover {
         font-weight: 500;
     }
@@ -179,6 +210,7 @@ export default {
         position: relative;
         top: 2px;
     }
+
     .albumlist-detail {
         display: flex;
         font-size: 10px;
@@ -231,6 +263,7 @@ export default {
                     background-color: #e65d4c;
                     color: white;
                 }
+
                 .playall .icon {
                     fill: white;
                 }
@@ -323,4 +356,5 @@ export default {
             background-color: #f0f0f0;
         }
     }
-}</style>
+}
+</style>

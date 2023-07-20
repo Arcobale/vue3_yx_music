@@ -181,6 +181,8 @@ export default {
             store.dispatch('getUserPlaylist', { uid: userInfo.id });
           });
         });
+        // 获取收藏的专辑
+        store.dispatch('getUserAlbumSublist', { limit: 10000, offset: 0 });
       }
     })
 

@@ -1,4 +1,4 @@
-import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist } from '@/api'
+import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqSubAlbum, reqUserDetail } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -6,6 +6,8 @@ const state = {
     userId: -1,
     likeListId: [],
     userPlaylist: [],
+    userAlbumSublist: [],
+    userAlbumSubCount: -1,
 };
 
 const mutations = {
@@ -22,6 +24,10 @@ const mutations = {
     USERPLAYLIST(state, userPlaylist) {
         state.userPlaylist = userPlaylist;
     },
+    USERALBUMSUBLIST(state, res) {
+        state.userAlbumSublist = res.data;
+        state.userAlbumSubCount = res.count;
+    }
 };
 
 const actions = {
@@ -38,6 +44,12 @@ const actions = {
             return Promise.resolve(res.profile.userId);
         }
     },
+    async getUserDetail({commit}, params) {
+        let res = await reqUserDetail(params);
+        if (res.code == 200) {
+            
+        }
+    },
     async getLikeList({ commit }, params) {
         let res = await reqLikeList(params);
         if (res.code == 200) {
@@ -50,9 +62,23 @@ const actions = {
             commit('USERPLAYLIST', res.playlist);
         }
     },
+    async getUserAlbumSublist({commit}, params) {
+        let res = await reqAlbumSublist(params);
+        if (res.code == 200) {
+            commit('USERALBUMSUBLIST', res);
+        }
+    },
 
     async getSubPlaylist({commit}, params) {
         let res = await reqSubPlaylist(params);
+        if (res.code == 200) {
+            return 'ok';
+        } else {
+            Promise.reject('操作失败！');
+        }
+    },
+    async getSubAlbum({commit}, params) {
+        let res = await reqSubAlbum(params);
         if (res.code == 200) {
             return 'ok';
         } else {
@@ -67,6 +93,14 @@ const getters = {
         let ids = new Map();
         for (let playlist of userPlaylist) {
             ids.set(playlist.id, playlist.creator.userId);
+        }
+        return ids;
+    },
+    userAlbumSublistId(state) {
+        let { userAlbumSublist } = state;
+        let ids = new Set();
+        for (let album of userAlbumSublist) {
+            ids.add(album.id);
         }
         return ids;
     }

@@ -542,7 +542,7 @@ export function reqSubPlaylist(params) {
 // 收藏/取消专辑
 export function reqSubAlbum(params) {
     return requests({
-        method: 'post',
+        method: 'get',
         url: `/album/sub`,
         params
     })
@@ -574,10 +574,11 @@ export function reqMVSublist() {
 }
 
 // 获取收藏的专辑列表
-export function reqAlbumSublist() {
+export function reqAlbumSublist(params) {
     return requests({
-        method: 'post',
-        url: `/album/sublist`
+        method: 'get',
+        url: `/album/sublist`,
+        params
     })
 }
 
