@@ -1,6 +1,6 @@
 <template>
   <div class="artistmv">
-    <div class="mv-item" v-for="item in artistMV" :key="item.id">
+    <div class="mv-item" v-for="item in artistMV" :key="item.id" @click="showMVDetail(item.id)">
       <img :src="item.imgurl16v9" alt="">
       <div class="mask">
         <span class="count">
@@ -11,7 +11,7 @@
         </span>
         <span class="length">{{ toSongLen(item.duration) }}</span>
       </div>
-      <span class="title">{{ item.name }}</span>
+      <div class="title">{{ item.name }}</div>
     </div>
   </div>
 </template>
@@ -38,6 +38,14 @@ export default {
       store.dispatch('getArtistMV', artistMVParams);
     })
 
+    function showMVDetail(mvId) {
+      // router.push({
+      //     name: 'mv',
+      //     params: {
+      //         id: mvId
+      //     }
+      // });
+    }
 
     function fixedCount(num) {
       return num > 99999999 ? parseInt(num / 100000000) + '亿' : num > 99999 ? parseInt(num / 10000) + '万' : num + '';
@@ -56,6 +64,7 @@ export default {
     }
 
     return {
+      showMVDetail,
       artistMV: computed(() => store.state.artisthome.artistMV || {}),
       fixedCount,
       toSongLen
@@ -115,6 +124,11 @@ export default {
       height: 25px;
       line-height: 25px;
       color: black;
+      min-width: 230px;
+      max-width: 230px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

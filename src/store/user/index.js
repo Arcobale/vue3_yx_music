@@ -1,4 +1,4 @@
-import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqSubAlbum, reqUserDetail, reqSubArtist } from '@/api'
+import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -10,6 +10,8 @@ const state = {
     userAlbumSubCount: 0,
     userArtistSublist: [],
     userArtistSubCount: 0,
+    userMVSublist: [],
+    userMVSubCount: 0,
 };
 
 const mutations = {
@@ -33,6 +35,10 @@ const mutations = {
     USERARTISTSUBLIST(state, res) {
         state.userArtistSublist = res.data;
         state.userArtistSubCount = res.count;
+    },
+    USERMVSUBLIST(state, res) {
+        state.userMVSublist = res.data;
+        state.userMVSubCount = res.count;
     }
 };
 
@@ -74,10 +80,16 @@ const actions = {
             commit('USERALBUMSUBLIST', res);
         }
     },
-    async getArtistSublist({commit}) {
+    async getUserArtistSublist({commit}) {
         let res = await reqArtistSublist();
         if (res.code == 200) {
             commit('USERARTISTSUBLIST', res);
+        }
+    },
+    async getUserMVSublist({commit}) {
+        let res = await reqMVSublist();
+        if (res.code == 200) {
+            commit('USERMVSUBLIST', res);
         }
     },
 
@@ -104,7 +116,15 @@ const actions = {
         } else {
             Promise.reject('操作失败！');
         }
-    }
+    },
+    async getSubMV({commit}, params) {
+        let res = await reqSubMV(params);
+        if (res.code == 200) {
+            return 'ok';
+        } else {
+            Promise.reject('操作失败！');
+        }
+    } 
 };
 
 const getters = {

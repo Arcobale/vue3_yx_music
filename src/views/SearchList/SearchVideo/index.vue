@@ -1,7 +1,8 @@
 <template>
     <div class="search-video">
         <div class="container">
-            <div class="container-item clickable" v-for="item in searchListVideo" :key="item.id" @click="showDetail(item.id)">
+            <div class="container-item clickable" v-for="item in searchListVideo" :key="item.id"
+                @click="showMVDetail(item.id)">
                 <img :src="item.cover" alt="">
                 <div class="mask">
                     <div class="count">
@@ -13,7 +14,15 @@
                     <div class="length">{{ toSongLen(item.duration) }}</div>
                 </div>
                 <span class="name">{{ item.name }}</span>
-                <span class="creator">{{ item.artists[0].name }}</span>
+                <div class="creator">
+                    <span class="clickable" @click="showArtistHome(item.artists[0].id)">{{ item?.artists?.[0]?.name
+                    }}</span>
+                    <span v-if="item?.artists?.length > 1">
+                        <span v-for="ar in item?.artists?.slice(1)" :key="ar.id">
+                            / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+                        </span>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -36,13 +45,21 @@ export default {
 
         });
 
-        function showDetail(mvId) {
+        function showMVDetail(mvId) {
             // router.push({
             //     name: 'mv',
             //     params: {
             //         id: mvId
             //     }
             // });
+        }
+
+        function showArtistHome(artistId) {
+            router.push({
+                name: 'artisthome', params: {
+                    id: artistId
+                }
+            })
         }
 
         function fixedCount(num) {
@@ -62,7 +79,8 @@ export default {
         }
 
         return {
-            showDetail,
+            showMVDetail,
+            showArtistHome,
             toSongLen,
             fixedCount,
             searchListVideo,
@@ -75,6 +93,7 @@ export default {
 <style lang="less" scoped>
 .search-video {
     font-size: 14px;
+
     .clickable {
         cursor: pointer;
     }
@@ -120,14 +139,37 @@ export default {
                 }
             }
 
-            span {
+            .name {
                 display: block;
-                width: 233px;
+                min-width: 233px;
+                max-width: 233px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-bottom: 8px;
                 margin-top: 8px;
+
+                .alia {
+                    display: inline;
+                    color: #656464;
+                }
             }
 
-            span.creator {
+            .creator {
+                max-width: 233px;
+                min-width: 233px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
                 color: #656464;
+
+                span {
+                    display: inline;
+                }
+            }
+
+            .clickable:hover {
+                font-weight: 500;
             }
         }
 

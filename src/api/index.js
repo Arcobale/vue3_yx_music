@@ -515,7 +515,7 @@ export function reqSubArtist(params) {
 // 收藏/取消视频
 export function reqSubVideo(params) {
     return requests({
-        method: 'post',
+        method: 'get',
         url: `/video/sub`,
         params
     })
@@ -524,7 +524,7 @@ export function reqSubVideo(params) {
 // 收藏/取消MV
 export function reqSubMV(params) {
     return requests({
-        method: 'post',
+        method: 'get',
         url: `/mv/sub`,
         params
     })
