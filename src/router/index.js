@@ -101,7 +101,7 @@ const router = createRouter({
             component: () => import('@/views/RecentSong')
         },
         {
-            path: '/collection',
+            path: '/Subscribe',
             redirect: {
                 name: '收藏专辑'
             },
@@ -111,17 +111,17 @@ const router = createRouter({
                 {
                     path: 'album',
                     name: '收藏专辑',
-                    component: () => import('@/views/Collection/Album'),
+                    component: () => import('@/views/Subscribe/Album'),
                 },
                 {
                     path: 'singer',
                     name: '收藏歌手',
-                    component: () => import('@/views/Collection/Singer'),
+                    component: () => import('@/views/Subscribe/Singer'),
                 },
                 {
                     path: 'video',
                     name: '收藏视频',
-                    component: () => import('@/views/Collection/Video'),
+                    component: () => import('@/views/Subscribe/Video'),
                 }
             ]
         },
