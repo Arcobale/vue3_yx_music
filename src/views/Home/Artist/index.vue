@@ -25,8 +25,18 @@
           <li class="clickable" value="3">乐队组合</li>
         </ul>
       </div>
+      <div class="category-initial">
+        <div class="key">
+          筛选：
+        </div>
+        <ul class="value" @click="changeInitial">
+          <li class="active clickable" value="-1">热门</li>
+          <li class="clickable" :value="initial.charCodeAt()" v-for="(initial, index) in initialList" :key="index">{{ initial }}</li>
+          <li class="clickable" value="0">#</li>
+        </ul>
+      </div>
     </div>
-    <div class="container">
+    <div class="container" v-infinite-scroll="loadRestData" infinite-scroll-delay="50">
       <div class="singer-item" v-for="item in artistList" :key="item.id" @click="showArtistHome(item.id)">
         <div class="cover clickable">
           <img :src="item.img1v1Url" alt="" style="width: 134px; height: 134px;">
@@ -38,7 +48,7 @@
 </template>
 
 <script>
-import { onMounted, computed, reactive } from 'vue';
+import { onMounted, computed, ref, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router'
 
@@ -48,19 +58,33 @@ export default {
     const store = useStore();
     const router = useRouter();
 
+    const initialList = reactive([]);
     const artistListParams = reactive({
       limit: 30,
       offset: 0,
       type: -1,
-      area: -1
+      area: -1,
+      initial: -1,
     })
+    let loadCount = 1;
+    const artistList = ref([]);
 
     onMounted(() => {
+      produceInitialList();
       getData();
     })
 
+    function produceInitialList() {
+      for (let i = 0; i < 26; i++) {
+        initialList.push(String.fromCharCode(65 + i));
+      }
+    }
+
     function getData() {
-      store.dispatch('getArtistList', artistListParams);
+      store.dispatch('getArtistList', artistListParams).then(() => {
+        // 每滑动触底请求一次就向列表数据中拼接
+        artistList.value = artistList.value.concat(store.state.home.artistList);
+      });
     }
 
     function changeArea(e) {
@@ -79,6 +103,19 @@ export default {
       getData();
     }
 
+    function changeInitial(e) {
+      let code = parseInt(e.target.value);
+      if (code > 0) {
+        artistListParams.initial = String.fromCharCode(code + 32);
+      } else {
+        artistListParams.initial = code;
+      }
+      let curActiveElement = document.querySelector('.category-initial .active');
+      curActiveElement.classList.remove('active');
+      e.target.classList.add('active');
+      getData();
+    }
+
     function showArtistHome(artistId) {
       router.push({
         name: 'artisthome', params: {
@@ -87,11 +124,20 @@ export default {
       })
     }
 
+    function loadRestData() {
+      loadCount++;
+      artistListParams.offset = 30 * (loadCount - 1);
+      getData();
+    }
+
     return {
+      initialList,
       changeArea,
       changeType,
+      changeInitial,
       showArtistHome,
-      artistList: computed(() => store.state.home.artistList),
+      loadRestData,
+      artistList,
     }
   }
 }
@@ -116,22 +162,25 @@ export default {
     line-height: 18px;
 
     .category-area,
-    .category-type {
+    .category-type,
+    .category-initial {
       display: flex;
       margin-bottom: 14px;
 
       .key {
         font-weight: 600;
+        width: 36px;
       }
 
       ul {
         display: flex;
-        justify-content: space-evenly;
+        flex-wrap: wrap;
         font-weight: 400;
+        width: 720px;
 
         li {
           display: block;
-          width: 76px;
+          width: 64px;
           box-sizing: border-box;
           text-align: center;
           border-left: 1px solid #e0e0e0;
@@ -147,6 +196,11 @@ export default {
         }
       }
     }
+    .category-initial {
+      li {
+        margin-bottom: 14px;
+      }
+    }
   }
 
   .container {
@@ -155,7 +209,8 @@ export default {
     column-gap: 18px;
     row-gap: 40px;
     font-size: 12px;
-    margin-top: 16px;
+    height: 500px;
+    overflow: auto;
 
     .singer-item {
       .desc {
