@@ -45,12 +45,6 @@ const router = createRouter({
             ]
         },
         {
-            path: '/podcast',
-            name: '播客',
-            iconClass: 'Mic',
-            component: () => import('@/views/Podcast')
-        },
-        {
             path: '/fm',
             name: '私人漫游',
             iconClass: 'Service',
@@ -75,12 +69,6 @@ const router = createRouter({
                     component: () => import('@/views/Video/MV')
                 }
             ]
-        },
-        {
-            path: '/follow',
-            name: '关注',
-            iconClass: 'User',
-            component: () => import('@/views/Follow')
         },
         {
             path: '/mylike',

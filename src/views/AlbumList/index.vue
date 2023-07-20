@@ -55,8 +55,6 @@
                     <span class="alia" v-if="item.alia != ''">({{ item.alia[0] }})</span>
                 </div>
                 <div class="artist">
-                    <!-- {{ item.ar[0].name }}
-                    <span v-for="ar in item.ar.slice(1)" :key="ar.id">/{{ ar.name }}</span> -->
                     <span class="clickable" @click="showArtistHome(item.ar[0].id)">{{ item?.ar?.[0]?.name }}</span>
                     <span v-if="item?.ar?.length > 1">
                         <span v-for="ar in item?.ar?.slice(1)" :key="ar.id">

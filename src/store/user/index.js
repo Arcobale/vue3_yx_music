@@ -1,4 +1,4 @@
-import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV } from '@/api'
+import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -12,6 +12,7 @@ const state = {
     userArtistSubCount: 0,
     userMVSublist: [],
     userMVSubCount: 0,
+    recentSong: [],
 };
 
 const mutations = {
@@ -39,6 +40,9 @@ const mutations = {
     USERMVSUBLIST(state, res) {
         state.userMVSublist = res.data;
         state.userMVSubCount = res.count;
+    },
+    RECENTSONG(state, recentSong) {
+        state.recentSong = recentSong;
     }
 };
 
@@ -90,6 +94,12 @@ const actions = {
         let res = await reqMVSublist();
         if (res.code == 200) {
             commit('USERMVSUBLIST', res);
+        }
+    },
+    async getRecentSong({commit}, params) {
+        let res = await reqRecentSong(params);
+        if (res.code == 200) {
+            commit('RECENTSONG', res.data.list);
         }
     },
 
