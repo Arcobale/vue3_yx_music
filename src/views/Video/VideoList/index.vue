@@ -21,7 +21,7 @@
           <span class="clickable activeCat">全部视频</span>
         </div>
         <div class="menu">
-          <div class="menu-item clickable" v-for="item in  videoGroupList " :key="item.id"
+          <div class="menu-item clickable" v-for="item in videoGroupList" :key="item.id"
             @click="changeGroup(item.id, item.name)">
             <span>{{ item.name }}</span>
           </div>
@@ -29,6 +29,7 @@
       </div>
     </div>
 
+    <!-- 视频 -->
     <div class="container" v-if="videoList?.[0]?.type === 1" v-infinite-scroll="loadRestData">
       <div class="container-item clickable" v-for=" item  in  videoList " :key="item.vid"
         @click="showMVDetail(item?.data?.vid)">
@@ -46,13 +47,14 @@
           {{ item?.data?.title }}
         </span>
         <div class="creator">
-          <span class="clickable" @click="showArtistHome(item?.data?.creator.userId)">
+          <span class="clickable" @click="showUserHome(item?.data?.creator.userId)">
             by {{ item?.data?.creator?.nickname }}
           </span>
         </div>
       </div>
     </div>
 
+    <!-- MV -->
     <div class="container" v-if="videoList?.[0]?.type === 2" v-infinite-scroll="loadRestData">
       <div class="container-item clickable" v-for=" item  in  videoList " :key="item?.data?.id"
         @click="showMVDetail(item?.data?.id)">
@@ -98,13 +100,6 @@ export default {
     const videoGroupList = computed(() => store.state.mv.videoGroupList);
     const videoCategoryList = computed(() => store.state.mv.videoCategoryList);
     const videoList = ref([]);
-    computed(() => {
-      if (curGroup.value === '全部视频') {
-        return store.state.mv.videoAll;
-      } else {
-        return store.state.mv.videoGroup;
-      }
-    });
 
     const curGroup = ref('全部视频');
     const isOpen = ref(false);
@@ -177,6 +172,10 @@ export default {
       })
     }
 
+    function showUserHome(userId) {
+
+    }
+
     function fixedCount(num) {
       return num > 99999999 ? parseInt(num / 100000000) + '亿' : num > 99999 ? parseInt(num / 10000) + '万' : num + '';
     }
@@ -198,6 +197,7 @@ export default {
       isOpen,
       showMVDetail,
       showArtistHome,
+      showUserHome,
       toSongLen,
       fixedCount,
       changeGroup,

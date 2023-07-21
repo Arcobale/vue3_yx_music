@@ -17,12 +17,23 @@
           {{ item?.title }}
           <span class="alia" v-if="item?.aliaName">（{{ item?.aliaName }}）</span>
         </span>
-        <div class="creator">
+        <!-- MV -->
+        <div class="creator" v-if="item.type === 0">
           <span class="clickable" @click="showArtistHome(item.creator[0].userId)">{{ item?.creator?.[0]?.userName
           }}</span>
           <span v-if="item?.creator?.length > 1">
             <span v-for="ar in item?.creator?.slice(1)" :key="ar.userId">
               / <span class="clickable" @click="showArtistHome(ar.userId)">{{ ar.userName }}</span>
+            </span>
+          </span>
+        </div>
+        <!-- 视频 -->
+        <div class="creator" v-if="item.type === 1">
+          <span class="clickable" @click="showUserHome(item.creator[0].userId)">by {{ item?.creator?.[0]?.userName
+          }}</span>
+          <span v-if="item?.creator?.length > 1">
+            <span v-for="ar in item?.creator?.slice(1)" :key="ar.userId">
+              / <span class="clickable" @click="showUserHome(ar.userId)">{{ ar.userName }}</span>
             </span>
           </span>
         </div>
@@ -66,6 +77,10 @@ export default {
       })
     }
 
+    function showUserHome(userId) {
+      
+    }
+
     function fixedCount(num) {
       return num > 99999999 ? parseInt(num / 100000000) + '亿' : num > 99999 ? parseInt(num / 10000) + '万' : num + '';
     }
@@ -85,6 +100,7 @@ export default {
     return {
       showMVDetail,
       showArtistHome,
+      showUserHome,
       toSongLen,
       fixedCount,
       userMVSublist,

@@ -203,15 +203,6 @@ export function reqArtistMV(params) {
     })
 }
 
-// 获取MV数据
-export function reqMVDetail(params) {
-    return requests({
-        method: 'get',
-        url: `/mv/detail`,
-        params
-    })
-}
-
 // 获取专辑内容
 export function reqAlbumDetail(params) {
     return requests({
@@ -639,6 +630,60 @@ export function reqVideoAll(params) {
     return requests({
         method: 'get',
         url: `/video/timeline/all`,
+        params
+    })
+}
+
+// 获取全部mv
+export function reqMVAll(params) {
+    return requests({
+        method: 'get',
+        url: `/mv/all`,
+        params
+    })
+}
+
+// 获取最新mv
+export function reqMVFist(params) {
+    return requests({
+        method: 'get',
+        url: `/mv/first`,
+        params
+    })
+}
+
+// 获取网易出品mv
+export function reqMVExclusive(params) {
+    return requests({
+        method: 'get',
+        url: `/mv/exclusive/rcmd`,
+        params
+    })
+}
+
+// 获取mv排行榜
+export function reqMVTop(params) {
+    return requests({
+        method: 'get',
+        url: `/top/mv`,
+        params
+    })
+}
+
+// 获取mv详情数据
+export function reqMVDetail(params) {
+    return requests({
+        method: 'get',
+        url: `/mv/detail`,
+        params
+    })
+}
+
+// 获取mv播放地址
+export function reqMVUrl(params) {
+    return requests({
+        method: 'get',
+        url: `/mv/url`,
         params
     })
 }

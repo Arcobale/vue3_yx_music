@@ -1,4 +1,4 @@
-import { reqMVDetail, reqVideoCategoryList, reqVideoGroup, reqVideoAll, reqVideoGroupList } from "@/api";
+import { reqMVDetail, reqVideoCategoryList, reqVideoGroup, reqVideoAll, reqVideoGroupList, reqMVFist, reqMVExclusive, reqMVTop } from "@/api";
 
 const state = {
     MVDetail: {},
@@ -7,6 +7,10 @@ const state = {
     videoGroup: [],
     videoAll: [],
     hasMore: false,
+
+    MVFirst: [],
+    MVExclusive: [],
+    MVTop: [],
 };
 
 const mutations = {
@@ -26,6 +30,16 @@ const mutations = {
     VIDEOALL(state, res) {
         state.videoAll = res.datas;
         state.hasMore = res.hasMore;
+    },
+
+    MVFIRST(state, MVFirst) {
+        state.MVFirst = MVFirst;
+    },
+    MVEXCLUSIVE(state, MVExclusive) {
+        state.MVExclusive = MVExclusive;
+    },
+    MVTOP(state, MVTop) {
+        state.MVTop = MVTop;
     }
 };
 
@@ -58,6 +72,25 @@ const actions = {
         let res = await reqVideoAll(params);
         if (res.code == 200) {
             commit('VIDEOALL', res);
+        }
+    },
+
+    async getMVFirst({commit}, params) {
+        let res = await reqMVFist(params);
+        if (res.code == 200) {
+            commit('MVFIRST', res.data);
+        }
+    },
+    async getMVExclusive({commit}, params) {
+        let res = await reqMVExclusive(params);
+        if (res.code == 200) {
+            commit('MVEXCLUSIVE', res.data);
+        }
+    },
+    async getMVTop({commit}, params) {
+        let res = await reqMVTop(params);
+        if (res.code == 200) {
+            commit('MVTOP', res.data);
         }
     },
 };
