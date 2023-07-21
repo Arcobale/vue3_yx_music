@@ -77,12 +77,6 @@ const router = createRouter({
             component: () => import('@/views/Like')
         },
         {
-            path: '/downloadmusic',
-            name: '下载管理',
-            iconClass: 'Download',
-            component: () => import('@/views/Download')
-        },
-        {
             path: '/recentsong',
             name: '最近播放',
             iconClass: 'PieChart',

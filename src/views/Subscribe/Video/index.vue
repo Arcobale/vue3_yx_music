@@ -99,7 +99,6 @@ export default {
 .subscribe-video {
   font-size: 12px;
 
-
   .clickable {
     cursor: pointer;
   }

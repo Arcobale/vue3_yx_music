@@ -608,3 +608,37 @@ export function reqLikeComment(params) {
         params
     })
 }
+
+// 获取视频标签列表
+export function reqVideoGroupList() {
+    return requests({
+        method: 'get',
+        url: `/video/group/list`
+    })
+}
+
+// 获取视频热门分类列表
+export function reqVideoCategoryList() {
+    return requests({
+        method: 'get',
+        url: `/video/category/list`
+    })
+}
+
+// 获取指定标签/热门分类id下的视频列表
+export function reqVideoGroup(params) {
+    return requests({
+        method: 'get',
+        url: `/video/group`,
+        params
+    })
+}
+
+// 获取全部视频列表
+export function reqVideoAll(params) {
+    return requests({
+        method: 'get',
+        url: `/video/timeline/all`,
+        params
+    })
+}
