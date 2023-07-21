@@ -104,10 +104,11 @@ export function reqNewSongList(params) {
 
 // PrivateFM
 // 获取私人FM，需登录
-export function reqPersonalFM() {
+export function reqPersonalFM(params) {
     return requests({
         method: 'get',
-        url: `/personal_fm`
+        url: `/personal_fm`,
+        params
     })
 }
 

@@ -101,7 +101,7 @@ export default {
                 store.commit('SKIPSONGRANDOM', { total: playData.length });
             }
             let nextSongId = playData[store.state.curSongIndex].id;
-            proxy.$Mitt.emit('playSong', { songId: nextSongId });
+            proxy.$Mitt.emit('playSong', { songId: nextSongId, songIndex: store.state.curSongIndex });
         })
 
         return {

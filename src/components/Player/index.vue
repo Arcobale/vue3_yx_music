@@ -2,7 +2,7 @@
   <audio :src="songPlayDetail ? songPlayDetail.url : ''"></audio>
 
   <div id="footer">
-    <div class="progress" @mousedown="dragStart" @mouseenter="isIconVisible=true" @mouseleave="isIconVisible=false">
+    <div class="progress" @mousedown="dragStart" @mouseenter="isIconVisible = true" @mouseleave="isIconVisible = false">
       <el-progress :percentage="percentage" color="#cf756c" :show-text="false" :stroke-width="2" :duration="0"
         style="cursor: pointer;"></el-progress>
       <div class="progress-icon-wrapper">
@@ -78,11 +78,13 @@
 <script>
 import { computed, getCurrentInstance, reactive, ref } from 'vue'
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'Player',
   setup() {
     const store = useStore();
+    const router = useRouter();
     const { proxy } = getCurrentInstance();
 
     const isPaused = ref(true);
@@ -92,6 +94,7 @@ export default {
     const isIconVisible = ref(false);
     // 循环状态。0:单曲循环，1:列表循环，2:随机播放
     const curCycle = computed(() => store.state.curCycle);
+    const curFMIndex = computed(() => store.state.curFMIndex);
     let isDragEnd = false;
     const songPlayDetail = computed(() => store.state.playlist.songUrl ? store.state.playlist.songUrl[0] : {});
     const songDetail = computed(() => store.state.playlist.songDetail[0] || undefined);
@@ -123,13 +126,13 @@ export default {
       songUrlParams.id = songId;
       songDetailParams.ids = songId;
       store.commit('CHANGECURSONGID', songId);
-      
+
       store.dispatch('getSongUrl', songUrlParams);
       store.dispatch('getSongDetail', songDetailParams);
       isEmpty.value = false;
 
       // 替换整个播放列表时记录点击歌曲的位置，以便切歌
-      if (songIndex) {
+      if (songIndex !== null) {
         store.commit('CHANGESONG', songIndex);
       }
 
@@ -191,7 +194,21 @@ export default {
 
     // 切歌
     function skipSong(step) {
-      proxy.$Mitt.emit('skipSong', step);
+
+      function doSkip() {
+        proxy.$Mitt.emit('skipSong', step);
+      }
+
+      if (router.currentRoute.value.fullPath === '/fm') {
+        store.commit('SKIPFM', step);
+        if (curFMIndex.value % 3 === 0) {
+          proxy.$Mitt.emit('getFMData', doSkip)
+        } else {
+          doSkip()
+        }
+      } else {
+        doSkip();
+      }
     }
 
     // 切换循环状态

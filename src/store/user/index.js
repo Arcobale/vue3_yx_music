@@ -1,4 +1,4 @@
-import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV } from '@/api'
+import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV, reqPersonalFM } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -6,6 +6,7 @@ const state = {
     userId: -1,
     likeListId: [],
     userPlaylist: [],
+
     userAlbumSublist: [],
     userAlbumSubCount: 0,
     userArtistSublist: [],
@@ -13,6 +14,8 @@ const state = {
     userMVSublist: [],
     userMVSubCount: 0,
     recentSong: [],
+
+    personalFM: [],
 };
 
 const mutations = {
@@ -43,6 +46,9 @@ const mutations = {
     },
     RECENTSONG(state, recentSong) {
         state.recentSong = recentSong;
+    },
+    PERSONALFM(state, personalFM) {
+        state.personalFM = personalFM;
     }
 };
 
@@ -108,7 +114,7 @@ const actions = {
         if (res.code == 200) {
             return 'ok';
         } else {
-            Promise.reject('操作失败！');
+            return Promise.reject('操作失败！');
         }
     },
     async getSubAlbum({commit}, params) {
@@ -116,7 +122,7 @@ const actions = {
         if (res.code == 200) {
             return 'ok';
         } else {
-            Promise.reject('操作失败！');
+            return Promise.reject('操作失败！');
         }
     },
     async getSubArtist({commit}, params) {
@@ -124,7 +130,7 @@ const actions = {
         if (res.code == 200) {
             return 'ok';
         } else {
-            Promise.reject('操作失败！');
+            return Promise.reject('操作失败！');
         }
     },
     async getSubMV({commit}, params) {
@@ -132,9 +138,16 @@ const actions = {
         if (res.code == 200) {
             return 'ok';
         } else {
-            Promise.reject('操作失败！');
+            return Promise.reject('操作失败！');
         }
-    } 
+    },
+
+    async getPersonalFM({commit}, params) {
+        let res = await reqPersonalFM(params);
+        if (res.code == 200) {
+            commit('PERSONALFM', res.data);
+        }
+    }
 };
 
 const getters = {

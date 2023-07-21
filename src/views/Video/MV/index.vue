@@ -97,6 +97,7 @@ export default {
     const router = useRouter();
 
     const curArea = ref('内地');
+    const areaList = ref(['内地', '港台', '欧美', '日本', '韩国']);
 
     const MVFirstParams = reactive({
       area: '内地',
@@ -162,6 +163,7 @@ export default {
 
     return {
       curArea,
+      areaList,
       showMVDetail,
       showArtistHome,
       fixedCount,

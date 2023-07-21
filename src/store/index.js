@@ -12,6 +12,7 @@ const store = createStore({
     state: {
         curSongIndex: -1,
         curCycle: 0,
+        curFMIndex: 0,
     },
     mutations: {
         SKIPSONG(state, { step, total }) {
@@ -26,6 +27,9 @@ const store = createStore({
         },
         CHANGECYCLE(state) {
             state.curCycle = (state.curCycle + 1) % 3;
+        },
+        SKIPFM(state, step) {
+            state.curFMIndex = state.curFMIndex + step;
         }
     },
     modules: {
