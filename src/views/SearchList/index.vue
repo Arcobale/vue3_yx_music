@@ -22,7 +22,7 @@
         </div>
 
         <div class="pagination" v-if="pageCount > 1">
-            <el-pagination background layout="prev, pager, next" :page-count="pageCount" pager-count="9"
+            <el-pagination background layout="prev, pager, next" :page-count="pageCount" :pager-count="9"
                 v-model:current-page="currentPage" @current-change="handleCurrentChange" />
         </div>
     </div>

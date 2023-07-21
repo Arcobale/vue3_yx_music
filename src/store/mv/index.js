@@ -1,4 +1,4 @@
-import { reqMVDetail, reqVideoCategoryList, reqVideoGroup, reqVideoAll, reqVideoGroupList, reqMVFist, reqMVExclusive, reqMVTop } from "@/api";
+import { reqMVDetail, reqVideoCategoryList, reqVideoGroup, reqVideoAll, reqVideoGroupList, reqMVFist, reqMVExclusive, reqMVTop, reqMVAll } from "@/api";
 
 const state = {
     MVDetail: {},
@@ -11,6 +11,8 @@ const state = {
     MVFirst: [],
     MVExclusive: [],
     MVTop: [],
+    MVAll: [],
+    allMVCount: 0,
 };
 
 const mutations = {
@@ -40,6 +42,10 @@ const mutations = {
     },
     MVTOP(state, MVTop) {
         state.MVTop = MVTop;
+    },
+    MVALL(state, res) {
+        state.MVAll = res.data;
+        state.allMVCount = res.count;
     }
 };
 
@@ -91,6 +97,13 @@ const actions = {
         let res = await reqMVTop(params);
         if (res.code == 200) {
             commit('MVTOP', res.data);
+        }
+    },
+    async getMVAll({commit}, params) {
+        let res = await reqMVAll(params);
+        if (res.code == 200) {
+            commit('MVALL', res);
+            return Promise.resolve(res.count);
         }
     },
 };

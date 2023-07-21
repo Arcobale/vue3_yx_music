@@ -2,7 +2,7 @@
   <div class="mv">
     <div class="wrapper">
       <div class="top">
-        <div class="title clickable" @click="changeRoute('/allmv')">
+        <div class="title clickable" @click="changeRoute(`/allmv?area=${curArea}&type=${'全部'}&order=${'最新'}`)">
           最新MV
           <el-icon>
             <ArrowRight />
@@ -47,7 +47,7 @@
 
     <div class="wrapper">
       <div class="top">
-        <div class="title clickable" @click="changeRoute('/allmv')">
+        <div class="title clickable" @click="changeRoute(`/allmv?area=${'全部'}&type=${'网易出品'}&order=${'最新'}`)">
           网易出品
           <el-icon>
             <ArrowRight />
@@ -96,7 +96,7 @@ export default {
     const store = useStore();
     const router = useRouter();
 
-    const areaList = ref(['内地', '港台', '欧美', '日本', '韩国']);
+    const curArea = ref('内地');
 
     const MVFirstParams = reactive({
       area: '内地',
@@ -150,6 +150,7 @@ export default {
         MVTopParams.area = areaName;
         store.dispatch('getMVTop', MVTopParams);
       }
+      curArea.value = areaName;
 
       let curActiveElement = document.querySelector('.activeCat');
       let element = event.target;
@@ -160,7 +161,7 @@ export default {
     }
 
     return {
-      areaList,
+      curArea,
       showMVDetail,
       showArtistHome,
       fixedCount,

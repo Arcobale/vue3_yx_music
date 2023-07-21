@@ -178,7 +178,13 @@ const router = createRouter({
                     component: () => import('@/views/SearchList/SearchPlayList')
                 },
             ]
-        }
+        },
+        {
+            path: '/allmv',
+            name: 'allmv',
+            component: () => import('@/views/AllMV'),
+            hidden: true
+        },
     ],
     history: createWebHistory()
 });
