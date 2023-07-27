@@ -4,12 +4,18 @@
             <div class="song-item" v-for="(item, index) in topListDetail.slice(0, 5)" :key="item.id"
                 @dblclick="playSong(item)">
                 <div class="num">{{ index + 1 }}</div>
-                <div class="title">{{ item.name }}</div>
-                <div class="alia" v-if="item.alia != ''">（{{ item.alia[0] }}）</div>
+                <div class="title">
+                    <span class="bold">{{ item.name }}</span>
+                    <span class="alia" v-if="item.alia != ''">({{ item.alia[0] }})</span>
+                </div>
                 <div class="artist">
-                    <div class="artist-item" v-for="ar in item.ar" :key="ar.id">
-                        {{ ar.name }}
-                    </div>
+                    <span class="clickable" @click="showArtistHome(item.ar[0].id)">{{ item?.ar?.[0]?.name
+                    }}</span>
+                    <span v-if="item?.ar?.length > 1">
+                        <span v-for="ar in item?.ar?.slice(1)" :key="ar.id">
+                            / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+                        </span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -62,10 +68,19 @@ export default {
             });
         }
 
+        function showArtistHome(artistId) {
+            router.push({
+                name: 'artisthome', params: {
+                    id: artistId
+                }
+            })
+        }
+
         return {
             topListDetail,
             playSong,
             showDetail,
+            showArtistHome,
             rankId: props.rankId
         }
     }
@@ -98,28 +113,33 @@ export default {
         }
 
         .title {
-            margin-left: 20px;
-        }
+            margin-left: 8px;
+            font-size: 13px;
+            margin-right: 20px;
+            max-width: 300px;
+            min-width: 300px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
 
-        .alia {
-            color: #656464;
+            .bold {
+                color: black;
+            }
+
+            .alia {
+                color: #656464;
+            }
         }
 
         .artist {
-            display: flex;
-            position: absolute;
-            right: 50px;
-            color: #949494;
-
-            .artist-item {
-                height: 12px;
-                border-left: 1px solid #949494;
-                padding: 0 5px;
-            }
-
-            .artist-item:first-child {
-                border-left: none;
-            }
+            margin-right: 20px;
+            max-width: 170px;
+            min-width: 170px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-align: right;
+            color: #656464;
         }
     }
 

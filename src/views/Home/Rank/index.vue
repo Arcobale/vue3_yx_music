@@ -7,12 +7,12 @@
       <div class="container">
         <div class="container-item" v-for="item in topList.slice(0, 4)" :key="item.id">
           <div class="cover clickable" @click="showDetail(item.id)">
-            <img :src="item.coverImgUrl" alt="" style="width: 170px; height: 170px;">
             <div class="mask">
               <div class="frequency">
                 {{ item.updateFrequency }}
               </div>
             </div>
+            <img :src="item.coverImgUrl" alt="">
           </div>
           <SongTop :rankId="item.id"></SongTop>
         </div>
@@ -116,20 +116,26 @@ export default {
       .container-item {
         margin: 30px 0;
         display: flex;
+        .cover {
+          position: relative;
 
-        .mask {
-          height: 170px;
-          width: 170px;
-          position: absolute;
-          transform: translate(0, -100%);
-          color: white;
-          font-size: 10px;
-
-          .frequency {
+          img {
+            width: 170px;
+            height: 170px;
+          }
+  
+          .mask {
+            height: 170px;
+            width: 170px;
             position: absolute;
-            top: 110px;
-            left: 50%;
-            transform: translate(-50%, 0);
+            color: white;
+            font-size: 10px;
+  
+            .frequency {
+              position: relative;
+              text-align: center;
+              top: 65%;
+            }
           }
         }
       }

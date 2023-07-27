@@ -47,13 +47,13 @@ export default {
 <style lang="less" scoped>
 @import url('./assets/reset.css');
 
-.root {
+.el-container.root {
   padding: 0px;
   margin: 0px;
   min-width: 1000px;
-  min-height: 670px;
+  min-height: 640px;
   width: 1000px;
-  height: 670px;
+  overflow: hidden;
 
   .el-header {
     padding: 0px;
@@ -63,13 +63,23 @@ export default {
     z-index: 20;
   }
 
-  .content {
+  .el-container.content {
     position: relative;
     top: 50px;
     bottom: 60px;
     width: 100%;
+    max-height: 538px;
+    overflow: hidden;
+    background-color: white;
+
+    .el-side {
+      height: 558px;
+    }
+
     .el-main {
-      margin-bottom: 60px;
+      // margin-bottom: 60px;
+      overflow-x: hidden;
+      overflow-y: scroll;
     }
   }
 

@@ -53,8 +53,7 @@
     </div>
 
     <div class="songlist">
-      <div v-for="item in playListHQ" :key="item.id" @click="showDetail(item.id)">
-        <img :src="item.coverImgUrl" :alt="item.name" class="cover clickable" style="width: 170px; height: 170px;">
+      <div class="songlist-item" v-for="item in playListHQ" :key="item.id" @click="showDetail(item.id)">
         <div class="mask clickable">
           <div class="creator">
             <svg class="icon" aria-hidden="true">
@@ -69,6 +68,7 @@
             {{ fixedNum(item.playCount) }}
           </div>
         </div>
+        <img :src="item.coverImgUrl" :alt="item.name" class="cover clickable">
         <div class="desc clickable">{{ item.name }}</div>
       </div>
     </div>
@@ -353,42 +353,49 @@ export default {
     column-gap: 16px;
     margin-top: 14px;
 
-    .icon {
-      width: 12px;
-      height: 12px;
-      fill: white;
-    }
-
-    .cover {
-      border-radius: 10px;
-    }
-
-    .desc {
-      line-height: 16px;
-    }
-
-    .desc .clickable:hover {
-      font-weight: 500;
-    }
-
-    .mask {
-      height: 170px;
-      width: 170px;
-      position: absolute;
-      transform: translate(0, -100%);
-      color: white;
-      font-size: 10px;
-
-      .creator {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
+    .songlist-item {
+      position: relative;
+      .icon {
+        width: 12px;
+        height: 12px;
+        fill: white;
       }
 
-      .playcount {
+      .cover {
+        border-radius: 10px;
+      }
+
+      .desc {
+        line-height: 16px;
+      }
+
+      .desc .clickable:hover {
+        font-weight: 500;
+      }
+
+      .mask {
+        height: 170px;
+        width: 170px;
         position: absolute;
-        top: 6px;
-        right: 8px;
+        color: white;
+        font-size: 10px;
+
+        .creator {
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+        }
+
+        .playcount {
+          position: absolute;
+          top: 6px;
+          right: 8px;
+        }
+      }
+
+      img {
+        width: 170px;
+        height: 170px;
       }
     }
   }

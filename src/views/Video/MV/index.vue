@@ -19,7 +19,6 @@
 
       <div class="container">
         <div class="container-item clickable" v-for="item in MVFirst" :key="item?.id" @click="showMVDetail(item?.id)">
-          <img :src="item?.cover" alt="">
           <div class="mask">
             <div class="count">
               <svg class="icon" aria-hidden="true">
@@ -28,6 +27,7 @@
               {{ fixedCount(item?.playCount) }}
             </div>
           </div>
+          <img :src="item?.cover" alt="">
           <span class="name">
             {{ item?.name }}
           </span>
@@ -57,7 +57,6 @@
 
       <div class="container">
         <div class="container-item clickable" v-for="item in MVExclusive" :key="item?.id" @click="showMVDetail(item?.id)">
-          <img :src="item?.cover" alt="">
           <div class="mask">
             <div class="count">
               <svg class="icon" aria-hidden="true">
@@ -66,6 +65,7 @@
               {{ fixedCount(item?.playCount) }}
             </div>
           </div>
+          <img :src="item?.cover" alt="">
           <span class="name">
             {{ item?.name }}
           </span>
@@ -246,6 +246,7 @@ export default {
       margin-top: 16px;
 
       .container-item {
+        position: relative;
         img {
           width: 233px;
           height: 130px;
@@ -257,7 +258,6 @@ export default {
           height: 130px;
           background-color: transparent;
           position: absolute;
-          transform: translate(0, -100%);
           color: white;
 
           .count {

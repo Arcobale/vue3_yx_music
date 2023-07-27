@@ -210,7 +210,6 @@ export default {
     row-gap: 40px;
     font-size: 12px;
     height: 500px;
-    overflow: auto;
 
     .singer-item {
       .desc {

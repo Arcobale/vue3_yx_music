@@ -24,7 +24,8 @@
 
       <el-sub-menu v-if="isLogin" index="createPlaylist">
         <template #title>创建的歌单</template>
-        <el-menu-item v-for="playlist in userPlaylist?.slice(1, createdPlaylistCount)" :key="playlist.id" :index="activePath" @click="showDetail(playlist.id)">
+        <el-menu-item v-for="playlist in userPlaylist?.slice(1, createdPlaylistCount)" :key="playlist.id"
+          :index="activePath" @click="showDetail(playlist.id)">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-24gl-playlistMusic4"></use>
           </svg>
@@ -34,7 +35,8 @@
 
       <el-sub-menu v-if="isLogin" index="subPlaylist">
         <template #title>收藏的歌单</template>
-        <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist.id" :index="activePath" @click="showDetail(playlist.id)">
+        <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist.id" :index="activePath"
+          @click="showDetail(playlist.id)">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-24gl-playlistMusic4"></use>
           </svg>
@@ -282,11 +284,9 @@ export default {
 #nav {
   background: #edeced;
   width: 200px;
-  min-height: 560px;
-  overflow: hidden;
   padding-right: 7px;
   box-sizing: border-box;
-  margin-bottom: 60px;
+  // margin-bottom: 60px;
 
   .icon {
     height: 16px;
@@ -295,11 +295,15 @@ export default {
   }
 
   .login {
+    background: #edeced;
+    position: absolute;
+    top: 0;
+    height: 60px;
+    width: 200px;
+    z-index: 1;
 
     .no,
     .yes {
-      width: 100%;
-      height: 60px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
@@ -323,6 +327,10 @@ export default {
   .el-menu {
     border: none;
     background: #edeced;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 478px;
+    margin-top: 60px;
 
     .el-menu-item {
       height: 35px;
@@ -347,8 +355,10 @@ export default {
       height: 35px;
       line-height: 35px;
     }
+
     .el-sub-menu .el-menu-item {
       padding: 0px 20px;
+
       span {
         max-width: 130px;
         overflow: hidden;

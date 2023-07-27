@@ -199,6 +199,7 @@ export default {
     width: 740px;
     display: flex;
     align-items: center;
+    position: relative;
 
     .left {
       ul {
@@ -225,7 +226,7 @@ export default {
       display: flex;
       font-size: 12px;
       position: absolute;
-      right: 50px;
+      right: 0px;
 
       .button {
         width: 90px;

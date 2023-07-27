@@ -33,7 +33,6 @@
     <div class="container" v-if="videoList?.[0]?.type === 1" v-infinite-scroll="loadRestData">
       <div class="container-item clickable" v-for=" item  in  videoList " :key="item.vid"
         @click="showMVDetail(item?.data?.vid)">
-        <img :src="item?.data?.coverUrl" alt="">
         <div class="mask">
           <div class="count">
             <svg class="icon" aria-hidden="true">
@@ -43,6 +42,7 @@
           </div>
           <div class="length">{{ toSongLen(item?.data?.durationms) }}</div>
         </div>
+        <img :src="item?.data?.coverUrl" alt="">
         <span class="name">
           {{ item?.data?.title }}
         </span>
@@ -338,6 +338,7 @@ export default {
     margin-top: 16px;
 
     .container-item {
+      position: relative;
       img {
         width: 233px;
         height: 130px;
@@ -349,7 +350,6 @@ export default {
         height: 130px;
         background-color: transparent;
         position: absolute;
-        transform: translate(0, -100%);
         color: white;
 
         .count {

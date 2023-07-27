@@ -51,9 +51,19 @@
           <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 60px; height: 60px;">
           <span class="num">{{ fixedNum(index) }}</span>
           <div class="desc">
-            <div class="item-title">{{ item.name }}</div>
+            <div class="item-title">
+              <span class="bold">{{ item.name }}</span>
+              <span class="alia" v-if="item?.song?.alias != ''">（{{ item?.song?.alias[0] }}）</span>
+            </div>
             <div class="item-singer">
-              <span v-for="artist in item.song.artists" :key="artist.id">{{ artist.name }}</span>
+              <!-- <span v-for="artist in item.song.artists" :key="artist.id">{{ artist.name }}</span> -->
+              <span class="clickable" @click="showArtistHome(item?.song?.artists[0].id)">{{
+                item?.song?.artists?.[0]?.name }}</span>
+              <span v-if="item?.song?.artists?.length > 1">
+                <span v-for="ar in item?.song?.artists?.slice(1)" :key="ar.id">
+                  / <span class="clickable" @click="showArtistHome(ar.id)">{{ ar.name }}</span>
+                </span>
+              </span>
             </div>
           </div>
         </div>
@@ -69,7 +79,7 @@
       <div class="container">
         <div class="clickable" v-for="item in personalizedMV" :key="item.id">
           <img :src="item.picUrl" :alt="item.name" class="cover" style="weight: 170px; height: 95px;">
-          <div class="desc">${{ item.name }}</div>
+          <div class="desc">{{ item.name }}</div>
         </div>
       </div>
     </div>
@@ -130,6 +140,14 @@ export default {
       });
     }
 
+    function showArtistHome(artistId) {
+      router.push({
+        name: 'artisthome', params: {
+          id: artistId
+        }
+      })
+    }
+
     function bannerHandler(banner, type) {
       if (type === 1) {
         // 新歌首发/热歌推荐，根据targetId播放歌曲
@@ -138,7 +156,7 @@ export default {
 
           proxy.$Mitt.emit('playSong', { songId: song.id });
           let newItem = { id: song.id, name: song.name, artist: song.ar, len: song.dt };
-          proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });     
+          proxy.$Mitt.emit('addSong', { song: newItem, insertIndex: store.state.curSongIndex + 1 });
         });
       } else if (type === 3000) {
         // 数字专辑/独家策划/活动，根据url属性的id参数跳转歌单详情页
@@ -169,6 +187,7 @@ export default {
       banner: computed(() => store.state.home.banner || {}),
       fixedNum,
       showDetail,
+      showArtistHome,
       playSong,
       bannerHandler,
       changeRoute
@@ -180,9 +199,14 @@ export default {
 <style lang="less" scoped>
 .home-recommend {
   background-color: #ffffff;
+
   .clickable {
-        cursor: pointer;
-    }
+    cursor: pointer;
+  }
+
+  .clickable:hover {
+    font-weight: 500;
+  }
 }
 
 .banner {
@@ -317,12 +341,33 @@ export default {
 
         .item-title {
           font-size: 14px;
+          margin-right: 20px;
+          max-width: 210px;
+          min-width: 210px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+
+          .bold {
+            color: black;
+          }
+
+          .alia {
+            color: #656464;
+          }
         }
 
         .item-singer {
           margin-top: 8px;
           font-size: 10px;
           color: #6e6e6e;
+
+          margin-right: 20px;
+          max-width: 170px;
+          min-width: 170px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
     }

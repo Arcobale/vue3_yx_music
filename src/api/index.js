@@ -498,7 +498,7 @@ export function reqUploadPlaylistCover(params) {
 // 收藏/取消歌手
 export function reqSubArtist(params) {
     return requests({
-        method: 'get',
+        method: 'put',
         url: `/artist/sub`,
         params
     })
@@ -507,7 +507,7 @@ export function reqSubArtist(params) {
 // 收藏/取消视频
 export function reqSubVideo(params) {
     return requests({
-        method: 'get',
+        method: 'put',
         url: `/video/sub`,
         params
     })
@@ -516,7 +516,7 @@ export function reqSubVideo(params) {
 // 收藏/取消MV
 export function reqSubMV(params) {
     return requests({
-        method: 'get',
+        method: 'put',
         url: `/mv/sub`,
         params
     })
@@ -525,7 +525,7 @@ export function reqSubMV(params) {
 // 收藏/取消歌单
 export function reqSubPlaylist(params) {
     return requests({
-        method: 'get',
+        method: 'put',
         url: `/playlist/subscribe`,
         params
     })
@@ -534,7 +534,7 @@ export function reqSubPlaylist(params) {
 // 收藏/取消专辑
 export function reqSubAlbum(params) {
     return requests({
-        method: 'get',
+        method: 'put',
         url: `/album/sub`,
         params
     })
