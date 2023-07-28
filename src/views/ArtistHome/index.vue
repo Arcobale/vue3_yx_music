@@ -59,27 +59,32 @@ export default {
         const isSubscribe = ref(false);
 
         onMounted(() => {
-            store.dispatch('getArtistSublist');
+            getData();
+        })
+        
+        function getData() {
             store.dispatch('getArtistDetail', { id: artistId.value });
             checkSubscribe();
-        })
+        }
 
         function checkSubscribe() {
-            if (userArtistSublistId.value.has(parseInt(artistId.value))) {
-                isSubscribe.value = true;
-            } else {
-                isSubscribe.value = false;
-            }
+            store.dispatch('getUserArtistSublist', { timestamp: new Date().getTime() }).then(() => {
+                if (userArtistSublistId.value.has(parseInt(artistId.value))) {
+                    isSubscribe.value = true;
+                } else {
+                    isSubscribe.value = false;
+                }
+            });
         }
 
         function changeSubscribe() {
             let t = isSubscribe.value ? 0 : 1;
             // 收藏歌手
-            store.dispatch('getSubArtist', { t, id: artistId.value }).then(() => {
+            store.dispatch('getSubArtist', { t, id: artistId.value, timestamp: new Date().getTime() }).then((msg) => {
+                console.log(msg);
                 // 切换显示状态
                 isSubscribe.value = !isSubscribe.value;
-            }, (msg) => {
-                alert(msg);
+                checkSubscribe();
             });
         }
 

@@ -57,7 +57,7 @@ export default {
     const userMVSubCount = computed(() => store.state.user.userMVSubCount);
 
     onMounted(() => {
-      store.dispatch('getUserMVSublist');
+      store.dispatch('getUserMVSublist', { timestamp: new Date().getTime() });
     });
 
     function showMVDetail(mvId) {
@@ -78,7 +78,7 @@ export default {
     }
 
     function showUserHome(userId) {
-      
+
     }
 
     function fixedCount(num) {
@@ -199,9 +199,10 @@ export default {
           display: inline;
         }
       }
+
       .clickable:hover {
         font-weight: 500;
-    }
+      }
     }
 
     .container-item:nth-child(2n) {

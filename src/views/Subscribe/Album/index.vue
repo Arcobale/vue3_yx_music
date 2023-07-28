@@ -42,7 +42,7 @@ export default {
         const userAlbumSubCount = computed(() => store.state.user.userAlbumSubCount);
 
         onMounted(() => {
-            store.dispatch('getUserAlbumSublist', { limit: 10000, offset: 0 });
+            store.dispatch('getUserAlbumSublist', { limit: 10000, offset: 0, timestamp: new Date().getTime() });
         });
 
         function showDetail(albumId) {

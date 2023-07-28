@@ -38,7 +38,7 @@ export default {
         const userArtistSubCount = computed(() => store.state.user.userArtistSubCount);
 
         onMounted(() => {
-            store.dispatch('getUserArtistSublist');
+            store.dispatch('getUserArtistSublist', { timestamp: new Date().getTime() });
         });
 
         function showArtistHome(artistId) {
@@ -120,4 +120,5 @@ export default {
             background-color: #f0f0f0;
         }
     }
-}</style>
+}
+</style>

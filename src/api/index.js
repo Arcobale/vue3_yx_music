@@ -434,10 +434,11 @@ export function reqUserAccount(params) {
 }
 
 // 获取用户信息，歌单，收藏，mv数量
-export function reqUserSubcount() {
+export function reqUserSubcount(params) {
     return requests({
         method: 'get',
-        url: `/user/subcount`
+        url: `/user/subcount`,
+        params
     })
 }
 
@@ -550,18 +551,20 @@ export function reqLike(params) {
 }
 
 // 获取收藏的歌手列表
-export function reqArtistSublist() {
+export function reqArtistSublist(params) {
     return requests({
         method: 'get',
-        url: `/artist/sublist`
+        url: `/artist/sublist`,
+        params
     })
 }
 
 // 获取收藏的MV列表
-export function reqMVSublist() {
+export function reqMVSublist(params) {
     return requests({
         method: 'get',
-        url: `/mv/sublist`
+        url: `/mv/sublist`,
+        params
     })
 }
 

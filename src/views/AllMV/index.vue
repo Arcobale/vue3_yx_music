@@ -94,6 +94,7 @@ export default {
             order: curOrder,
             limit: 96,
             offset: 0,
+            timestamp: new Date().getTime()
         });
 
         const MVAll = computed(() => store.state.mv.MVAll);
@@ -145,6 +146,7 @@ export default {
                     e.classList.add('active');
                 }
             }
+            MVAllParams.timestamp = new Date().getTime();
             store.dispatch('getMVAll', MVAllParams).then((total) => {
                 pageCount.value = Math.ceil(total / MVAllParams.limit);
             });

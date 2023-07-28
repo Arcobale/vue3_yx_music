@@ -91,28 +91,30 @@ export default {
         const isSubscribe = ref(false);
 
         onMounted(() => {
-            store.dispatch('getUserAlbumSublist', { limit: store.state.user.userAlbumSubCount, offset: 0 });
-            store.dispatch('getAlbumDetailDynamic', { id: albumId.value });
-            store.dispatch('getAlbumDetail', { id: albumId.value })
-            checkSubscribe();
+            store.dispatch('getAlbumDetail', { id: albumId.value });
+            store.dispatch('getAlbumDetailDynamic', { id: albumId.value }).then(() => {
+                isSubscribe.value = albumDetailDynamic.value.isSub;
+            });
         })
 
         function checkSubscribe() {
-            if (userAlbumSublistId.value.has(parseInt(albumId.value))) {
-                isSubscribe.value = true;
-            } else {
-                isSubscribe.value = false;
-            }
+            store.dispatch('getUserAlbumSublist', { limit: 10000, offset: 0, timestamp: new Date().getTime() }).then(() => {
+                if (userAlbumSublistId.value.has(parseInt(albumId.value))) {
+                    isSubscribe.value = true;
+                } else {
+                    isSubscribe.value = false;
+                }
+            });
         }
 
         function changeSubscribe() {
             let t = isSubscribe.value ? 0 : 1;
             // 收藏专辑
-            store.dispatch('getSubAlbum', { t, id: albumId.value }).then(() => {
+            store.dispatch('getSubAlbum', { t, id: albumId.value, timestamp: new Date().getTime() }).then((msg) => {
+                console.log(msg);
                 // 切换显示状态
                 isSubscribe.value = !isSubscribe.value;
-            }, (msg) => {
-                alert(msg);
+                checkSubscribe();
             });
         }
 

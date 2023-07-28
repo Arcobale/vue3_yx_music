@@ -53,8 +53,8 @@ const mutations = {
 };
 
 const actions = {
-    async getUserSubcount({ commit }) {
-        let res = await reqUserSubcount();
+    async getUserSubcount({ commit }, params) {
+        let res = await reqUserSubcount(params);
         if (res.code == 200) {
             commit('USERSUBCOUNT', res);
         }
@@ -90,14 +90,14 @@ const actions = {
             commit('USERALBUMSUBLIST', res);
         }
     },
-    async getUserArtistSublist({commit}) {
-        let res = await reqArtistSublist();
+    async getUserArtistSublist({commit}, params) {
+        let res = await reqArtistSublist(params);
         if (res.code == 200) {
             commit('USERARTISTSUBLIST', res);
         }
     },
-    async getUserMVSublist({commit}) {
-        let res = await reqMVSublist();
+    async getUserMVSublist({commit}, params) {
+        let res = await reqMVSublist(params);
         if (res.code == 200) {
             commit('USERMVSUBLIST', res);
         }
@@ -112,7 +112,11 @@ const actions = {
     async getSubPlaylist({commit}, params) {
         let res = await reqSubPlaylist(params);
         if (res.code == 200) {
-            return 'ok';
+            if (params.t === 1) {
+                return Promise.resolve('收藏成功！');
+            } else {
+                return Promise.resolve('歌单取消收藏成功！');
+            }
         } else {
             return Promise.reject('操作失败！');
         }
@@ -120,7 +124,11 @@ const actions = {
     async getSubAlbum({commit}, params) {
         let res = await reqSubAlbum(params);
         if (res.code == 200) {
-            return 'ok';
+            if (params.t === 1) {
+                return Promise.resolve('专辑已收藏');
+            } else {
+                return Promise.resolve('专辑取消收藏成功');
+            }
         } else {
             return Promise.reject('操作失败！');
         }
@@ -128,7 +136,11 @@ const actions = {
     async getSubArtist({commit}, params) {
         let res = await reqSubArtist(params);
         if (res.code == 200) {
-            return 'ok';
+            if (params.t === 1) {
+                return Promise.resolve('收藏成功！');
+            } else {
+                return Promise.resolve('歌手取消收藏成功！');
+            }
         } else {
             return Promise.reject('操作失败！');
         }
@@ -136,7 +148,11 @@ const actions = {
     async getSubMV({commit}, params) {
         let res = await reqSubMV(params);
         if (res.code == 200) {
-            return 'ok';
+            if (params.t === 1) {
+                return Promise.resolve('视频已收藏');
+            } else {
+                return Promise.resolve('视频取消收藏成功');
+            }
         } else {
             return Promise.reject('操作失败！');
         }

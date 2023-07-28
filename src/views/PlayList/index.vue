@@ -115,14 +115,19 @@ export default {
         const isToggle = ref(true);
 
         onMounted(() => {
-            store.dispatch('getPlayListDetail', playListDetailParams);
-            checkSubscribe();
+            getData();
         })
 
         watch(router.currentRoute, () => {
-            store.dispatch('getPlayListDetail', playListDetailParams);
-            checkSubscribe();
+            getData();
         })
+
+        function getData() {
+            playListDetailParams.timestamp = new Date().getTime();
+            store.dispatch('getPlayListDetail', playListDetailParams).then(() => {
+                checkSubscribe();
+            });
+        }
 
         function checkSubscribe() {
             if (userPlaylistId.value.has(parseInt(playlistId.value))) {
@@ -193,17 +198,16 @@ export default {
             if (!isSelf.value) {
                 let t = isSubscribe.value ? 2 : 1;
                 // 收藏歌单
-                store.dispatch('getSubPlaylist', { t, id: playlistId.value }).then(() => {
+                store.dispatch('getSubPlaylist', { t, id: playlistId.value, timestamp: new Date().getTime() }).then((msg) => {
+                    console.log(msg);
                     // 切换显示状态
                     isSubscribe.value = !isSubscribe.value;
 
                     // 获取当前创建歌单数量和收藏歌单数量
-                    store.dispatch('getUserSubcount').then(() => {
+                    store.dispatch('getUserSubcount', { timestamp: new Date().getTime() }).then(() => {
                         // 获取用户歌单
-                        store.dispatch('getUserPlaylist', { uid: userId.value });
+                        store.dispatch('getUserPlaylist', { uid: userId.value, timestamp: new Date().getTime() });
                     });
-                }, (msg) => {
-                    alert(msg);
                 });
             }
         }
