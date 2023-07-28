@@ -24,23 +24,23 @@
 
       <el-sub-menu v-if="isLogin" index="createPlaylist">
         <template #title>创建的歌单</template>
-        <el-menu-item v-for="playlist in userPlaylist?.slice(1, createdPlaylistCount)" :key="playlist.id"
-          :index="activePath" @click="showDetail(playlist.id)">
+        <el-menu-item v-for="playlist in userPlaylist?.slice(1, createdPlaylistCount)" :key="playlist?.id"
+          :index="activePath" @click="showDetail(playlist?.id)">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-24gl-playlistMusic4"></use>
           </svg>
-          <span>{{ playlist.name }}</span>
+          <span>{{ playlist?.name }}</span>
         </el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu v-if="isLogin" index="subPlaylist">
         <template #title>收藏的歌单</template>
-        <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist.id" :index="activePath"
-          @click="showDetail(playlist.id)">
+        <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist?.id" :index="activePath"
+          @click="showDetail(playlist?.id)">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-24gl-playlistMusic4"></use>
           </svg>
-          <span>{{ playlist.name }}</span>
+          <span>{{ playlist?.name }}</span>
         </el-menu-item>
       </el-sub-menu>
 
@@ -146,11 +146,7 @@ export default {
       id: -1,
     })
     const isLogin = computed(() => {
-      if (localStorage.getItem('nickname')) {
-        return true;
-      } else {
-        return false;
-      }
+      return localStorage.getItem('nickname') !== undefined
     });
 
     let timer = null;
@@ -173,14 +169,18 @@ export default {
     const userPlaylist = computed(() => store.state.user.userPlaylist);
 
     onMounted(() => {
-      if (isLogin) {
+      if (isLogin.value) {
         // 获取用户id
         store.dispatch('getUserAccount').then(() => {
           userInfo.id = store.state.user.userId;
           // 获取创建歌单数量和收藏歌单数量
           store.dispatch('getUserSubcount').then(() => {
             // 获取用户歌单
-            store.dispatch('getUserPlaylist', { uid: userInfo.id });
+            store.dispatch('getUserPlaylist', { uid: userInfo.id }).then(() => {
+              if (userPlaylist.value[0]) {
+                router.getRoutes()[27].redirect  = {path:`/playlist/${userPlaylist.value[0]?.id}`}
+              }
+            });
           });
         });
         // 获取收藏的专辑

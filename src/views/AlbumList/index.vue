@@ -92,7 +92,7 @@ export default {
 
         onMounted(() => {
             store.dispatch('getAlbumDetail', { id: albumId.value });
-            store.dispatch('getAlbumDetailDynamic', { id: albumId.value }).then(() => {
+            store.dispatch('getAlbumDetailDynamic', { id: albumId.value, timestamp: new Date().getTime() }).then(() => {
                 isSubscribe.value = albumDetailDynamic.value.isSub;
             });
         })

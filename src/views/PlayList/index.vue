@@ -47,14 +47,14 @@
                     </div>
                 </div>
                 <div class="desc">
-                    <div class="content" :class="{descToggle: !isToggle}">
+                    <div class="content" :class="{ descToggle: !isToggle }">
                         <span>简介：</span>{{ playListDetail.description }}
                     </div>
                     <div class="toggle">
-                        <svg class="icon" aria-hidden="true" v-if="isToggle" @click="isToggle=!isToggle">
+                        <svg class="icon" aria-hidden="true" v-if="isToggle" @click="isToggle = !isToggle">
                             <use xlink:href="#icon-xiajiantou"></use>
                         </svg>
-                        <svg class="icon" aria-hidden="true" v-else @click="isToggle=!isToggle">
+                        <svg class="icon" aria-hidden="true" v-else @click="isToggle = !isToggle">
                             <use xlink:href="#icon-shangjiantou"></use>
                         </svg>
                     </div>
@@ -62,12 +62,12 @@
             </div>
         </div>
         <div class="container">
-            <div class="song-item" v-for="(item, index) in playListTracks" :key="item.id"
-                @dblclick="playAllSong(item.id, index)">
+            <div class="song-item" v-for="(item, index) in playListTracks" :key="item.id" :data-songId="item.id"
+                @contextmenu="openContextMenu" @dblclick="playAllSong(item.id, index)">
                 <div class="num">{{ fixedNum(index + 1) }}</div>
                 <div class="title">
                     <span class="bold">{{ item.name }}</span>
-                    <span class="alia" v-if="item.alia != ''">({{ item.alia[0] }})</span>
+                    <span class="alia" v-if="item.alia != ''">（{{ item.alia[0] }}）</span>
                 </div>
                 <div class="artist">
                     <span class="clickable" @click="showArtistHome(item.ar[0].id)">{{ item?.ar?.[0]?.name }}</span>
@@ -79,6 +79,21 @@
                 </div>
                 <div class="album clickable" @click="showAlbumDetail(item?.al?.id)">{{ item?.al?.name }}</div>
                 <div class="length">{{ toSongLen(item.dt) }}</div>
+            </div>
+
+            <div id="contextMenu">
+                <div class="menu-item sub">
+                    收藏歌单
+                    <div class="submenu">
+                        <div class="submenu-item" v-for="playlist in userPlaylist?.slice(0, createdPlaylistCount)"
+                            :key="playlist.id" @click="updatePlaylistSongs('add', playlist.id)">
+                            {{ playlist.name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item" @click="updatePlaylistSongs('del')">
+                    从歌单中删除
+                </div>
             </div>
         </div>
     </div>
@@ -103,7 +118,7 @@ export default {
         });
         const playListTracks = computed(() => store.state.playlist.playListDetail?.tracks || {});
         const userPlaylistId = computed(() => store.getters.userPlaylistId);
-        const isSubscribe = ref(false);
+
         const userId = computed(() => store.state.user.userId);
         const creatorId = computed(() => {
             if (userPlaylistId.value.has(parseInt(playlistId.value))) {
@@ -111,11 +126,34 @@ export default {
             }
             return -1;
         });
+        const userPlaylist = computed(() => store.state.user.userPlaylist);
+        const createdPlaylistCount = computed(() => store.state.user.userSubcount?.createdPlaylistCount);
+
+        const isSubscribe = ref(false);
         const isSelf = computed(() => userId.value === creatorId.value);
         const isToggle = ref(true);
 
+        let selectedSongIds = [];
+
         onMounted(() => {
             getData();
+            let menuItem = document.querySelector('#contextMenu .sub');
+
+            menuItem.addEventListener('mouseenter', () => {
+                let submenu = document.querySelector('#contextMenu .sub .submenu');
+                submenu.style.visibility = 'visible';
+            });
+            menuItem.addEventListener('mouseleave', () => {
+                let submenu = document.querySelector('#contextMenu .sub .submenu');
+                submenu.style.visibility = 'hidden';
+            });
+
+            // 点击事件收回右键菜单
+            window.onclick = function (e) {
+                // 清除选中的歌曲
+                selectedSongIds.length = 0;
+                document.getElementById('contextMenu').style.visibility = 'hidden';
+            }
         })
 
         watch(router.currentRoute, () => {
@@ -212,6 +250,31 @@ export default {
             }
         }
 
+        function updatePlaylistSongs(op, pid = playlistId.value) {
+            let tracks = selectedSongIds.join(',');
+            // 只能操作自己创建的歌单
+            if (isSelf.value) {
+                // 添加或删除歌曲到歌单
+                store.dispatch('getUpdatePlaylistTrack', { op, pid, tracks }).then((msg) => {
+                    console.log(msg);
+                    playListDetailParams.timestamp = new Date().getTime();
+                    // 更新歌曲列表
+                    store.dispatch('getPlayListDetail', playListDetailParams);
+                });
+            }
+        }
+
+        function openContextMenu(e) {
+            // 取消默认的浏览器右键菜单
+            e.preventDefault();
+            // 获取自定义的右键菜单
+            let menu = document.getElementById('contextMenu');
+            menu.style.left = e.clientX + 'px';
+            menu.style.top = e.clientY + 'px';
+            menu.style.visibility = 'visible';
+            selectedSongIds.push(parseInt(e.currentTarget.getAttribute('data-songId')));
+        }
+
         return {
             isSubscribe,
             isSelf,
@@ -224,8 +287,12 @@ export default {
             showAlbumDetail,
             showArtistHome,
             changeSubscribe,
+            openContextMenu,
+            updatePlaylistSongs,
             playListDetail: computed(() => store.state.playlist.playListDetail || {}),
             playListTracks,
+            userPlaylist,
+            createdPlaylistCount,
         }
     }
 }
@@ -353,6 +420,7 @@ export default {
             .desc {
                 display: flex;
                 justify-content: space-between;
+
                 .content {
                     line-height: 1.75;
                     font-weight: 300;
@@ -362,11 +430,11 @@ export default {
                     white-space: nowrap;
                     text-overflow: ellipsis;
                 }
-    
+
                 .descToggle {
                     white-space: normal;
                 }
-    
+
                 .toggle {
                     margin-left: 15px;
                     cursor: pointer;
@@ -382,6 +450,58 @@ export default {
     .container {
         margin-top: 35px;
 
+        #contextMenu {
+            position: fixed;
+            visibility: hidden;
+            background-color: #f0f0f0;
+            width: 180px;
+            padding: 4px;
+            font-size: 14px;
+            border: 1px solid black;
+            border-radius: 10px;
+
+            .menu-item {
+                line-height: 22px;
+                height: 22px;
+                cursor: default;
+                border-radius: 10px;
+                width: 166px;
+                padding: 4px 8px;
+
+                .submenu {
+                    width: 210px;
+                    padding: 4px;
+                    border: 1px solid black;
+                    border-radius: 10px;
+                    background-color: #f0f0f0;
+                    position: relative;
+                    left: 165px;
+                    top: -35px;
+                    visibility: hidden;
+                    color: black;
+
+                    .submenu-item {
+                        cursor: default;
+                        border-radius: 10px;
+                        padding: 4px 8px;
+                        width: 166px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                    }
+
+                    .submenu-item:hover {
+                        background-color: #102db9;
+                        color: white;
+                    }
+                }
+            }
+
+            .menu-item:hover {
+                background-color: #102db9;
+                color: white;
+            }
+        }
+
         .song-item {
             display: flex;
             height: 34px;
@@ -389,6 +509,7 @@ export default {
             font-weight: 400;
             align-items: center;
             color: #696969;
+            cursor: default;
 
             .num {
                 margin-left: 8px;

@@ -1,4 +1,5 @@
 import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV, reqPersonalFM, reqLike } from '@/api'
+import { reqUpdatePlaylistTrack } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -66,10 +67,10 @@ const actions = {
             return Promise.resolve(res.profile.userId);
         }
     },
-    async getUserDetail({commit}, params) {
+    async getUserDetail({ commit }, params) {
         let res = await reqUserDetail(params);
         if (res.code == 200) {
-            
+
         }
     },
     async getLikeList({ commit }, params) {
@@ -84,32 +85,32 @@ const actions = {
             commit('USERPLAYLIST', res.playlist);
         }
     },
-    async getUserAlbumSublist({commit}, params) {
+    async getUserAlbumSublist({ commit }, params) {
         let res = await reqAlbumSublist(params);
         if (res.code == 200) {
             commit('USERALBUMSUBLIST', res);
         }
     },
-    async getUserArtistSublist({commit}, params) {
+    async getUserArtistSublist({ commit }, params) {
         let res = await reqArtistSublist(params);
         if (res.code == 200) {
             commit('USERARTISTSUBLIST', res);
         }
     },
-    async getUserMVSublist({commit}, params) {
+    async getUserMVSublist({ commit }, params) {
         let res = await reqMVSublist(params);
         if (res.code == 200) {
             commit('USERMVSUBLIST', res);
         }
     },
-    async getRecentSong({commit}, params) {
+    async getRecentSong({ commit }, params) {
         let res = await reqRecentSong(params);
         if (res.code == 200) {
             commit('RECENTSONG', res.data.list);
         }
     },
 
-    async getSubPlaylist({commit}, params) {
+    async getSubPlaylist({ commit }, params) {
         let res = await reqSubPlaylist(params);
         if (res.code == 200) {
             if (params.t === 1) {
@@ -121,7 +122,7 @@ const actions = {
             return Promise.reject('操作失败！');
         }
     },
-    async getSubAlbum({commit}, params) {
+    async getSubAlbum({ commit }, params) {
         let res = await reqSubAlbum(params);
         if (res.code == 200) {
             if (params.t === 1) {
@@ -133,7 +134,7 @@ const actions = {
             return Promise.reject('操作失败！');
         }
     },
-    async getSubArtist({commit}, params) {
+    async getSubArtist({ commit }, params) {
         let res = await reqSubArtist(params);
         if (res.code == 200) {
             if (params.t === 1) {
@@ -145,7 +146,7 @@ const actions = {
             return Promise.reject('操作失败！');
         }
     },
-    async getSubMV({commit}, params) {
+    async getSubMV({ commit }, params) {
         let res = await reqSubMV(params);
         if (res.code == 200) {
             if (params.t === 1) {
@@ -157,7 +158,7 @@ const actions = {
             return Promise.reject('操作失败！');
         }
     },
-    async getLike({commit}, params) {
+    async getLike({ commit }, params) {
         let res = await reqLike(params);
         if (res.code == 200) {
             if (params.like) {
@@ -170,10 +171,27 @@ const actions = {
         }
     },
 
-    async getPersonalFM({commit}, params) {
+    async getPersonalFM({ commit }, params) {
         let res = await reqPersonalFM(params);
         if (res.code == 200) {
             commit('PERSONALFM', res.data);
+        }
+    },
+
+
+    // 关于歌单修改
+    async getUpdatePlaylistTrack({commit}, params) {
+        let res = await reqUpdatePlaylistTrack(params);
+        if (res.body.code == 200) {
+            if (params.op === 'add') {
+                return Promise.resolve('添加歌曲成功');
+            } else if (params.op === 'del') {
+                return Promise.resolve('删除歌曲成功');
+            }
+        } else if (res.body.code == 502) {
+            return Promise.reject(res.body.message);
+        } else {
+            return Promise.reject('操作失败！');
         }
     }
 };
