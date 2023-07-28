@@ -1,4 +1,4 @@
-import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV, reqPersonalFM } from '@/api'
+import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV, reqPersonalFM, reqLike } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -137,6 +137,18 @@ const actions = {
         let res = await reqSubMV(params);
         if (res.code == 200) {
             return 'ok';
+        } else {
+            return Promise.reject('操作失败！');
+        }
+    },
+    async getLike({commit}, params) {
+        let res = await reqLike(params);
+        if (res.code == 200) {
+            if (params.like) {
+                return Promise.resolve('已添加到我喜欢的音乐');
+            } else {
+                return Promise.resolve('取消喜欢成功');
+            }
         } else {
             return Promise.reject('操作失败！');
         }
