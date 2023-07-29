@@ -23,7 +23,12 @@
       </template>
 
       <el-sub-menu v-if="isLogin" index="createPlaylist">
-        <template #title>创建的歌单</template>
+        <template #title>
+          <svg class="icon clickable" aria-hidden="true" @click="createPlaylistDialogVisible = true">
+            <use xlink:href="#icon-tianjia1"></use>
+          </svg>
+          创建的歌单
+        </template>
         <el-menu-item v-for="playlist in userPlaylist?.slice(1, createdPlaylistCount)" :key="playlist?.id"
           :index="activePath" @click="showDetail(playlist?.id)">
           <svg class="icon" aria-hidden="true">
@@ -35,8 +40,8 @@
 
       <el-sub-menu v-if="isLogin" index="subPlaylist">
         <template #title>收藏的歌单</template>
-        <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist?.id" :index="activePath"
-          @click="showDetail(playlist?.id)">
+        <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist?.id"
+          :index="activePath" @click="showDetail(playlist?.id)">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-24gl-playlistMusic4"></use>
           </svg>
@@ -46,7 +51,8 @@
 
     </el-menu>
 
-    <el-dialog v-model="centerDialogVisible" width="350px" align-center draggable @close="stopTimer">
+    <!-- 登录对话框 -->
+    <el-dialog v-model="loginDialogVisible" width="350px" align-center draggable @close="stopTimer">
       <div class="content">
         <div class="qr-login" v-if="isQRLogin">
           <span class="title">扫码登录</span>
@@ -120,6 +126,25 @@
         </div>
       </div>
     </el-dialog>
+
+    <!-- 新建歌单对话框 -->
+    <el-dialog v-model="createPlaylistDialogVisible" title="新建歌单">
+      <el-form :model="createPlaylistForm">
+        <el-form-item>
+          <el-input v-model="createPlaylistForm.name" autocomplete="off" placeholder="输入新歌单标题" />
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox v-model="createPlaylistForm.privacy" label="设置为隐私歌单" value="10" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="createPlaylist">
+            创建
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -136,7 +161,8 @@ export default {
     const store = useStore();
     const { proxy } = getCurrentInstance();
 
-    const centerDialogVisible = ref(false);
+    const loginDialogVisible = ref(false);
+    const createPlaylistDialogVisible = ref(false);
     const QRImgUrl = ref('');
     const isExpire = ref(false);
     const isQRLogin = ref(true);
@@ -168,28 +194,39 @@ export default {
     const createdPlaylistCount = computed(() => store.state.user.userSubcount?.createdPlaylistCount);
     const userPlaylist = computed(() => store.state.user.userPlaylist);
 
+    const createPlaylistForm = reactive({
+      name: '',
+      privacy: false,
+      type: 'NORMAL'
+    })
+
     onMounted(() => {
       if (isLogin.value) {
         // 获取用户id
         store.dispatch('getUserAccount').then(() => {
           userInfo.id = store.state.user.userId;
-          // 获取创建歌单数量和收藏歌单数量
-          store.dispatch('getUserSubcount').then(() => {
-            // 获取用户歌单
-            store.dispatch('getUserPlaylist', { uid: userInfo.id }).then(() => {
-              if (userPlaylist.value[0]) {
-                router.getRoutes()[27].redirect  = {path:`/playlist/${userPlaylist.value[0]?.id}`}
-              }
-            });
-          });
+          reloadNav();
         });
         // 获取收藏的专辑
         store.dispatch('getUserAlbumSublist', { limit: 10000, offset: 0 });
       }
     })
 
+    // 重新加载导航栏
+    function reloadNav() {
+      // 获取创建歌单数量和收藏歌单数量
+      store.dispatch('getUserSubcount', { timestamp: new Date().getTime() }).then(() => {
+        // 获取用户歌单
+        store.dispatch('getUserPlaylist', { uid: userInfo.id, timestamp: new Date().getTime() }).then(() => {
+          if (userPlaylist.value[0]) {
+            router.getRoutes()[27].redirect = { path: `/playlist/${userPlaylist.value[0]?.id}` }
+          }
+        });
+      });
+    }
+
     function openQR() {
-      centerDialogVisible.value = true;
+      loginDialogVisible.value = true;
       getQRCode();
     }
 
@@ -216,7 +253,7 @@ export default {
             localStorage.setItem("nickname", store.state.login.nickname);
 
             proxy.$cookies.set('token', store.state.login.cookie);
-            centerDialogVisible.value = false;
+            loginDialogVisible.value = false;
             stopTimer();
           } else if (store.state.login.status == 800) {
             isExpire.value = true;
@@ -251,6 +288,20 @@ export default {
       });
     }
 
+    function createPlaylist() {
+      // privacy : 是否设置为隐私歌单，默认否，传'10'则设置成隐私歌单
+      // type : 歌单类型,默认'NORMAL',传 'VIDEO'则为视频歌单,传 'SHARED'则为共享歌单
+      let { name, type } = createPlaylistForm;
+      let privacy = createPlaylistForm.privacy ? 10 : 0;
+      store.dispatch('getCreatePlaylist', { name, privacy, type }).then((msg) => {
+        console.log(msg);
+        // 重新加载导航栏
+        reloadNav();
+        // 关闭对话框
+        createPlaylistDialogVisible.value = false;
+      })
+    }
+
     watch(QRCodeLinkParams, () => {
       store.dispatch('getQRCodeLink', QRCodeLinkParams).then(() => {
         QRImgUrl.value = store.state.login.QRCodeLink;
@@ -260,7 +311,8 @@ export default {
     return {
       menus,
       activePath,
-      centerDialogVisible,
+      loginDialogVisible,
+      createPlaylistDialogVisible,
       openQR,
       stopTimer,
       QRImgUrl,
@@ -273,6 +325,8 @@ export default {
       sentCaptcha,
       login,
       showDetail,
+      createPlaylist,
+      createPlaylistForm,
       createdPlaylistCount,
       userPlaylist
     }
@@ -471,9 +525,7 @@ export default {
           align-items: center;
           margin: 15px 0 45px;
 
-          .autologin {
-  
-          }
+          .autologin {}
 
           .right {
             display: flex;

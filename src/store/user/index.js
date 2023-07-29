@@ -1,5 +1,5 @@
 import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV, reqPersonalFM, reqLike } from '@/api'
-import { reqUpdatePlaylistTrack } from '@/api'
+import { reqUpdatePlaylistTrack, reqCreatePlaylist, reqDeletePlaylist } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -193,7 +193,29 @@ const actions = {
         } else {
             return Promise.reject('操作失败！');
         }
-    }
+    },
+    async getCreatePlaylist({commit}, params) {
+        let res = await reqCreatePlaylist(params);
+        if (res.code == 200) {
+            if (params.type === 'NORMAL') {
+                return Promise.resolve('创建歌单成功');
+            } else if (params.type === 'VIDEO') {
+                return Promise.resolve('创建视频歌单成功');
+            } else if (params.type === 'SHARED') {
+                return Promise.resolve('创建共享歌单成功');
+            }
+        } else {
+            return Promise.reject('操作失败！');
+        }
+    },
+    async getDeletePlaylist({commit}, params) {
+        let res = await reqDeletePlaylist(params);
+        if (res.code == 200) {
+            return Promise.resolve('删除歌单成功');
+        } else {
+            return Promise.reject('操作失败！');
+        }
+    },
 };
 
 const getters = {

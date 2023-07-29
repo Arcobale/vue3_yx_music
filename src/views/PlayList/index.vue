@@ -152,7 +152,14 @@ export default {
             window.onclick = function (e) {
                 // 清除选中的歌曲
                 selectedSongIds.length = 0;
-                document.getElementById('contextMenu').style.visibility = 'hidden';
+                let menu = document.querySelector('#contextMenu');
+                let submenu = document.querySelector('#contextMenu .sub .submenu');
+                if (menu) {
+                    menu.style.visibility = 'hidden';
+                }
+                if (submenu) {
+                    submenu.style.visibility = 'hidden';
+                }
             }
         })
 
