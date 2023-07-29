@@ -145,6 +145,7 @@ export default {
     height: 50px;
     width: 100%;
     display: flex;
+    -webkit-app-region: drag;
 
     #history {
         width: 200px;

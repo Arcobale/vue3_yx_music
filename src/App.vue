@@ -51,7 +51,7 @@ export default {
   padding: 0px;
   margin: 0px;
   min-width: 1000px;
-  min-height: 640px;
+  min-height: 670px;
   width: 1000px;
   overflow: hidden;
 
@@ -68,7 +68,7 @@ export default {
     top: 50px;
     bottom: 60px;
     width: 100%;
-    max-height: 538px;
+    max-height: 558px;
     overflow: hidden;
     background-color: white;
 

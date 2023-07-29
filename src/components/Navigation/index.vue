@@ -329,7 +329,7 @@ export default {
     background: #edeced;
     overflow-x: hidden;
     overflow-y: scroll;
-    height: 478px;
+    height: 498px;
     margin-top: 60px;
 
     .el-menu-item {
@@ -471,7 +471,9 @@ export default {
           align-items: center;
           margin: 15px 0 45px;
 
-          .autologin {}
+          .autologin {
+  
+          }
 
           .right {
             display: flex;
