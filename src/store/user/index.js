@@ -1,5 +1,5 @@
 import { reqLikeList, reqUserSubcount, reqUserAccount, reqUserPlaylist, reqSubPlaylist, reqAlbumSublist, reqArtistSublist, reqMVSublist, reqRecentSong, reqSubAlbum, reqUserDetail, reqSubArtist, reqSubMV, reqPersonalFM, reqLike } from '@/api'
-import { reqUpdatePlaylistTrack, reqCreatePlaylist, reqDeletePlaylist } from '@/api'
+import { reqUpdatePlaylistTrack, reqCreatePlaylist, reqDeletePlaylist, reqUpdatePlaylist } from '@/api'
 
 const state = {
     userSubcount: {},
@@ -216,6 +216,14 @@ const actions = {
             return Promise.reject('操作失败！');
         }
     },
+    async getUpdatePlaylist({commit}, params) {
+        let res = await reqUpdatePlaylist(params);
+        if (res.code == 200) {
+            return Promise.resolve('保存成功！');
+        } else {
+            return Promise.reject('操作失败！');
+        }
+    }
 };
 
 const getters = {

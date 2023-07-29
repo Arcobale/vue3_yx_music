@@ -130,10 +130,10 @@
     </el-dialog>
 
     <!-- 新建歌单对话框 -->
-    <el-dialog v-model="createPlaylistDialogVisible" title="新建歌单">
+    <el-dialog v-model="createPlaylistDialogVisible" title="新建歌单" center align-center draggable>
       <el-form :model="createPlaylistForm">
         <el-form-item>
-          <el-input v-model="createPlaylistForm.name" autocomplete="off" placeholder="输入新歌单标题" />
+          <el-input v-model="createPlaylistForm.name" autocomplete="off" placeholder="输入新歌单标题" minlength="1" />
         </el-form-item>
         <el-form-item>
           <el-checkbox v-model="createPlaylistForm.privacy" label="设置为隐私歌单" value="10" />
@@ -149,8 +149,8 @@
     </el-dialog>
 
     <!-- 歌单右键菜单 -->
-    <div id="contextMenu">
-      <div class="menu-item">
+    <div id="contextPlaylistMenu">
+      <div class="menu-item" @click="updatePlaylist">
         编辑歌单信息
       </div>
       <div class="menu-item" @click="deletePlaylist">
@@ -222,16 +222,6 @@ export default {
         });
         // 获取收藏的专辑
         store.dispatch('getUserAlbumSublist', { limit: 10000, offset: 0 });
-
-        // 点击事件收回右键菜单
-        window.onclick = function (e) {
-          // 清除选中的歌曲
-          selectedPlaylistIds.length = 0;
-          let menu = document.querySelector('#contextMenu');
-          if (menu) {
-            menu.style.visibility = 'hidden';
-          }
-        }
       }
     })
 
@@ -329,11 +319,14 @@ export default {
       // 取消默认的浏览器右键菜单
       e.preventDefault();
       // 获取自定义的右键菜单
-      let menu = document.getElementById('contextMenu');
+      let menu = document.getElementById('contextPlaylistMenu');
       menu.style.left = e.clientX + 'px';
       menu.style.top = e.clientY + 'px';
       menu.style.visibility = 'visible';
+      // 清除选中的歌曲
+      selectedPlaylistIds.length = 0;
       selectedPlaylistIds.push(parseInt(e.currentTarget.getAttribute('data-playlistId')));
+      console.log(selectedPlaylistIds);
     }
 
     function deletePlaylist() {
@@ -341,6 +334,15 @@ export default {
       store.dispatch('getDeletePlaylist', { id }).then((msg) => {
         console.log(msg);
         reloadNav();
+      })
+    }
+
+    function updatePlaylist() {
+      router.push({
+        path: '/editplaylist',
+        query: {
+          id: selectedPlaylistIds[0]
+        }
       })
     }
 
@@ -370,6 +372,7 @@ export default {
       createPlaylist,
       openContextMenu,
       deletePlaylist,
+      updatePlaylist,
       createPlaylistForm,
       createdPlaylistCount,
       userPlaylist
@@ -637,7 +640,7 @@ export default {
     }
   }
 
-  #contextMenu {
+  #contextPlaylistMenu {
     position: fixed;
     visibility: hidden;
     background-color: #f0f0f0;

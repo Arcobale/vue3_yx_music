@@ -82,9 +82,12 @@
             </div>
 
             <!-- 歌曲右键菜单 -->
-            <div id="contextMenu">
+            <div id="contextSongMenu">
                 <div class="menu-item sub">
-                    收藏歌单
+                    收藏
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-jiantou_liebiaoxiangyou"></use>
+                    </svg>
                     <div class="submenu">
                         <div class="submenu-item" v-for="playlist in userPlaylist?.slice(0, createdPlaylistCount)"
                             :key="playlist.id" @click="updatePlaylistSongs('add', playlist.id)">
@@ -138,30 +141,16 @@ export default {
 
         onMounted(() => {
             getData();
-            let menuItem = document.querySelector('#contextMenu .sub');
+            let menuItem = document.querySelector('#contextSongMenu .sub');
 
             menuItem.addEventListener('mouseenter', () => {
-                let submenu = document.querySelector('#contextMenu .sub .submenu');
+                let submenu = document.querySelector('#contextSongMenu .sub .submenu');
                 submenu.style.visibility = 'visible';
             });
             menuItem.addEventListener('mouseleave', () => {
-                let submenu = document.querySelector('#contextMenu .sub .submenu');
+                let submenu = document.querySelector('#contextSongMenu .sub .submenu');
                 submenu.style.visibility = 'hidden';
             });
-
-            // 点击事件收回右键菜单
-            window.onclick = function (e) {
-                // 清除选中的歌曲
-                selectedSongIds.length = 0;
-                let menu = document.querySelector('#contextMenu');
-                let submenu = document.querySelector('#contextMenu .sub .submenu');
-                if (menu) {
-                    menu.style.visibility = 'hidden';
-                }
-                if (submenu) {
-                    submenu.style.visibility = 'hidden';
-                }
-            }
         })
 
         watch(router.currentRoute, () => {
@@ -276,10 +265,12 @@ export default {
             // 取消默认的浏览器右键菜单
             e.preventDefault();
             // 获取自定义的右键菜单
-            let menu = document.getElementById('contextMenu');
+            let menu = document.getElementById('contextSongMenu');
             menu.style.left = e.clientX + 'px';
             menu.style.top = e.clientY + 'px';
             menu.style.visibility = 'visible';
+            // 清除选中的歌曲
+            selectedSongIds.length = 0;
             selectedSongIds.push(parseInt(e.currentTarget.getAttribute('data-songId')));
         }
 
@@ -458,7 +449,7 @@ export default {
     .container {
         margin-top: 35px;
 
-        #contextMenu {
+        #contextSongMenu {
             position: fixed;
             visibility: hidden;
             background-color: #f0f0f0;
@@ -475,6 +466,16 @@ export default {
                 border-radius: 10px;
                 width: 166px;
                 padding: 4px 8px;
+                position: relative;
+
+                .icon {
+                    position: absolute;
+                    right: 10px;
+                    fill: black;
+                    width: 20px;
+                    height: 20px;
+                    top: 6px;
+                }
 
                 .submenu {
                     width: 210px;
@@ -507,6 +508,9 @@ export default {
             .menu-item:hover {
                 background-color: #102db9;
                 color: white;
+                .icon {
+                    fill: white;
+                }
             }
         }
 

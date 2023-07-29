@@ -473,16 +473,7 @@ export function reqDeletePlaylist(params) {
 export function reqUpdatePlaylist(params) {
     return requests({
         method: 'put',
-        url: `/update/playlist`,
-        params
-    })
-}
-
-// 对歌单添加或删除歌曲
-export function reqUpdatePlaylistTrack(params) {
-    return requests({
-        method: 'put',
-        url: `/playlist/tracks`,
+        url: `/playlist/update`,
         params
     })
 }
@@ -492,6 +483,15 @@ export function reqUploadPlaylistCover(params) {
     return requests({
         method: 'post',
         url: `/playlist/cover`,
+        params
+    })
+}
+
+// 对歌单添加或删除歌曲
+export function reqUpdatePlaylistTrack(params) {
+    return requests({
+        method: 'put',
+        url: `/playlist/tracks`,
         params
     })
 }

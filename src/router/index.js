@@ -114,6 +114,12 @@ const router = createRouter({
             hidden: true
         },
         {
+            path: '/editplaylist',
+            name: 'editplaylist',
+            component: () => import('@/views/EditPlayList'),
+            hidden: true
+        },
+        {
             path: '/albumlist/:id',
             name: 'albumlist',
             component: () => import('@/views/AlbumList'),
