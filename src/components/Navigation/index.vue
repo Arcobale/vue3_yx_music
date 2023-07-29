@@ -30,7 +30,8 @@
           创建的歌单
         </template>
         <el-menu-item v-for="playlist in userPlaylist?.slice(1, createdPlaylistCount)" :key="playlist?.id"
-          :index="activePath" @click="showDetail(playlist?.id)">
+          :index="activePath" @click="showDetail(playlist?.id)" @contextmenu="openContextMenu"
+          :data-playlistId="playlist?.id">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-24gl-playlistMusic4"></use>
           </svg>
@@ -41,7 +42,8 @@
       <el-sub-menu v-if="isLogin" index="subPlaylist">
         <template #title>收藏的歌单</template>
         <el-menu-item v-for="playlist in userPlaylist?.slice(createdPlaylistCount)" :key="playlist?.id"
-          :index="activePath" @click="showDetail(playlist?.id)">
+          :index="activePath" @click="showDetail(playlist?.id)" @contextmenu="openContextMenu"
+          :data-playlistId="playlist?.id">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-24gl-playlistMusic4"></use>
           </svg>
@@ -145,6 +147,16 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 歌单右键菜单 -->
+    <div id="contextMenu">
+      <div class="menu-item">
+        编辑歌单信息
+      </div>
+      <div class="menu-item" @click="deletePlaylist">
+        删除歌单
+      </div>
+    </div>
   </div>
 </template>
 
@@ -199,6 +211,7 @@ export default {
       privacy: false,
       type: 'NORMAL'
     })
+    let selectedPlaylistIds = [];
 
     onMounted(() => {
       if (isLogin.value) {
@@ -209,6 +222,16 @@ export default {
         });
         // 获取收藏的专辑
         store.dispatch('getUserAlbumSublist', { limit: 10000, offset: 0 });
+
+        // 点击事件收回右键菜单
+        window.onclick = function (e) {
+          // 清除选中的歌曲
+          selectedPlaylistIds.length = 0;
+          let menu = document.querySelector('#contextMenu');
+          if (menu) {
+            menu.style.visibility = 'hidden';
+          }
+        }
       }
     })
 
@@ -302,6 +325,25 @@ export default {
       })
     }
 
+    function openContextMenu(e) {
+      // 取消默认的浏览器右键菜单
+      e.preventDefault();
+      // 获取自定义的右键菜单
+      let menu = document.getElementById('contextMenu');
+      menu.style.left = e.clientX + 'px';
+      menu.style.top = e.clientY + 'px';
+      menu.style.visibility = 'visible';
+      selectedPlaylistIds.push(parseInt(e.currentTarget.getAttribute('data-playlistId')));
+    }
+
+    function deletePlaylist() {
+      let id = selectedPlaylistIds.join(',');
+      store.dispatch('getDeletePlaylist', { id }).then((msg) => {
+        console.log(msg);
+        reloadNav();
+      })
+    }
+
     watch(QRCodeLinkParams, () => {
       store.dispatch('getQRCodeLink', QRCodeLinkParams).then(() => {
         QRImgUrl.value = store.state.login.QRCodeLink;
@@ -326,6 +368,8 @@ export default {
       login,
       showDetail,
       createPlaylist,
+      openContextMenu,
+      deletePlaylist,
       createPlaylistForm,
       createdPlaylistCount,
       userPlaylist
@@ -590,6 +634,58 @@ export default {
           }
         }
       }
+    }
+  }
+
+  #contextMenu {
+    position: fixed;
+    visibility: hidden;
+    background-color: #f0f0f0;
+    width: 180px;
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid black;
+    border-radius: 10px;
+
+    .menu-item {
+      line-height: 22px;
+      height: 22px;
+      cursor: default;
+      border-radius: 10px;
+      width: 166px;
+      padding: 4px 8px;
+
+      .submenu {
+        width: 210px;
+        padding: 4px;
+        border: 1px solid black;
+        border-radius: 10px;
+        background-color: #f0f0f0;
+        position: relative;
+        left: 165px;
+        top: -35px;
+        visibility: hidden;
+        color: black;
+
+        .submenu-item {
+          cursor: default;
+          border-radius: 10px;
+          padding: 4px 8px;
+          width: 166px;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+        .submenu-item:hover {
+          background-color: #102db9;
+          color: white;
+        }
+      }
+    }
+
+    .menu-item:hover {
+      background-color: #102db9;
+      color: white;
     }
   }
 }
